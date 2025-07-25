@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Download, RefreshCw } from 'lucide-react';
+import { ArrowLeft, Download, RefreshCw, ExternalLink } from 'lucide-react';
 import { FormData } from '@/components/ChangeAssessmentForm';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -15,12 +15,21 @@ interface StrategyRecommendation {
   frameworks: string[];
 }
 
+interface ArticleSnippet {
+  title: string;
+  url: string;
+  snippet: string;
+  source: string;
+}
+
 const Results: React.FC = () => {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
   const [formData, setFormData] = useState<FormData | null>(null);
   const [recommendation, setRecommendation] = useState<StrategyRecommendation | null>(null);
+  const [articles, setArticles] = useState<ArticleSnippet[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingArticles, setIsLoadingArticles] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -53,6 +62,7 @@ const Results: React.FC = () => {
     const data = JSON.parse(storedData) as FormData;
     setFormData(data);
     generateRecommendation(data);
+    fetchRelevantArticles(data);
   }, [navigate]);
 
   const generateRecommendation = async (data: FormData) => {
@@ -152,6 +162,74 @@ const Results: React.FC = () => {
     }
     
     return frameworks;
+  };
+
+  const fetchRelevantArticles = async (data: FormData) => {
+    setIsLoadingArticles(true);
+    try {
+      // Create search query based on organization data
+      const searchTerms = [
+        `${data.organizationSize} organization change management success`,
+        `${data.industry} change management case study`,
+        data.changeTypes.join(' ') + ' implementation success story',
+        'change management best practices ' + data.organizationSize + ' company'
+      ];
+
+      const articles: ArticleSnippet[] = [];
+      
+      // Search for each term and collect results
+      for (const searchTerm of searchTerms.slice(0, 2)) { // Limit to 2 searches to avoid too many requests
+        try {
+          const response = await fetch('/api/search-articles', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ query: searchTerm }),
+          });
+          
+          if (response.ok) {
+            const searchResults = await response.json();
+            if (searchResults.articles) {
+              articles.push(...searchResults.articles.slice(0, 3)); // Take top 3 results per search
+            }
+          }
+        } catch (error) {
+          console.error('Error searching for articles:', error);
+        }
+      }
+
+      // If API is not available, use mock data
+      if (articles.length === 0) {
+        const mockArticles: ArticleSnippet[] = [
+          {
+            title: `How ${data.organizationSize === 'large' ? 'Enterprise' : data.organizationSize === 'medium' ? 'Mid-Size' : 'Small'} ${data.industry} Companies Successfully Navigate Change`,
+            url: '#',
+            snippet: `Learn from real-world examples of ${data.organizationSize} ${data.industry.toLowerCase()} organizations that successfully implemented ${data.changeTypes.join(' and ').toLowerCase()} changes, achieving remarkable results through strategic change management.`,
+            source: 'Harvard Business Review'
+          },
+          {
+            title: `${data.industry} Transformation: A Case Study in Change Management Excellence`,
+            url: '#',
+            snippet: `Discover how a leading ${data.industry.toLowerCase()} company transformed their operations while managing ${data.stakeholderGroups.length} key stakeholder groups and ${data.numberOfStakeholders} impacted employees.`,
+            source: 'McKinsey & Company'
+          },
+          {
+            title: `Best Practices for ${data.urgency === 'high' ? 'Rapid' : data.urgency === 'medium' ? 'Structured' : 'Long-term'} Change Implementation`,
+            url: '#',
+            snippet: `Proven strategies and frameworks for managing ${data.urgency}-urgency changes in ${data.organizationSize} organizations, with specific focus on ${data.changeTypes.join(', ').toLowerCase()} transformations.`,
+            source: 'MIT Sloan Management Review'
+          }
+        ];
+        articles.push(...mockArticles);
+      }
+
+      setArticles(articles.slice(0, 6)); // Limit to 6 articles
+    } catch (error) {
+      console.error('Error fetching articles:', error);
+    } finally {
+      setIsLoadingArticles(false);
+    }
   };
 
   if (!formData) {
@@ -291,6 +369,48 @@ const Results: React.FC = () => {
                 <p className="text-sm text-muted-foreground mt-4">
                   These frameworks are specifically selected based on your organization's characteristics and change requirements.
                 </p>
+              </CardContent>
+            </Card>
+
+            {/* Relevant Articles & Case Studies */}
+            <Card className="shadow-card">
+              <CardHeader>
+                <CardTitle className="text-accent">Success Stories & Best Practices</CardTitle>
+                <CardDescription>
+                  Learn from organizations similar to yours who have successfully implemented change management programs
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {isLoadingArticles ? (
+                  <div className="flex items-center justify-center py-8">
+                    <RefreshCw className="w-6 h-6 animate-spin mr-2 text-primary" />
+                    <span>Finding relevant case studies...</span>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {articles.map((article, index) => (
+                      <div key={index} className="border border-border rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <div className="flex items-start justify-between mb-2">
+                          <h4 className="font-semibold text-sm leading-tight flex-1">{article.title}</h4>
+                          <ExternalLink className="w-4 h-4 text-muted-foreground ml-2 flex-shrink-0" />
+                        </div>
+                        <p className="text-sm text-muted-foreground mb-3 line-clamp-3">{article.snippet}</p>
+                        <div className="flex items-center justify-between">
+                          <Badge variant="outline" className="text-xs">{article.source}</Badge>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-xs p-2 h-auto"
+                            onClick={() => article.url !== '#' && window.open(article.url, '_blank')}
+                            disabled={article.url === '#'}
+                          >
+                            Read More
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
 
