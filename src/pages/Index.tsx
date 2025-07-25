@@ -1,11 +1,36 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ChangeAssessmentForm } from '@/components/ChangeAssessmentForm';
-import { ArrowRight, Users, Target, TrendingUp, CheckCircle } from 'lucide-react';
+import { ArrowRight, Users, Target, TrendingUp, CheckCircle, LogOut } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
 import heroImage from '@/assets/hero-change-management.jpg';
 
 const Index = () => {
+  const { user, loading, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate('/auth');
+    }
+  }, [user, loading, navigate]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
   const features = [
     {
       icon: <Target className="w-8 h-8 text-primary" />,
@@ -31,6 +56,18 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-section-gradient">
+      {/* Navigation */}
+      <nav className="absolute top-0 right-0 z-10 p-6">
+        <Button 
+          variant="outline" 
+          onClick={signOut}
+          className="bg-white/90 backdrop-blur-sm hover:bg-white"
+        >
+          <LogOut className="w-4 h-4 mr-2" />
+          Sign Out
+        </Button>
+      </nav>
+
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div className="container mx-auto px-4 py-16 lg:py-24">

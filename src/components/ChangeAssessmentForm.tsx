@@ -7,6 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface FormData {
   organizationSize: string;
@@ -54,6 +56,8 @@ const changeTypeOptions = [
 export const ChangeAssessmentForm: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
+  const [loading, setLoading] = useState(false);
   
   const [formData, setFormData] = useState<FormData>({
     organizationSize: '',
@@ -82,8 +86,17 @@ export const ChangeAssessmentForm: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "Please sign in to continue.",
+        variant: "destructive"
+      });
+      return;
+    }
     
     // Validation
     if (!formData.organizationSize || !formData.industry || !formData.numberOfStakeholders || !formData.urgency) {
@@ -113,9 +126,42 @@ export const ChangeAssessmentForm: React.FC = () => {
       return;
     }
 
-    // Store form data and navigate to results
-    sessionStorage.setItem('changeAssessmentData', JSON.stringify(formData));
-    navigate('/results');
+    setLoading(true);
+
+    try {
+      // Save assessment to database
+      const { data, error } = await supabase
+        .from('assessments')
+        .insert({
+          user_id: user.id,
+          organization_size: formData.organizationSize,
+          industry: formData.industry,
+          stakeholder_groups: formData.stakeholderGroups,
+          num_stakeholders: formData.numberOfStakeholders,
+          change_types: formData.changeTypes,
+          urgency: formData.urgency
+        })
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      // Store assessment ID and navigate to results
+      sessionStorage.setItem('assessmentId', data.id);
+      sessionStorage.setItem('changeAssessmentData', JSON.stringify(formData));
+      navigate('/results');
+    } catch (error) {
+      console.error('Error saving assessment:', error);
+      toast({
+        title: "Error saving assessment",
+        description: "Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -246,8 +292,13 @@ export const ChangeAssessmentForm: React.FC = () => {
           </div>
 
           <div className="pt-6">
-            <Button type="submit" size="lg" className="w-full bg-hero-gradient hover:opacity-90 transition-smooth">
-              Generate Change Management Strategy
+            <Button 
+              type="submit" 
+              size="lg" 
+              className="w-full bg-hero-gradient hover:opacity-90 transition-smooth"
+              disabled={loading}
+            >
+              {loading ? "Generating Strategy..." : "Generate Change Management Strategy"}
             </Button>
           </div>
         </form>
