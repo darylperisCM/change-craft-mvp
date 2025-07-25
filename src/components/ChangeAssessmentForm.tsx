@@ -89,12 +89,9 @@ export const ChangeAssessmentForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Check if user is authenticated before generating report
     if (!user) {
-      toast({
-        title: "Authentication required",
-        description: "Please sign in to continue.",
-        variant: "destructive"
-      });
+      navigate("/auth");
       return;
     }
     
