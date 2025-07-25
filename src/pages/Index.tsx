@@ -50,6 +50,13 @@ const Index = () => {
                   Transform your organization's approach to change management with AI-powered insights, 
                   personalized strategies, and proven frameworks that drive successful outcomes.
                 </p>
+                <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 mt-4">
+                  <p className="text-base text-foreground">
+                    <strong>Perfect for Newcomers & Small Organizations:</strong> Professional change management 
+                    guidance without the enterprise consulting costs. Designed for individual practitioners 
+                    and resource-conscious teams.
+                  </p>
+                </div>
               </div>
               
               <div className="flex flex-col sm:flex-row gap-4">
@@ -136,7 +143,8 @@ const Index = () => {
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Answer a few questions about your organization and change requirements 
-              to receive AI-generated recommendations tailored to your specific needs.
+              to receive AI-generated recommendations tailored to your specific needs. 
+              Accessible change management for organizations of all sizes and budgets.
             </p>
           </div>
           

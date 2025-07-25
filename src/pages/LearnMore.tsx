@@ -29,6 +29,13 @@ const LearnMore = () => {
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
               But transformation without structure often leads to confusion, resistance, and failure. That's where Change Management steps in.
             </p>
+            <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 mt-6">
+              <p className="text-base text-foreground max-w-3xl mx-auto">
+                <strong>Designed for Everyone:</strong> While formal change management consulting can cost thousands, 
+                our platform is specifically designed for newcomers, individual practitioners, and smaller organizations 
+                with limited resources. Get professional-grade change management strategies without the enterprise price tag.
+              </p>
+            </div>
           </div>
 
           <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-2">
@@ -90,7 +97,14 @@ const LearnMore = () => {
                 
                 <div className="text-center pt-4">
                   <p className="text-sm text-muted-foreground">
-                    Source: Prosci Best Practices in Change Management Research
+                    Source: <a 
+                      href="https://www.prosci.com" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline"
+                    >
+                      Prosci Best Practices in Change Management Research
+                    </a>
                   </p>
                   <p className="text-sm font-medium text-primary mt-2">
                     Organizations with excellent change management are 7x more likely to achieve their goals
