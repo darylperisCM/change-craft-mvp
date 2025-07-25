@@ -7,6 +7,7 @@ import { ArrowRight, Users, Target, TrendingUp, CheckCircle } from 'lucide-react
 import heroImage from '@/assets/hero-change-management.jpg';
 
 const Index = () => {
+  const navigate = useNavigate();
   const features = [
     {
       icon: <Target className="w-8 h-8 text-primary" />,
@@ -60,7 +61,11 @@ const Index = () => {
                   Start Assessment
                   <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-smooth" />
                 </Button>
-                <Button size="lg" variant="outline">
+                <Button 
+                  size="lg" 
+                  variant="outline"
+                  onClick={() => navigate('/learn-more')}
+                >
                   Learn More
                 </Button>
               </div>
