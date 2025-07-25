@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Download, RefreshCw, ExternalLink } from 'lucide-react';
 import { FormData } from '@/components/ChangeAssessmentForm';
-import { useAuth } from '@/hooks/useAuth';
+
 
 interface StrategyRecommendation {
   strategySummary: string;
@@ -24,33 +24,13 @@ interface ArticleSnippet {
 
 const Results: React.FC = () => {
   const navigate = useNavigate();
-  const { user, loading } = useAuth();
+  
   const [formData, setFormData] = useState<FormData | null>(null);
   const [recommendation, setRecommendation] = useState<StrategyRecommendation | null>(null);
   const [articles, setArticles] = useState<ArticleSnippet[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingArticles, setIsLoadingArticles] = useState(false);
 
-  useEffect(() => {
-    if (!loading && !user) {
-      navigate('/auth');
-    }
-  }, [user, loading, navigate]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-muted-foreground">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return null;
-  }
 
   useEffect(() => {
     const storedData = sessionStorage.getItem('changeAssessmentData');

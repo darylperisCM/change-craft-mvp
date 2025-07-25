@@ -7,8 +7,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/integrations/supabase/client';
 
 export interface FormData {
   organizationSize: string;
@@ -56,7 +54,7 @@ const changeTypeOptions = [
 export const ChangeAssessmentForm: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { user } = useAuth();
+  
   const [loading, setLoading] = useState(false);
   
   const [formData, setFormData] = useState<FormData>({
@@ -89,12 +87,6 @@ export const ChangeAssessmentForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Check if user is authenticated before generating report
-    if (!user) {
-      navigate("/auth");
-      return;
-    }
-    
     // Validation
     if (!formData.organizationSize || !formData.industry || !formData.numberOfStakeholders || !formData.urgency) {
       toast({
@@ -126,33 +118,13 @@ export const ChangeAssessmentForm: React.FC = () => {
     setLoading(true);
 
     try {
-      // Save assessment to database
-      const { data, error } = await supabase
-        .from('assessments')
-        .insert({
-          user_id: user.id,
-          organization_size: formData.organizationSize,
-          industry: formData.industry,
-          stakeholder_groups: formData.stakeholderGroups,
-          num_stakeholders: formData.numberOfStakeholders,
-          change_types: formData.changeTypes,
-          urgency: formData.urgency
-        })
-        .select()
-        .single();
-
-      if (error) {
-        throw error;
-      }
-
-      // Store assessment ID and navigate to results
-      sessionStorage.setItem('assessmentId', data.id);
+      // Store assessment data and navigate to results
       sessionStorage.setItem('changeAssessmentData', JSON.stringify(formData));
       navigate('/results');
     } catch (error) {
-      console.error('Error saving assessment:', error);
+      console.error('Error:', error);
       toast({
-        title: "Error saving assessment",
+        title: "Error processing assessment",
         description: "Please try again.",
         variant: "destructive"
       });
