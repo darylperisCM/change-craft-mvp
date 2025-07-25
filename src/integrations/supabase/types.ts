@@ -14,7 +14,84 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      assessments: {
+        Row: {
+          change_types: string[]
+          communication_frequency: string | null
+          created_at: string
+          frameworks: string | null
+          id: string
+          industry: string
+          num_stakeholders: string
+          organization_size: string
+          stakeholder_focus: string | null
+          stakeholder_groups: string[]
+          strategy_summary: string | null
+          training_level: string | null
+          urgency: string
+          user_id: string
+        }
+        Insert: {
+          change_types: string[]
+          communication_frequency?: string | null
+          created_at?: string
+          frameworks?: string | null
+          id?: string
+          industry: string
+          num_stakeholders: string
+          organization_size: string
+          stakeholder_focus?: string | null
+          stakeholder_groups: string[]
+          strategy_summary?: string | null
+          training_level?: string | null
+          urgency: string
+          user_id: string
+        }
+        Update: {
+          change_types?: string[]
+          communication_frequency?: string | null
+          created_at?: string
+          frameworks?: string | null
+          id?: string
+          industry?: string
+          num_stakeholders?: string
+          organization_size?: string
+          stakeholder_focus?: string | null
+          stakeholder_groups?: string[]
+          strategy_summary?: string | null
+          training_level?: string | null
+          urgency?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          company_name: string | null
+          created_at: string
+          id: string
+          role: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          company_name?: string | null
+          created_at?: string
+          id?: string
+          role?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          company_name?: string | null
+          created_at?: string
+          id?: string
+          role?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
