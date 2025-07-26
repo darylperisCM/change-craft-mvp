@@ -41,8 +41,8 @@ const Assessment = () => {
             <h1 className="text-4xl font-bold text-foreground mb-4">
               Start Your Free Change Management Assessment
             </h1>
-            <p className="text-xl text-foreground/80">
-              Answer a few questions to get your personalized change management plan
+            <p className="text-xl text-foreground/80 max-w-2xl mx-auto">
+              Answer a few questions about your organization and change requirements to receive AI-generated recommendations tailored to your specific needs. Accessible change management for organizations of all sizes and budgets.
             </p>
           </div>
 
