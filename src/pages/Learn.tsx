@@ -60,9 +60,12 @@ const Learn = () => {
                 <TrendingUp className="h-8 w-8 text-primary" />
                 <h3 className="text-xl font-semibold">Success Rates</h3>
               </div>
-              <p className="text-foreground/80">
+              <p className="text-foreground/80 mb-3">
                 Projects with excellent change management are 6x more likely to meet objectives 
                 compared to those with poor change management.
+              </p>
+              <p className="text-sm text-foreground/60">
+                Source: <a href="https://www.prosci.com/resources/articles/change-management-roi-study" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Prosci Best Practices in Change Management Study</a>
               </p>
             </div>
             <div className="bg-card p-6 rounded-lg border">
@@ -70,16 +73,19 @@ const Learn = () => {
                 <Users className="h-8 w-8 text-primary" />
                 <h3 className="text-xl font-semibold">People Impact</h3>
               </div>
-              <p className="text-foreground/80">
+              <p className="text-foreground/80 mb-3">
                 70% of change initiatives fail due to employee resistance and lack of management support, 
                 not technical issues.
+              </p>
+              <p className="text-sm text-foreground/60">
+                Source: <a href="https://www.mckinsey.com/capabilities/people-and-organizational-performance/our-insights/the-irrational-side-of-change-management" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">McKinsey & Company</a>
               </p>
             </div>
           </div>
           
           <div className="bg-primary/5 p-6 rounded-lg border">
             <h3 className="text-xl font-semibold mb-4">Research Shows:</h3>
-            <ul className="space-y-3">
+            <ul className="space-y-3 mb-4">
               <li className="flex items-start gap-3">
                 <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                 <span>Organizations with strong change management capabilities are 2.5x more likely to exceed project expectations</span>
@@ -93,6 +99,18 @@ const Learn = () => {
                 <span>Proper stakeholder engagement increases project success rates by 40%</span>
               </li>
             </ul>
+            <div className="text-sm text-foreground/60 space-y-1">
+              <p>Sources:</p>
+              <p>
+                • <a href="https://www.prosci.com/resources/articles/change-management-roi-study" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Prosci Best Practices in Change Management Study</a>
+              </p>
+              <p>
+                • <a href="https://www.pmi.org/learning/library/effective-communication-better-project-management-6480" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Project Management Institute (PMI)</a>
+              </p>
+              <p>
+                • <a href="https://hbr.org/2005/10/leading-change-why-transformation-efforts-fail" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Harvard Business Review</a>
+              </p>
+            </div>
           </div>
         </section>
 
