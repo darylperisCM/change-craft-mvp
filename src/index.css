@@ -6,53 +6,53 @@
 
 @layer base {
   :root {
-    --background: 54 100% 93%;
-    --foreground: 0 0% 20%;
+    --background: 0 0% 100%;
+    --foreground: 0 0% 1%;
 
-    --card: 171 44% 69%;
-    --card-foreground: 0 0% 20%;
+    --card: 172 54% 67%;
+    --card-foreground: 0 0% 1%;
 
-    --popover: 54 100% 93%;
-    --popover-foreground: 0 0% 20%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 1%;
 
-    --primary: 175 78% 34%;
+    --primary: 204 74% 18%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 171 44% 69%;
-    --secondary-foreground: 0 0% 20%;
+    --secondary: 172 54% 67%;
+    --secondary-foreground: 0 0% 1%;
 
-    --muted: 171 30% 85%;
-    --muted-foreground: 0 0% 47%;
+    --muted: 172 30% 90%;
+    --muted-foreground: 0 0% 40%;
 
-    --accent: 175 78% 34%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 172 54% 67%;
+    --accent-foreground: 0 0% 1%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 171 30% 80%;
-    --input: 171 30% 85%;
-    --ring: 175 78% 34%;
+    --border: 172 20% 85%;
+    --input: 172 20% 90%;
+    --ring: 204 74% 18%;
 
     --radius: 0.75rem;
 
     /* Custom tokens for modern SaaS theme */
-    --hero-gradient: linear-gradient(135deg, hsl(175 78% 34%), hsl(175 78% 45%));
-    --section-gradient: linear-gradient(180deg, hsl(54 100% 96%), hsl(54 100% 93%));
-    --card-shadow: 0 8px 25px hsl(175 78% 34% / 0.12);
-    --hero-shadow: 0 20px 40px hsl(175 78% 34% / 0.18);
+    --hero-gradient: linear-gradient(135deg, hsl(204 74% 18%), hsl(204 74% 25%));
+    --section-gradient: linear-gradient(180deg, hsl(0 0% 98%), hsl(0 0% 100%));
+    --card-shadow: 0 8px 25px hsl(204 74% 18% / 0.12);
+    --hero-shadow: 0 20px 40px hsl(204 74% 18% / 0.18);
     
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
-    --sidebar-background: 178 84% 23%;
+    --sidebar-background: 204 74% 18%;
     --sidebar-foreground: 0 0% 100%;
-    --sidebar-primary: 175 78% 34%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 171 44% 69%;
-    --sidebar-accent-foreground: 0 0% 20%;
-    --sidebar-border: 178 50% 20%;
-    --sidebar-ring: 175 78% 34%;
+    --sidebar-primary: 172 54% 67%;
+    --sidebar-primary-foreground: 0 0% 1%;
+    --sidebar-accent: 172 30% 85%;
+    --sidebar-accent-foreground: 0 0% 1%;
+    --sidebar-border: 204 50% 25%;
+    --sidebar-ring: 172 54% 67%;
   }
 
   .dark {
