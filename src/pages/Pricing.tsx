@@ -107,12 +107,12 @@ const Pricing = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+        <div className="flex flex-col lg:flex-row gap-6 max-w-7xl mx-auto">
           {plans.map((plan, index) => (
             <Card 
               key={index} 
-              className={`relative transition-all duration-300 hover:shadow-lg ${
-                plan.popular ? 'border-primary shadow-lg scale-105' : 'hover:scale-105'
+              className={`relative flex-1 flex flex-col transition-all duration-300 hover:shadow-xl rounded-xl shadow-md ${
+                plan.popular ? 'border-primary shadow-lg ring-2 ring-primary/20' : 'hover:shadow-lg'
               }`}
             >
               {plan.popular && (
@@ -122,37 +122,41 @@ const Pricing = () => {
                 </Badge>
               )}
               
-              <CardHeader className="text-center">
-                <CardTitle className="text-xl">{plan.title}</CardTitle>
-                <div className="flex items-baseline justify-center gap-1">
-                  <span className="text-3xl font-bold text-primary">{plan.price}</span>
+              <CardHeader className="text-center p-8 pb-4">
+                <CardTitle className="text-xl font-semibold">{plan.title}</CardTitle>
+                <div className="flex items-baseline justify-center gap-1 my-4">
+                  <span className="text-4xl font-bold text-primary">{plan.price}</span>
                   {plan.priceNote && (
-                    <span className="text-foreground/60">{plan.priceNote}</span>
+                    <span className="text-foreground/60 text-lg">{plan.priceNote}</span>
                   )}
                 </div>
-                <CardDescription className="mt-2">{plan.description}</CardDescription>
+                <CardDescription className="text-center text-foreground/70 leading-relaxed">
+                  {plan.description}
+                </CardDescription>
               </CardHeader>
               
-              <CardContent className="space-y-4">
-                <ul className="space-y-3">
+              <CardContent className="flex-1 flex flex-col p-8 pt-4">
+                <ul className="space-y-4 flex-1">
                   {plan.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="flex items-start gap-2">
-                      <CheckCircle className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                      <span className="text-sm text-foreground/80">{feature}</span>
+                    <li key={featureIndex} className="flex items-start gap-3 text-center">
+                      <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                      <span className="text-sm text-foreground/80 text-left">{feature}</span>
                     </li>
                   ))}
                 </ul>
                 
-                <Button 
-                  onClick={plan.ctaAction}
-                  className={`w-full ${
-                    plan.popular 
-                      ? 'bg-primary hover:bg-primary/90' 
-                      : 'variant-outline'
-                  }`}
-                >
-                  {plan.cta}
-                </Button>
+                <div className="mt-8">
+                  <Button 
+                    onClick={plan.ctaAction}
+                    className={`w-full h-11 text-sm font-medium ${
+                      plan.popular 
+                        ? 'bg-primary hover:bg-primary/90 text-primary-foreground' 
+                        : 'variant-outline'
+                    }`}
+                  >
+                    {plan.cta}
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           ))}
