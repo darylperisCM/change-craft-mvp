@@ -6,23 +6,23 @@
 
 @layer base {
   :root {
-    --background: 50 100% 93%;
-    --foreground: 178 84% 23%;
+    --background: 54 100% 93%;
+    --foreground: 0 0% 20%;
 
     --card: 171 44% 69%;
-    --card-foreground: 178 84% 23%;
+    --card-foreground: 0 0% 20%;
 
-    --popover: 50 100% 93%;
-    --popover-foreground: 178 84% 23%;
+    --popover: 54 100% 93%;
+    --popover-foreground: 0 0% 20%;
 
     --primary: 175 78% 34%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 171 44% 69%;
-    --secondary-foreground: 178 84% 23%;
+    --secondary-foreground: 0 0% 20%;
 
     --muted: 171 30% 85%;
-    --muted-foreground: 178 40% 40%;
+    --muted-foreground: 0 0% 47%;
 
     --accent: 175 78% 34%;
     --accent-foreground: 0 0% 100%;
@@ -38,20 +38,20 @@
 
     /* Custom tokens for modern SaaS theme */
     --hero-gradient: linear-gradient(135deg, hsl(175 78% 34%), hsl(175 78% 45%));
-    --section-gradient: linear-gradient(180deg, hsl(50 100% 96%), hsl(50 100% 93%));
+    --section-gradient: linear-gradient(180deg, hsl(54 100% 96%), hsl(54 100% 93%));
     --card-shadow: 0 8px 25px hsl(175 78% 34% / 0.12);
     --hero-shadow: 0 20px 40px hsl(175 78% 34% / 0.18);
     
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
-    --sidebar-background: 171 44% 69%;
-    --sidebar-foreground: 178 84% 23%;
+    --sidebar-background: 178 84% 23%;
+    --sidebar-foreground: 0 0% 100%;
     --sidebar-primary: 175 78% 34%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 171 30% 85%;
-    --sidebar-accent-foreground: 178 84% 23%;
-    --sidebar-border: 171 30% 80%;
+    --sidebar-accent: 171 44% 69%;
+    --sidebar-accent-foreground: 0 0% 20%;
+    --sidebar-border: 178 50% 20%;
     --sidebar-ring: 175 78% 34%;
   }
 
