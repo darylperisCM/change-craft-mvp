@@ -11,7 +11,7 @@ const Pricing = () => {
     {
       title: "Start for Free",
       price: "$0",
-      description: "Ideal for solo users or those exploring basic change management needs.",
+      description: "Generate your personalized Change Management plan — free forever.",
       features: [
         "Access to planner",
         "Email delivery of your custom plan",
@@ -25,7 +25,7 @@ const Pricing = () => {
       title: "Basic Toolkit",
       price: "$49",
       priceNote: "one-time",
-      description: "Perfect for individuals looking for a comprehensive set of tools and resources.",
+      description: "Access a set of generic templates and tools — ready to download and fully editable for your organization.",
       features: [
         "Instant access to templates",
         "Editable stakeholder map, comms plan, trackers",
@@ -40,7 +40,7 @@ const Pricing = () => {
       title: "Customized Toolkit",
       price: "$79",
       priceNote: "one-time",
-      description: "Tailored for teams requiring a toolkit aligned to their unique change context.",
+      description: "Receive templates and tools tailored to your inputs, organization specifics, and change type.",
       features: [
         "Templates customized for your needs",
         "Editable stakeholder map, comms plan, trackers",
@@ -56,7 +56,7 @@ const Pricing = () => {
       title: "Change Success Kit",
       price: "$139",
       priceNote: "one-time",
-      description: "Suited for growing organizations seeking advanced features and regular updates.",
+      description: "Get a 60-minute live session with a certified expert plus your customized toolkit—everything you need to succeed.",
       features: [
         "60-minute live expert session",
         "Fully customized templates and tools",
