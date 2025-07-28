@@ -22,50 +22,51 @@ const Pricing = () => {
       popular: false
     },
     {
-      title: "Complete Toolkit",
-      price: "$99",
+      title: "Basic Toolkit",
+      price: "$49",
       priceNote: "one-time",
-      description: "Templates and tools to implement your strategy with confidence.",
+      description: "Access a set of generic templates and tools — ready to download and fully editable for your organization.",
       features: [
+        "Instant access to templates",
         "Editable stakeholder map, comms plan, trackers",
         "PPT + Excel files",
-        "Lifetime access",
-        "Implementation guides"
+        "Step-by-step instructions"
       ],
       cta: "Get the Toolkit",
-      ctaAction: () => window.open('mailto:darylperis.cm@gmail.com?subject=Toolkit Purchase Inquiry'),
-      popular: true
-    },
-    {
-      title: "Live Expert Session",
-      price: "$60",
-      priceNote: "/ hour",
-      description: "Book a tailored consultation with a certified CM expert.",
-      features: [
-        "Review your plan",
-        "Practical advice for implementation",
-        "60-minute session",
-        "Follow-up resources"
-      ],
-      cta: "Book Now",
-      ctaAction: () => window.open('https://www.linkedin.com/in/darylperis/'),
+      ctaAction: () => window.open('mailto:darylperis.cm@gmail.com?subject=Basic Toolkit Purchase Inquiry'),
       popular: false
     },
     {
-      title: "Change Craft Pro",
-      price: "$10",
-      priceNote: "/month",
-      description: "Access advanced tools, plan history, and exclusive webinars.",
+      title: "Customized Toolkit",
+      price: "$79",
+      priceNote: "one-time",
+      description: "Receive templates and tools tailored to your inputs, organization specifics, and change type.",
       features: [
-        "Save multiple plans",
-        "Premium resources",
-        "Monthly Q&As",
-        "Priority support"
+        "Templates customized for your needs",
+        "Editable stakeholder map, comms plan, trackers",
+        "PPT + Excel files",
+        "Personalized implementation guide",
+        "Email delivery within 48 hours"
       ],
-      cta: "Join the Waitlist",
-      ctaAction: () => window.open('mailto:darylperis.cm@gmail.com?subject=Pro Membership Waitlist'),
-      popular: false,
-      comingSoon: true
+      cta: "Get Customized Toolkit",
+      ctaAction: () => window.open('mailto:darylperis.cm@gmail.com?subject=Customized Toolkit Purchase Inquiry'),
+      popular: true
+    },
+    {
+      title: "Change Success Kit",
+      price: "$139",
+      priceNote: "one-time",
+      description: "Get a 60-minute live session with a certified expert plus your customized toolkit—everything you need to succeed.",
+      features: [
+        "60-minute live expert session",
+        "Fully customized templates and tools",
+        "Personalized action plan",
+        "Follow-up resources",
+        "Priority email support"
+      ],
+      cta: "Get Expert Bundle",
+      ctaAction: () => window.open('mailto:darylperis.cm@gmail.com?subject=Change Success Kit Purchase Inquiry'),
+      popular: true
     }
   ];
 
@@ -120,11 +121,6 @@ const Pricing = () => {
                   Most Popular
                 </Badge>
               )}
-              {plan.comingSoon && (
-                <Badge variant="secondary" className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                  Coming Soon
-                </Badge>
-              )}
               
               <CardHeader className="text-center">
                 <CardTitle className="text-xl">{plan.title}</CardTitle>
@@ -154,7 +150,6 @@ const Pricing = () => {
                       ? 'bg-primary hover:bg-primary/90' 
                       : 'variant-outline'
                   }`}
-                  disabled={plan.comingSoon}
                 >
                   {plan.cta}
                 </Button>
