@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Users, TrendingUp, CheckCircle } from "lucide-react";
 
@@ -55,7 +56,7 @@ const Learn = () => {
         <section className="mb-12">
           <h2 className="text-3xl font-bold text-foreground mb-6">Why It Matters</h2>
           <div className="grid md:grid-cols-2 gap-8 mb-8">
-            <div className="bg-card p-6 rounded-lg border">
+            <Card variant="peach" className="p-6">
               <div className="flex items-center gap-3 mb-4">
                 <TrendingUp className="h-8 w-8 text-primary" />
                 <h3 className="text-xl font-semibold">Success Rates</h3>
@@ -67,8 +68,8 @@ const Learn = () => {
               <p className="text-sm text-foreground/60">
                 Source: <a href="https://www.prosci.com/resources/articles/change-management-roi-study" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Prosci Best Practices in Change Management Study</a>
               </p>
-            </div>
-            <div className="bg-card p-6 rounded-lg border">
+            </Card>
+            <Card variant="teal" className="p-6">
               <div className="flex items-center gap-3 mb-4">
                 <Users className="h-8 w-8 text-primary" />
                 <h3 className="text-xl font-semibold">People Impact</h3>
@@ -80,10 +81,10 @@ const Learn = () => {
               <p className="text-sm text-foreground/60">
                 Source: <a href="https://www.mckinsey.com/capabilities/people-and-organizational-performance/our-insights/the-irrational-side-of-change-management" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">McKinsey & Company</a>
               </p>
-            </div>
+            </Card>
           </div>
           
-          <div className="bg-primary/5 p-6 rounded-lg border">
+          <Card variant="coral" className="p-6">
             <h3 className="text-xl font-semibold mb-4">Research Shows:</h3>
             <ul className="space-y-3 mb-4">
               <li className="flex items-start gap-3">
@@ -111,7 +112,7 @@ const Learn = () => {
                 • <a href="https://hbr.org/2005/10/leading-change-why-transformation-efforts-fail" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Harvard Business Review</a>
               </p>
             </div>
-          </div>
+          </Card>
         </section>
 
         {/* How Change Craft Helps */}
@@ -149,7 +150,7 @@ const Learn = () => {
         </section>
 
         {/* CTA */}
-        <div className="text-center bg-primary/5 p-8 rounded-lg border">
+        <Card variant="lavender" className="text-center p-8">
           <h3 className="text-2xl font-bold mb-4">Ready to Start Your Change Journey?</h3>
           <p className="text-foreground/80 mb-6">
             Get your personalized change management plan in minutes — completely free.
@@ -161,7 +162,7 @@ const Learn = () => {
           >
             Start Your Free Assessment
           </Button>
-        </div>
+        </Card>
       </div>
     </div>
   );

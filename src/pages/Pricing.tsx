@@ -108,9 +108,14 @@ const Pricing = () => {
         </div>
 
         <div className="flex flex-col lg:flex-row gap-6 max-w-7xl mx-auto">
-          {plans.map((plan, index) => (
+          {plans.map((plan, index) => {
+            const cardVariants = ["coral", "peach", "teal", "lavender"];
+            const variant = cardVariants[index % cardVariants.length];
+            
+            return (
             <Card 
-              key={index} 
+              key={index}
+              variant={variant as any}
               className={`relative flex-1 flex flex-col transition-all duration-300 hover:shadow-xl rounded-xl shadow-md ${
                 plan.popular ? 'border-primary shadow-lg ring-2 ring-primary/20' : 'hover:shadow-lg'
               }`}
@@ -159,10 +164,11 @@ const Pricing = () => {
                 </div>
               </CardContent>
             </Card>
-          ))}
+            );
+          })}
         </div>
 
-        <div className="text-center mt-12 bg-primary/5 p-8 rounded-lg border max-w-4xl mx-auto">
+        <Card variant="mint" className="text-center mt-12 p-8 max-w-4xl mx-auto">
           <h3 className="text-2xl font-bold mb-4">Questions About Pricing?</h3>
           <p className="text-foreground/80 mb-6">
             Need a custom solution or have questions? I'm here to help you find the right fit.
@@ -173,7 +179,7 @@ const Pricing = () => {
           >
             Contact Me
           </Button>
-        </div>
+        </Card>
       </div>
     </div>
   );

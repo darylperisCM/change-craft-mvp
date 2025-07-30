@@ -49,6 +49,24 @@
     --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     --transition-fast: all 0.2s ease-out;
 
+    /* Complementary color palette for card variations */
+    --coral: 22 100% 67%;
+    --coral-light: 22 100% 80%;
+    --peach: 30 100% 75%;
+    --peach-light: 30 100% 88%;
+    --lavender: 265 35% 75%;
+    --lavender-light: 265 35% 88%;
+    --mint: 150 35% 75%;
+    --mint-light: 150 35% 88%;
+    --warm-cream: 50 100% 95%;
+    
+    /* Card background variations */
+    --card-coral: 22 100% 67% / 0.03;
+    --card-peach: 30 100% 75% / 0.03;
+    --card-lavender: 265 35% 75% / 0.03;
+    --card-mint: 150 35% 75% / 0.03;
+    --card-teal: 174 80% 52% / 0.03;
+
     --sidebar-background: 204 74% 18%;
     --sidebar-foreground: 0 0% 100%;
     --sidebar-primary: 172 54% 67%;
@@ -160,5 +178,31 @@
     ring-color: hsl(var(--primary));
     border-color: hsl(var(--primary));
     transition: var(--transition-fast);
+  }
+
+  /* Card color variants */
+  .card-coral {
+    background-color: hsl(var(--card-coral));
+    border-color: hsl(var(--coral) / 0.2);
+  }
+
+  .card-peach {
+    background-color: hsl(var(--card-peach));
+    border-color: hsl(var(--peach) / 0.2);
+  }
+
+  .card-lavender {
+    background-color: hsl(var(--card-lavender));
+    border-color: hsl(var(--lavender) / 0.2);
+  }
+
+  .card-mint {
+    background-color: hsl(var(--card-mint));
+    border-color: hsl(var(--mint) / 0.2);
+  }
+
+  .card-teal {
+    background-color: hsl(var(--card-teal));
+    border-color: hsl(var(--primary) / 0.2);
   }
 }

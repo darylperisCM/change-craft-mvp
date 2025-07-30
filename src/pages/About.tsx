@@ -42,7 +42,7 @@ const About = () => {
 
         <div className="grid md:grid-cols-3 gap-8 mb-12">
           <div className="md:col-span-1">
-            <Card className="border-2">
+            <Card variant="teal" className="border-2">
               <CardContent className="p-6 text-center">
                 <div className="w-32 h-32 bg-primary/10 rounded-full mx-auto mb-4 flex items-center justify-center">
                   <span className="text-4xl font-bold text-primary">D</span>
@@ -86,7 +86,7 @@ const About = () => {
                 accessible to everyone.
               </p>
 
-              <div className="bg-primary/5 p-6 rounded-lg border mb-6">
+              <Card variant="coral" className="p-6 mb-6">
                 <h3 className="text-xl font-semibold mb-4">My Credentials & Experience:</h3>
                 <ul className="space-y-3">
                   <li className="flex items-start gap-3">
@@ -106,13 +106,13 @@ const About = () => {
                     <span>Passionate about capability building and accessible transformation</span>
                   </li>
                 </ul>
-              </div>
+              </Card>
             </div>
           </div>
         </div>
 
         {/* Mission Section */}
-        <Card className="mb-12">
+        <Card variant="mint" className="mb-12">
           <CardContent className="p-8">
             <h3 className="text-2xl font-bold mb-4 text-center">My Mission</h3>
             <p className="text-lg text-foreground/80 text-center max-w-3xl mx-auto">
@@ -124,7 +124,7 @@ const About = () => {
         </Card>
 
         {/* CTA */}
-        <div className="text-center bg-primary/5 p-8 rounded-lg border">
+        <Card variant="peach" className="text-center p-8">
           <h3 className="text-2xl font-bold mb-4">Let's Connect</h3>
           <p className="text-foreground/80 mb-6">
             Have questions about change management or want to discuss your specific situation? 
@@ -146,7 +146,7 @@ const About = () => {
               Send Email
             </Button>
           </div>
-        </div>
+        </Card>
       </div>
     </div>
   );
