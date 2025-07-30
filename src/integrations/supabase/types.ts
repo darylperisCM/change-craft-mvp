@@ -92,12 +92,37 @@ export type Database = {
         }
         Relationships: []
       }
+      secrets: {
+        Row: {
+          id: string
+          key_name: string | null
+          key_value: string | null
+        }
+        Insert: {
+          id?: string
+          key_name?: string | null
+          key_value?: string | null
+        }
+        Update: {
+          id?: string
+          key_name?: string | null
+          key_value?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_id: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      user_has_profile: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
