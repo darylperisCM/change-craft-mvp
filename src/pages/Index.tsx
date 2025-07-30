@@ -136,8 +136,17 @@ const Index = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {features.map((feature, index) => (
-              <Card key={index} className="text-center group animate-fade-in" style={{ animationDelay: `${index * 100}ms` }}>
+            {features.map((feature, index) => {
+              const cardVariants = ["coral", "peach", "teal", "lavender"];
+              const variant = cardVariants[index % cardVariants.length];
+              
+              return (
+              <Card 
+                key={index} 
+                variant={variant as any}
+                className="text-center group animate-fade-in" 
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
                 <CardHeader>
                   <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-primary/20 to-accent/20 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                     <feature.icon className="w-10 h-10 text-primary" />
@@ -148,7 +157,8 @@ const Index = () => {
                   <p className="text-foreground/70 leading-relaxed">{feature.description}</p>
                 </CardContent>
               </Card>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
