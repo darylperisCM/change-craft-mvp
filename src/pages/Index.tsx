@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, Users, Target, TrendingUp, CheckCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import heroImage from "@/assets/hero-change-management.jpg";
@@ -9,22 +9,22 @@ const Index = () => {
   
   const features = [
     {
-      icon: <Target className="w-8 h-8 text-primary" />,
+      icon: Target,
       title: "Strategic Planning",
       description: "Develop comprehensive change strategies tailored to your organization's specific needs and constraints."
     },
     {
-      icon: <Users className="w-8 h-8 text-primary" />,
+      icon: Users,
       title: "Stakeholder Engagement",
       description: "Identify and engage all stakeholders effectively throughout the change process with targeted communication."
     },
     {
-      icon: <TrendingUp className="w-8 h-8 text-primary" />,
+      icon: TrendingUp,
       title: "Impact Assessment",
       description: "Analyze and measure the impact of changes across different organizational levels and functions."
     },
     {
-      icon: <CheckCircle className="w-8 h-8 text-primary" />,
+      icon: CheckCircle,
       title: "Implementation Support",
       description: "Get framework recommendations and best practices to ensure successful change implementation."
     }
@@ -33,26 +33,26 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
-      <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b">
-        <div className="container mx-auto px-4 py-4">
+      <nav className="sticky top-0 z-50 glass backdrop-blur-glass border-b">
+        <div className="container mx-auto px-6 py-5">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <h1 className="text-2xl font-bold text-primary">Change Craft</h1>
-              <span className="text-sm text-foreground/60 hidden md:inline">
+            <div className="flex items-center space-x-3">
+              <h1 className="text-3xl font-bold text-primary tracking-wide">Change Craft</h1>
+              <span className="text-sm text-foreground/70 hidden md:inline font-medium">
                 Smart Change Management Planning — Free to Start, Built for Everyone
               </span>
             </div>
-            <div className="hidden md:flex space-x-6">
-              <a href="/learn" className="text-foreground/80 hover:text-primary transition-colors">
+            <div className="hidden md:flex space-x-8">
+              <a href="/learn" className="text-foreground/80 hover:text-primary transition-all duration-200 font-medium">
                 Learn More
               </a>
-              <a href="/assessment" className="text-foreground/80 hover:text-primary transition-colors">
+              <a href="/assessment" className="text-foreground/80 hover:text-primary transition-all duration-200 font-medium">
                 Start Assessment
               </a>
-              <a href="/pricing" className="text-foreground/80 hover:text-primary transition-colors">
+              <a href="/pricing" className="text-foreground/80 hover:text-primary transition-all duration-200 font-medium">
                 Pricing
               </a>
-              <a href="/about" className="text-foreground/80 hover:text-primary transition-colors">
+              <a href="/about" className="text-foreground/80 hover:text-primary transition-all duration-200 font-medium">
                 About Us
               </a>
             </div>
@@ -61,43 +61,47 @@ const Index = () => {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-background via-background to-primary/5">
-        <div className="container mx-auto px-4 py-16 lg:py-24">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-8">
-              <div className="space-y-4">
-                <h1 className="text-4xl lg:text-6xl font-bold leading-tight">
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden" style={{ background: 'var(--hero-gradient)' }}>
+        <div className="container mx-auto px-6 py-20">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <div className="space-y-10 animate-fade-in">
+              <div className="space-y-6">
+                <div className="inline-block px-6 py-3 glass-card text-primary rounded-modern text-sm font-semibold mb-8 animate-scale-in">
+                  ✨ Free Assessment for New Users
+                </div>
+                <h1 className="text-5xl lg:text-7xl font-bold leading-tight tracking-wide">
                   Navigate Change with
-                  <span className="bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent block">
+                  <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent block mt-2">
                     Confidence
                   </span>
                 </h1>
-                <p className="text-xl text-foreground/80 leading-relaxed">
+                <p className="text-xl text-foreground/80 leading-relaxed max-w-2xl">
                   Transform your organization's approach to change management with AI-powered insights, 
                   personalized strategies, and proven frameworks that drive successful outcomes.
                 </p>
-                <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 mt-4">
-                  <p className="text-base text-foreground">
-                    <strong>Perfect for Newcomers & Small Organizations:</strong> Professional change management 
+                <div className="glass-card p-6 mt-6 animate-scale-in">
+                  <p className="text-base text-foreground font-medium">
+                    <strong className="text-primary">Perfect for Newcomers & Small Organizations:</strong> Professional change management 
                     guidance without the enterprise consulting costs. Designed for individual practitioners 
                     and resource-conscious teams.
                   </p>
                 </div>
               </div>
               
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-6">
                 <Button 
                   size="lg" 
-                  className="bg-primary hover:bg-primary/90 group"
+                  className="group animate-scale-in"
                   onClick={() => navigate('/assessment')}
                 >
                   Start Your Free Assessment
-                  <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-all" />
+                  <ArrowRight className="w-5 h-5 ml-3 group-hover:translate-x-1 transition-all" />
                 </Button>
                 <Button 
                   size="lg" 
-                  variant="outline"
+                  variant="glass"
                   onClick={() => navigate('/learn')}
+                  className="animate-scale-in"
                 >
                   Learn More
                 </Button>
@@ -105,14 +109,13 @@ const Index = () => {
 
             </div>
             
-            <div className="relative">
-              <div className="relative overflow-hidden rounded-2xl shadow-xl">
+            <div className="relative animate-fade-in">
+              <div className="glass-card p-6 rounded-3xl">
                 <img 
                   src={heroImage} 
                   alt="Change Management Team Collaboration" 
-                  className="w-full h-auto object-cover"
+                  className="w-full h-auto object-cover rounded-2xl card-hover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent"></div>
               </div>
             </div>
           </div>
@@ -120,13 +123,13 @@ const Index = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-16 lg:py-24">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-5xl font-bold mb-6">
+      <section className="py-24 lg:py-32 bg-background">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-20 animate-fade-in">
+            <h2 className="text-4xl lg:text-6xl font-bold mb-8 tracking-wide">
               Why Choose Our Platform?
             </h2>
-            <p className="text-xl text-foreground/80 max-w-3xl mx-auto">
+            <p className="text-xl text-foreground/70 max-w-3xl mx-auto leading-relaxed">
               Our comprehensive approach combines proven methodologies with AI-powered insights 
               to deliver personalized change management strategies.
             </p>
@@ -134,11 +137,15 @@ const Index = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((feature, index) => (
-              <Card key={index} className="shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-                <CardContent className="p-6 text-center space-y-4">
-                  <div className="flex justify-center">{feature.icon}</div>
-                  <h3 className="text-xl font-semibold">{feature.title}</h3>
-                  <p className="text-foreground/80">{feature.description}</p>
+              <Card key={index} className="text-center group animate-fade-in" style={{ animationDelay: `${index * 100}ms` }}>
+                <CardHeader>
+                  <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-primary/20 to-accent/20 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <feature.icon className="w-10 h-10 text-primary" />
+                  </div>
+                  <CardTitle className="text-xl mb-4">{feature.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-foreground/70 leading-relaxed">{feature.description}</p>
                 </CardContent>
               </Card>
             ))}

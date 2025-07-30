@@ -134,137 +134,137 @@ export const ChangeAssessmentForm: React.FC = () => {
   };
 
   return (
-    <Card className="w-full max-w-4xl mx-auto shadow-card">
-      <CardHeader className="text-center pb-8">
-        <CardTitle className="text-3xl font-bold bg-hero-gradient bg-clip-text text-transparent">
+    <Card className="w-full max-w-5xl mx-auto animate-fade-in">
+      <CardHeader className="text-center pb-10">
+        <CardTitle className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent tracking-wide">
           Change Management Assessment
         </CardTitle>
-        <CardDescription className="text-lg mt-4">
+        <CardDescription className="text-xl mt-6 text-foreground/70 max-w-3xl mx-auto leading-relaxed">
           Help us understand your organization and change requirements to provide personalized recommendations
         </CardDescription>
       </CardHeader>
       
-      <CardContent className="space-y-8">
-        <form onSubmit={handleSubmit} className="space-y-8">
+      <CardContent className="space-y-10">
+        <form onSubmit={handleSubmit} className="space-y-10">
           {/* Organization Size */}
-          <div className="space-y-4">
-            <Label className="text-lg font-semibold">Organization Size *</Label>
+          <div className="space-y-6">
+            <Label className="text-xl font-bold text-foreground">Organization Size *</Label>
             <RadioGroup 
               value={formData.organizationSize} 
               onValueChange={(value) => setFormData(prev => ({ ...prev, organizationSize: value }))}
-              className="grid grid-cols-1 md:grid-cols-3 gap-4"
+              className="grid grid-cols-1 md:grid-cols-3 gap-6"
             >
-              <div className="flex items-center space-x-2 p-4 border rounded-lg hover:bg-muted transition-smooth">
+              <div className="flex items-center space-x-3 p-6 glass-card rounded-modern hover:bg-white/20 transition-all duration-300 card-hover">
                 <RadioGroupItem value="small" id="small" />
-                <Label htmlFor="small" className="font-medium cursor-pointer">Small (0-50 employees)</Label>
+                <Label htmlFor="small" className="font-semibold cursor-pointer text-foreground">Small (0-50 employees)</Label>
               </div>
-              <div className="flex items-center space-x-2 p-4 border rounded-lg hover:bg-muted transition-smooth">
+              <div className="flex items-center space-x-3 p-6 glass-card rounded-modern hover:bg-white/20 transition-all duration-300 card-hover">
                 <RadioGroupItem value="medium" id="medium" />
-                <Label htmlFor="medium" className="font-medium cursor-pointer">Medium (50-500 employees)</Label>
+                <Label htmlFor="medium" className="font-semibold cursor-pointer text-foreground">Medium (50-500 employees)</Label>
               </div>
-              <div className="flex items-center space-x-2 p-4 border rounded-lg hover:bg-muted transition-smooth">
+              <div className="flex items-center space-x-3 p-6 glass-card rounded-modern hover:bg-white/20 transition-all duration-300 card-hover">
                 <RadioGroupItem value="large" id="large" />
-                <Label htmlFor="large" className="font-medium cursor-pointer">Large (&gt;500 employees)</Label>
+                <Label htmlFor="large" className="font-semibold cursor-pointer text-foreground">Large (&gt;500 employees)</Label>
               </div>
             </RadioGroup>
           </div>
 
           {/* Industry */}
-          <div className="space-y-4">
-            <Label className="text-lg font-semibold">Industry *</Label>
+          <div className="space-y-6">
+            <Label className="text-xl font-bold text-foreground">Industry *</Label>
             <Select value={formData.industry} onValueChange={(value) => setFormData(prev => ({ ...prev, industry: value }))}>
-              <SelectTrigger className="w-full">
+              <SelectTrigger className="w-full h-14 rounded-modern border-2 glass text-foreground font-medium input-focus">
                 <SelectValue placeholder="Select your industry" />
               </SelectTrigger>
-              <SelectContent className="bg-background">
+              <SelectContent className="bg-background glass-card border rounded-modern">
                 {industries.map((industry) => (
-                  <SelectItem key={industry} value={industry}>{industry}</SelectItem>
+                  <SelectItem key={industry} value={industry} className="font-medium">{industry}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
 
           {/* Stakeholder Groups */}
-          <div className="space-y-4">
-            <Label className="text-lg font-semibold">Affected Stakeholder Groups *</Label>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="space-y-6">
+            <Label className="text-xl font-bold text-foreground">Affected Stakeholder Groups *</Label>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {stakeholderOptions.map((group) => (
-                <div key={group} className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-muted transition-smooth">
+                <div key={group} className="flex items-center space-x-3 p-6 glass-card rounded-modern hover:bg-white/20 transition-all duration-300 card-hover">
                   <Checkbox
                     id={group}
                     checked={formData.stakeholderGroups.includes(group)}
                     onCheckedChange={(checked) => handleStakeholderGroupChange(group, checked as boolean)}
                   />
-                  <Label htmlFor={group} className="font-medium cursor-pointer">{group}</Label>
+                  <Label htmlFor={group} className="font-semibold cursor-pointer text-foreground">{group}</Label>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Number of Stakeholders */}
-          <div className="space-y-4">
-            <Label className="text-lg font-semibold">Number of Impacted Stakeholders *</Label>
+          <div className="space-y-6">
+            <Label className="text-xl font-bold text-foreground">Number of Impacted Stakeholders *</Label>
             <RadioGroup 
               value={formData.numberOfStakeholders} 
               onValueChange={(value) => setFormData(prev => ({ ...prev, numberOfStakeholders: value }))}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
             >
-              <div className="flex items-center space-x-2 p-4 border rounded-lg hover:bg-muted transition-smooth">
+              <div className="flex items-center space-x-3 p-6 glass-card rounded-modern hover:bg-white/20 transition-all duration-300 card-hover">
                 <RadioGroupItem value="0-50" id="stakeholders-0-50" />
-                <Label htmlFor="stakeholders-0-50" className="font-medium cursor-pointer">0-50</Label>
+                <Label htmlFor="stakeholders-0-50" className="font-semibold cursor-pointer text-foreground">0-50</Label>
               </div>
-              <div className="flex items-center space-x-2 p-4 border rounded-lg hover:bg-muted transition-smooth">
+              <div className="flex items-center space-x-3 p-6 glass-card rounded-modern hover:bg-white/20 transition-all duration-300 card-hover">
                 <RadioGroupItem value="50-100" id="stakeholders-50-100" />
-                <Label htmlFor="stakeholders-50-100" className="font-medium cursor-pointer">50-100</Label>
+                <Label htmlFor="stakeholders-50-100" className="font-semibold cursor-pointer text-foreground">50-100</Label>
               </div>
-              <div className="flex items-center space-x-2 p-4 border rounded-lg hover:bg-muted transition-smooth">
+              <div className="flex items-center space-x-3 p-6 glass-card rounded-modern hover:bg-white/20 transition-all duration-300 card-hover">
                 <RadioGroupItem value="100-500" id="stakeholders-100-500" />
-                <Label htmlFor="stakeholders-100-500" className="font-medium cursor-pointer">100-500</Label>
+                <Label htmlFor="stakeholders-100-500" className="font-semibold cursor-pointer text-foreground">100-500</Label>
               </div>
-              <div className="flex items-center space-x-2 p-4 border rounded-lg hover:bg-muted transition-smooth">
+              <div className="flex items-center space-x-3 p-6 glass-card rounded-modern hover:bg-white/20 transition-all duration-300 card-hover">
                 <RadioGroupItem value=">500" id="stakeholders-500plus" />
-                <Label htmlFor="stakeholders-500plus" className="font-medium cursor-pointer">&gt;500</Label>
+                <Label htmlFor="stakeholders-500plus" className="font-semibold cursor-pointer text-foreground">&gt;500</Label>
               </div>
             </RadioGroup>
           </div>
 
           {/* Type of Change */}
-          <div className="space-y-4">
-            <Label className="text-lg font-semibold">Type of Change *</Label>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="space-y-6">
+            <Label className="text-xl font-bold text-foreground">Type of Change *</Label>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {changeTypeOptions.map((type) => (
-                <div key={type} className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-muted transition-smooth">
+                <div key={type} className="flex items-center space-x-3 p-6 glass-card rounded-modern hover:bg-white/20 transition-all duration-300 card-hover">
                   <Checkbox
                     id={type}
                     checked={formData.changeTypes.includes(type)}
                     onCheckedChange={(checked) => handleChangeTypeChange(type, checked as boolean)}
                   />
-                  <Label htmlFor={type} className="font-medium cursor-pointer">{type}</Label>
+                  <Label htmlFor={type} className="font-semibold cursor-pointer text-foreground">{type}</Label>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Urgency */}
-          <div className="space-y-4">
-            <Label className="text-lg font-semibold">Urgency Level *</Label>
+          <div className="space-y-6">
+            <Label className="text-xl font-bold text-foreground">Urgency Level *</Label>
             <Select value={formData.urgency} onValueChange={(value) => setFormData(prev => ({ ...prev, urgency: value }))}>
-              <SelectTrigger className="w-full">
+              <SelectTrigger className="w-full h-14 rounded-modern border-2 glass text-foreground font-medium input-focus">
                 <SelectValue placeholder="Select urgency level" />
               </SelectTrigger>
-              <SelectContent className="bg-background">
-                <SelectItem value="low">Low (8-12 weeks)</SelectItem>
-                <SelectItem value="medium">Medium (4-8 weeks)</SelectItem>
-                <SelectItem value="high">High (&lt;4 weeks)</SelectItem>
+              <SelectContent className="bg-background glass-card border rounded-modern">
+                <SelectItem value="low" className="font-medium">Low (8-12 weeks)</SelectItem>
+                <SelectItem value="medium" className="font-medium">Medium (4-8 weeks)</SelectItem>
+                <SelectItem value="high" className="font-medium">High (&lt;4 weeks)</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
-          <div className="pt-6">
+          <div className="pt-8">
             <Button 
               type="submit" 
               size="lg" 
-              className="w-full bg-hero-gradient hover:opacity-90 transition-smooth"
+              className="w-full font-bold text-lg animate-scale-in"
               disabled={loading}
             >
               {loading ? "Generating Strategy..." : "Generate Change Management Strategy"}
