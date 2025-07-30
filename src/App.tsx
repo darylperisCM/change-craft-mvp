@@ -11,6 +11,7 @@ import Assessment from "./pages/Assessment";
 import Pricing from "./pages/Pricing";
 import About from "./pages/About";
 import Auth from "./pages/Auth";
+import EmailCollectionPage from "./pages/EmailCollectionPage";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -29,6 +30,7 @@ const App = () => (
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/about" element={<About />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/email-collection" element={<EmailCollectionPage />} />
           <Route 
             path="/assessment" 
             element={

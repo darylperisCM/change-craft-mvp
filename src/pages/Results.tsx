@@ -91,6 +91,7 @@ const Results: React.FC = () => {
   const [articles, setArticles] = useState<ArticleSnippet[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingArticles, setIsLoadingArticles] = useState(false);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
 
 
   useEffect(() => {
@@ -102,7 +103,12 @@ const Results: React.FC = () => {
     
     const data = JSON.parse(storedData) as FormData;
     setFormData(data);
-    generateRecommendation(data);
+    
+    // Get user email
+    const email = sessionStorage.getItem('userEmail');
+    setUserEmail(email);
+    
+    generateRecommendation(data, email);
   }, [navigate]);
 
   // Separate effect to handle articles after recommendation is set
@@ -112,7 +118,7 @@ const Results: React.FC = () => {
     }
   }, [recommendation, formData]);
 
-  const generateRecommendation = async (data: FormData) => {
+  const generateRecommendation = async (data: FormData, email?: string | null) => {
     setIsLoading(true);
     
     try {
@@ -126,6 +132,21 @@ const Results: React.FC = () => {
       }
 
       setRecommendation(response);
+      
+      // Send email with strategy if email is provided
+      if (email && response) {
+        try {
+          await supabase.functions.invoke('send-strategy-email', {
+            body: {
+              email,
+              strategyData: response,
+              assessmentData: data
+            }
+          });
+        } catch (emailError) {
+          console.error('Failed to send email:', emailError);
+        }
+      }
     } catch (error) {
       console.error('Failed to generate AI strategy, using fallback:', error);
       // Fallback to original mock generation
@@ -139,6 +160,21 @@ const Results: React.FC = () => {
         relatedResources: generateMockResources(data)
       };
       setRecommendation(mockRecommendation);
+      
+      // Send email with strategy if email is provided (for fallback case)
+      if (email && mockRecommendation) {
+        try {
+          await supabase.functions.invoke('send-strategy-email', {
+            body: {
+              email,
+              strategyData: mockRecommendation,
+              assessmentData: data
+            }
+          });
+        } catch (emailError) {
+          console.error('Failed to send email:', emailError);
+        }
+      }
     } finally {
       setIsLoading(false);
     }

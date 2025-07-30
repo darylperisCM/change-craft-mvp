@@ -118,9 +118,9 @@ export const ChangeAssessmentForm: React.FC = () => {
     setLoading(true);
 
     try {
-      // Store assessment data and navigate to results
+      // Store assessment data and navigate to email collection for free users
       sessionStorage.setItem('changeAssessmentData', JSON.stringify(formData));
-      navigate('/results');
+      navigate('/email-collection');
     } catch (error) {
       console.error('Error:', error);
       toast({
