@@ -10,10 +10,16 @@ import { supabase } from '@/integrations/supabase/client';
 
 interface StrategyRecommendation {
   summary: string;
+  actionPlan: string;
   stakeholderFocus: string;
   trainingLevel: string;
   communicationFrequency: string;
   frameworks: string;
+  relatedResources?: Array<{
+    title: string;
+    url: string;
+    description: string;
+  }>;
 }
 
 interface ArticleSnippet {
@@ -43,8 +49,14 @@ const Results: React.FC = () => {
     const data = JSON.parse(storedData) as FormData;
     setFormData(data);
     generateRecommendation(data);
-    fetchRelevantArticles(data);
   }, [navigate]);
+
+  // Separate effect to handle articles after recommendation is set
+  useEffect(() => {
+    if (formData) {
+      fetchRelevantArticles(formData);
+    }
+  }, [recommendation, formData]);
 
   const generateRecommendation = async (data: FormData) => {
     setIsLoading(true);
@@ -65,10 +77,12 @@ const Results: React.FC = () => {
       // Fallback to original mock generation
       const mockRecommendation: StrategyRecommendation = {
         summary: generateStrategySummary(data),
+        actionPlan: generateActionPlan(data),
         stakeholderFocus: generateStakeholderFocus(data),
         trainingLevel: generateTrainingLevel(data),
         communicationFrequency: generateCommunicationFrequency(data),
-        frameworks: generateFrameworks(data).join(', ')
+        frameworks: generateFrameworks(data).join(', '),
+        relatedResources: generateMockResources(data)
       };
       setRecommendation(mockRecommendation);
     } finally {
@@ -155,69 +169,86 @@ const Results: React.FC = () => {
     return frameworks;
   };
 
+  const generateActionPlan = (data: FormData): string => {
+    const urgencyActions = {
+      high: [
+        "• Establish emergency change leadership team within 48 hours",
+        "• Conduct rapid stakeholder impact assessment",
+        "• Deploy immediate communication to all affected parties"
+      ],
+      medium: [
+        "• Form cross-functional change management team",
+        "• Develop comprehensive stakeholder engagement plan",
+        "• Create detailed change timeline and milestones"
+      ],
+      low: [
+        "• Conduct thorough organizational readiness assessment",
+        "• Build coalition of change champions across departments",
+        "• Design phased implementation approach with pilot programs"
+      ]
+    };
+
+    const commonActions = [
+      `• Tailor training programs for ${data.changeTypes.join(' and ').toLowerCase()} changes`,
+      `• Establish feedback mechanisms for ${data.stakeholderGroups.length} stakeholder groups`
+    ];
+
+    return urgencyActions[data.urgency].concat(commonActions).join('\n');
+  };
+
+  const generateMockResources = (data: FormData) => {
+    return [
+      {
+        title: `${data.industry} Change Management: Lessons from Industry Leaders`,
+        url: "https://hbr.org/topic/change-management",
+        description: `Harvard Business Review insights on ${data.industry.toLowerCase()} transformation best practices`
+      },
+      {
+        title: `Implementing ${data.changeTypes[0]} Change in ${data.organizationSize} Organizations`,
+        url: "https://www.mckinsey.com/capabilities/transformation/our-insights",
+        description: `McKinsey research on effective change strategies for ${data.organizationSize} companies`
+      }
+    ];
+  };
+
   const fetchRelevantArticles = async (data: FormData) => {
     setIsLoadingArticles(true);
     try {
-      // Create search query based on organization data
-      const searchTerms = [
-        `${data.organizationSize} organization change management success`,
-        `${data.industry} change management case study`,
-        data.changeTypes.join(' ') + ' implementation success story',
-        'change management best practices ' + data.organizationSize + ' company'
-      ];
-
-      const articles: ArticleSnippet[] = [];
-      
-      // Search for each term and collect results
-      for (const searchTerm of searchTerms.slice(0, 2)) { // Limit to 2 searches to avoid too many requests
-        try {
-          const response = await fetch('/api/search-articles', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ query: searchTerm }),
-          });
-          
-          if (response.ok) {
-            const searchResults = await response.json();
-            if (searchResults.articles) {
-              articles.push(...searchResults.articles.slice(0, 3)); // Take top 3 results per search
-            }
-          }
-        } catch (error) {
-          console.error('Error searching for articles:', error);
-        }
-      }
-
-      // If API is not available, use mock data
-      if (articles.length === 0) {
+      // Use AI-generated resources if available, otherwise fallback to mock
+      if (recommendation?.relatedResources && recommendation.relatedResources.length > 0) {
+        const aiArticles: ArticleSnippet[] = recommendation.relatedResources.map(resource => ({
+          title: resource.title,
+          url: resource.url,
+          snippet: resource.description,
+          source: "AI-Generated Resource"
+        }));
+        setArticles(aiArticles);
+      } else {
+        // Fallback to mock data if AI resources not available
         const mockArticles: ArticleSnippet[] = [
           {
             title: `How ${data.organizationSize === 'large' ? 'Enterprise' : data.organizationSize === 'medium' ? 'Mid-Size' : 'Small'} ${data.industry} Companies Successfully Navigate Change`,
-            url: '#',
+            url: 'https://hbr.org/topic/change-management',
             snippet: `Learn from real-world examples of ${data.organizationSize} ${data.industry.toLowerCase()} organizations that successfully implemented ${data.changeTypes.join(' and ').toLowerCase()} changes, achieving remarkable results through strategic change management.`,
             source: 'Harvard Business Review'
           },
           {
             title: `${data.industry} Transformation: A Case Study in Change Management Excellence`,
-            url: '#',
+            url: 'https://www.mckinsey.com/capabilities/transformation/our-insights',
             snippet: `Discover how a leading ${data.industry.toLowerCase()} company transformed their operations while managing ${data.stakeholderGroups.length} key stakeholder groups and ${data.numberOfStakeholders} impacted employees.`,
             source: 'McKinsey & Company'
           },
           {
             title: `Best Practices for ${data.urgency === 'high' ? 'Rapid' : data.urgency === 'medium' ? 'Structured' : 'Long-term'} Change Implementation`,
-            url: '#',
+            url: 'https://www.kotterinc.com/research-and-perspectives/',
             snippet: `Proven strategies and frameworks for managing ${data.urgency}-urgency changes in ${data.organizationSize} organizations, with specific focus on ${data.changeTypes.join(', ').toLowerCase()} transformations.`,
-            source: 'MIT Sloan Management Review'
+            source: 'Kotter International'
           }
         ];
-        articles.push(...mockArticles);
+        setArticles(mockArticles);
       }
-
-      setArticles(articles.slice(0, 6)); // Limit to 6 articles
     } catch (error) {
-      console.error('Error fetching articles:', error);
+      console.error('Error setting up articles:', error);
     } finally {
       setIsLoadingArticles(false);
     }
@@ -314,6 +345,18 @@ const Results: React.FC = () => {
               </CardContent>
             </Card>
 
+            {/* Action Plan */}
+            <Card className="shadow-card">
+              <CardHeader>
+                <CardTitle className="text-accent">Immediate Action Plan</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="prose prose-sm max-w-none">
+                  <div className="whitespace-pre-line leading-relaxed">{recommendation.actionPlan}</div>
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Stakeholder Focus */}
             <Card className="shadow-card">
               <CardHeader>
@@ -377,18 +420,17 @@ const Results: React.FC = () => {
                           <ExternalLink className="w-4 h-4 text-muted-foreground ml-2 flex-shrink-0" />
                         </div>
                         <p className="text-sm text-muted-foreground mb-3 line-clamp-3">{article.snippet}</p>
-                        <div className="flex items-center justify-between">
-                          <Badge variant="outline" className="text-xs">{article.source}</Badge>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="text-xs p-2 h-auto"
-                            onClick={() => article.url !== '#' && window.open(article.url, '_blank')}
-                            disabled={article.url === '#'}
-                          >
-                            Read More
-                          </Button>
-                        </div>
+                         <div className="flex items-center justify-between">
+                           <Badge variant="outline" className="text-xs">{article.source}</Badge>
+                           <Button
+                             variant="ghost"
+                             size="sm"
+                             className="text-xs p-2 h-auto"
+                             onClick={() => window.open(article.url, '_blank')}
+                           >
+                             Read More
+                           </Button>
+                         </div>
                       </div>
                     ))}
                   </div>

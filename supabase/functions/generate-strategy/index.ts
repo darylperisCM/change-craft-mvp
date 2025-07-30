@@ -41,13 +41,15 @@ Organization Profile:
 Provide a response in JSON format with these exact fields:
 {
   "summary": "A 2-3 sentence executive summary of the recommended strategy approach",
+  "actionPlan": "3-5 specific, actionable steps this organization should take immediately to begin their change initiative (bullet points format)",
   "stakeholderFocus": "Specific guidance on which stakeholder groups to prioritize and why (2-3 sentences)",
   "trainingLevel": "Recommended training intensity and approach based on the change complexity (2-3 sentences)",
   "communicationFrequency": "Optimal communication cadence and channels for this context (2-3 sentences)",
-  "frameworks": "Most suitable change management frameworks and methodologies for this situation (2-3 sentences)"
+  "frameworks": "Most suitable change management frameworks and methodologies for this situation (2-3 sentences)",
+  "relatedResources": "Array of 2-4 real, working URLs to relevant change management case studies, articles, or organizational resources that match this industry and change type. Include both title and url for each resource in format [{\"title\": \"...\", \"url\": \"...\", \"description\": \"...\"}]"
 }
 
-Focus on practical, industry-specific advice that considers the organization size, stakeholder complexity, and urgency level.`;
+Focus on practical, industry-specific advice that considers the organization size, stakeholder complexity, and urgency level. For relatedResources, find actual URLs to Harvard Business Review, McKinsey, Deloitte, Kotter International, or similar authoritative change management sources.`;
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
