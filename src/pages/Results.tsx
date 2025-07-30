@@ -462,7 +462,7 @@ const Results: React.FC = () => {
           </Button>
           
           <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold bg-hero-gradient bg-clip-text text-transparent mb-4">
+            <h1 className="text-4xl font-bold text-foreground mb-4">
               Your Change Management Strategy
             </h1>
             <p className="text-lg text-muted-foreground">
@@ -528,7 +528,7 @@ const Results: React.FC = () => {
             {/* Strategy Summary */}
             <Card className="shadow-card">
               <CardHeader>
-                <CardTitle className="text-accent">Strategy Summary</CardTitle>
+                <CardTitle className="text-primary">Strategy Summary</CardTitle>
               </CardHeader>
               <CardContent className="flex items-center min-h-[120px]">
                 <p className="leading-relaxed">{recommendation.summary}</p>
@@ -538,7 +538,7 @@ const Results: React.FC = () => {
             {/* Action Plan */}
             <Card className="shadow-card">
               <CardHeader>
-                <CardTitle className="text-accent">Immediate Action Plan</CardTitle>
+                <CardTitle className="text-primary">Immediate Action Plan</CardTitle>
               </CardHeader>
               <CardContent className="flex items-center min-h-[120px]">
                 <div className="prose prose-sm max-w-none w-full">
@@ -550,7 +550,7 @@ const Results: React.FC = () => {
             {/* Stakeholder Focus */}
             <Card className="shadow-card">
               <CardHeader>
-                <CardTitle className="text-accent">Stakeholder Focus</CardTitle>
+                <CardTitle className="text-primary">Stakeholder Focus</CardTitle>
               </CardHeader>
               <CardContent className="flex items-center min-h-[120px]">
                 <p className="leading-relaxed">{recommendation.stakeholderFocus}</p>
@@ -560,7 +560,7 @@ const Results: React.FC = () => {
             {/* Training Level */}
             <Card className="shadow-card">
               <CardHeader>
-                <CardTitle className="text-accent">Training Level</CardTitle>
+                <CardTitle className="text-primary">Training Level</CardTitle>
               </CardHeader>
               <CardContent className="flex items-center min-h-[120px]">
                 <p className="leading-relaxed">{recommendation.trainingLevel}</p>
@@ -570,7 +570,7 @@ const Results: React.FC = () => {
             {/* Communication Frequency */}
             <Card className="shadow-card">
               <CardHeader>
-                <CardTitle className="text-accent">Communication Frequency</CardTitle>
+                <CardTitle className="text-primary">Communication Frequency</CardTitle>
               </CardHeader>
               <CardContent className="flex items-center min-h-[120px]">
                 <p className="leading-relaxed">{recommendation.communicationFrequency}</p>
@@ -580,7 +580,7 @@ const Results: React.FC = () => {
             {/* Frameworks */}
             <Card className="shadow-card">
               <CardHeader>
-                <CardTitle className="text-accent">Recommended Frameworks</CardTitle>
+                <CardTitle className="text-primary">Recommended Frameworks</CardTitle>
               </CardHeader>
               <CardContent className="flex items-center min-h-[120px]">
                 <p className="leading-relaxed">{recommendation.frameworks}</p>
@@ -591,7 +591,7 @@ const Results: React.FC = () => {
             {getIndustryArticles(formData.industry).length > 0 && (
               <Card className="shadow-card">
                 <CardHeader>
-                  <CardTitle className="text-accent">Recommended Articles and Resources</CardTitle>
+                  <CardTitle className="text-primary">Recommended Articles and Resources</CardTitle>
                   <CardDescription>
                     Curated articles and resources specifically for the {formData.industry} industry
                   </CardDescription>
@@ -625,7 +625,7 @@ const Results: React.FC = () => {
             {/* Relevant Articles & Case Studies */}
             <Card className="shadow-card">
               <CardHeader>
-                <CardTitle className="text-accent">Success Stories & Best Practices</CardTitle>
+                <CardTitle className="text-primary">Success Stories & Best Practices</CardTitle>
                 <CardDescription>
                   Learn from organizations similar to yours who have successfully implemented change management programs
                 </CardDescription>
@@ -669,7 +669,7 @@ const Results: React.FC = () => {
                 <Download className="w-4 h-4 mr-2" />
                 Download Report
               </Button>
-              <Button onClick={() => navigate('/')} className="bg-hero-gradient">
+              <Button onClick={() => navigate('/')} className="bg-primary hover:bg-primary/90 text-primary-foreground">
                 New Assessment
               </Button>
             </div>
