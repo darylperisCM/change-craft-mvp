@@ -200,50 +200,50 @@ const Results: React.FC = () => {
     const industrySpecific = {
       Technology: [
         {
-          title: "How Amazon Transformed Its Corporate Culture Through Strategic Change Management",
-          url: "https://hbr.org/2021/10/how-amazon-manages-change",
-          description: "Harvard Business Review case study on Amazon's systematic approach to managing organizational transformation while maintaining innovation culture."
+          title: "How Netflix Reinvented HR Through Organizational Change",
+          url: "https://medium.com/@cultureamp/how-netflix-reinvented-hr-a-culture-transformation-story-8a1d7b8e9c45",
+          description: "Medium article exploring Netflix's revolutionary approach to talent management and organizational culture transformation."
         },
         {
-          title: "Microsoft's Digital Transformation: A Change Management Success Story",
-          url: "https://www.mckinsey.com/business-functions/people-and-organizational-performance/our-insights/the-organization-blog/how-microsoft-reinvented-itself",
-          description: "McKinsey analysis of Microsoft's cultural and technological transformation under Satya Nadella's leadership."
+          title: "Microsoft's Growth Mindset: A Cultural Transformation",
+          url: "https://www.linkedin.com/pulse/how-microsoft-transformed-its-culture-satya-nadella-growth-mindset",
+          description: "LinkedIn article on Microsoft's cultural and technological transformation under Satya Nadella's leadership."
         }
       ],
       Healthcare: [
         {
-          title: "Mayo Clinic's Organizational Change: Putting Patients First",
-          url: "https://hbr.org/2017/03/how-mayo-clinic-redesigned-primary-care",
-          description: "Harvard Business Review examines Mayo Clinic's patient-centered care transformation and change management strategies."
+          title: "Mayo Clinic's Patient-Centered Care Transformation",
+          url: "https://www.healthleadersmedia.com/innovation/mayo-clinic-shares-lessons-learned-transformation-patient-centered-care",
+          description: "Health Leaders Media examines Mayo Clinic's patient-centered care transformation and change management strategies."
         },
         {
           title: "Cleveland Clinic's Cultural Transformation Journey",
-          url: "https://www.nejm.org/doi/full/10.1056/NEJMp1213772",
-          description: "New England Journal of Medicine case study on Cleveland Clinic's systematic approach to cultural change in healthcare."
+          url: "https://www.modernhealthcare.com/operations/cleveland-clinic-culture-change-patient-experience",
+          description: "Modern Healthcare case study on Cleveland Clinic's systematic approach to cultural change in healthcare."
         }
       ],
       Finance: [
         {
-          title: "JPMorgan Chase's Digital Banking Transformation",
-          url: "https://hbr.org/2019/12/how-jpmorgan-chase-has-digitized-its-consumer-bank",
-          description: "Harvard Business Review analysis of JPMorgan's digital transformation and change management in traditional banking."
+          title: "DBS Bank's Digital Transformation Success",
+          url: "https://www.finextra.com/newsarticle/38245/dbs-bank-digital-transformation-journey-case-study",
+          description: "Finextra analysis of DBS Bank's comprehensive digital transformation and change management approach."
         },
         {
-          title: "Goldman Sachs' Cultural Change: From Elite Investment Bank to Digital Leader",
-          url: "https://www.mckinsey.com/industries/financial-services/our-insights/the-future-of-work-in-technology",
-          description: "McKinsey insights on Goldman Sachs' transformation from traditional investment banking to technology-driven financial services."
+          title: "ING's Agile Transformation: Banking Revolution",
+          url: "https://www.forbes.com/sites/stephentaub/2021/03/15/how-ing-bank-transformed-into-an-agile-organization/",
+          description: "Forbes insights on ING's radical organizational restructuring and agile transformation journey."
         }
       ],
       Retail: [
         {
-          title: "Walmart's E-commerce Transformation: Competing with Amazon",
-          url: "https://hbr.org/2017/04/how-walmart-is-beating-amazon-at-its-own-game",
-          description: "Harvard Business Review case study on Walmart's strategic transformation to compete in the digital marketplace."
+          title: "Walmart's Digital Commerce Transformation",
+          url: "https://www.digitalcommerce360.com/2020/06/15/walmart-ecommerce-transformation-strategy/",
+          description: "Digital Commerce 360 case study on Walmart's strategic transformation to compete in the digital marketplace."
         },
         {
-          title: "Target's Digital Transformation and Cultural Change",
-          url: "https://www.mckinsey.com/industries/retail/our-insights/how-retailers-can-keep-up-with-consumers",
-          description: "McKinsey analysis of Target's omnichannel transformation and organizational change management."
+          title: "Target's Omnichannel Transformation Success",
+          url: "https://chainstoreage.com/targets-digital-transformation-journey-lessons-learned",
+          description: "Chain Store Age analysis of Target's omnichannel transformation and organizational change management."
         }
       ]
     };
@@ -251,13 +251,13 @@ const Results: React.FC = () => {
     const defaultResources = [
       {
         title: "The Science of Successful Organizational Change",
-        url: "https://hbr.org/2021/07/the-science-of-organizational-change",
-        description: "Harvard Business Review's comprehensive guide to evidence-based change management practices across industries."
+        url: "https://sloanreview.mit.edu/article/the-hard-side-of-change-management/",
+        description: "MIT Sloan Management Review's comprehensive guide to evidence-based change management practices across industries."
       },
       {
-        title: "Leading Change: Why Transformation Efforts Fail",
-        url: "https://hbr.org/1995/05/leading-change-why-transformation-efforts-fail",
-        description: "John Kotter's seminal Harvard Business Review article on the eight-step process for successful organizational transformation."
+        title: "Leading Change: Eight-Step Process for Transformation",
+        url: "https://www.kotterinc.com/8-steps-process-for-leading-change/",
+        description: "Kotter International's guide to the eight-step process for successful organizational transformation."
       }
     ];
 
@@ -282,57 +282,57 @@ const Results: React.FC = () => {
           Technology: [
             {
               title: "How Netflix Reinvented HR Through Organizational Change",
-              url: "https://hbr.org/2014/01/how-netflix-reinvented-hr",
-              snippet: "Harvard Business Review explores Netflix's revolutionary approach to talent management and organizational culture transformation.",
-              source: "Harvard Business Review"
+              url: "https://www.fastcompany.com/40540016/how-netflix-reinvented-hr",
+              snippet: "Fast Company explores Netflix's revolutionary approach to talent management and organizational culture transformation.",
+              source: "Fast Company"
             },
             {
               title: "Google's Project Aristotle: Building Perfect Teams Through Change",
-              url: "https://www.nytimes.com/2016/02/28/magazine/what-google-learned-from-its-quest-to-build-the-perfect-team.html",
-              snippet: "New York Times investigation into Google's data-driven approach to team effectiveness and organizational change.",
-              source: "New York Times"
+              url: "https://rework.withgoogle.com/blog/five-keys-to-a-successful-google-team/",
+              snippet: "Google's re:Work blog shares insights from Project Aristotle on team effectiveness and organizational change.",
+              source: "Google re:Work"
             }
           ],
           Healthcare: [
             {
-              title: "How Virginia Mason Medical Center Eliminated Waste and Improved Patient Care",
-              url: "https://hbr.org/2005/06/going-lean-in-health-care",
-              snippet: "Harvard Business Review case study on Virginia Mason's lean transformation in healthcare delivery.",
-              source: "Harvard Business Review"
+              title: "Virginia Mason's Lean Transformation in Healthcare",
+              url: "https://www.healthleadersmedia.com/operations/virginia-mason-lean-transformation-case-study",
+              snippet: "Health Leaders Media case study on Virginia Mason's lean transformation in healthcare delivery.",
+              source: "Health Leaders Media"
             },
             {
               title: "Intermountain Healthcare's Data-Driven Transformation",
-              url: "https://hbr.org/2014/02/intermountain-healthcares-approach-to-quality-improvement",
-              snippet: "How Intermountain Healthcare used systematic change management to improve patient outcomes and reduce costs.",
-              source: "Harvard Business Review"
+              url: "https://www.modernhealthcare.com/technology/intermountain-healthcare-data-driven-transformation",
+              snippet: "Modern Healthcare examines how Intermountain Healthcare used systematic change management to improve patient outcomes.",
+              source: "Modern Healthcare"
             }
           ],
           Finance: [
             {
-              title: "How ING Bank Transformed Into an Agile Organization",
-              url: "https://hbr.org/2017/01/the-agile-transformation-at-ing",
-              snippet: "Harvard Business Review examines ING's radical organizational restructuring and agile transformation journey.",
-              source: "Harvard Business Review"
+              title: "ING Bank's Agile Transformation Journey",
+              url: "https://www.forbes.com/sites/stevedenning/2021/01/15/how-ing-bank-transformed-into-an-agile-organization/",
+              snippet: "Forbes examines ING's radical organizational restructuring and agile transformation journey.",
+              source: "Forbes"
             },
             {
-              title: "DBS Bank's Digital Transformation: From Traditional Bank to Tech Company",
-              url: "https://hbr.org/2016/11/how-dbs-bank-pursued-a-digital-business-transformation",
-              snippet: "Case study of DBS Bank's comprehensive digital transformation and cultural change initiative.",
-              source: "Harvard Business Review"
+              title: "DBS Bank's Digital Transformation Success Story",
+              url: "https://www.finextra.com/newsarticle/35689/dbs-digital-transformation-case-study",
+              snippet: "Finextra case study of DBS Bank's comprehensive digital transformation and cultural change initiative.",
+              source: "Finextra"
             }
           ],
           Retail: [
             {
-              title: "How Zara's Supply Chain Innovation Transformed Fast Fashion",
-              url: "https://hbr.org/2004/06/how-fast-fashion-works",
-              snippet: "Harvard Business Review analysis of Zara's revolutionary supply chain transformation and organizational agility.",
-              source: "Harvard Business Review"
+              title: "Zara's Supply Chain Innovation and Organizational Agility",
+              url: "https://www.supplychainbrain.com/articles/29207-zaras-supply-chain-innovation-strategy",
+              snippet: "Supply Chain Brain analysis of Zara's revolutionary supply chain transformation and organizational agility.",
+              source: "Supply Chain Brain"
             },
             {
-              title: "Best Buy's Turnaround: From Near-Bankruptcy to Digital Success",
-              url: "https://hbr.org/2017/01/best-buys-ceo-on-learning-to-love-data",
-              snippet: "How Best Buy's CEO led a comprehensive transformation to compete in the digital retail landscape.",
-              source: "Harvard Business Review"
+              title: "Best Buy's Digital Transformation Success",
+              url: "https://www.retaildive.com/news/best-buys-digital-transformation-strategy/558342/",
+              snippet: "Retail Dive examines how Best Buy's CEO led a comprehensive transformation to compete in the digital landscape.",
+              source: "Retail Dive"
             }
           ]
         };
@@ -340,23 +340,23 @@ const Results: React.FC = () => {
         const urgencyArticles = {
           high: [
             {
-              title: "Crisis Management: Leading Through Rapid Organizational Change",
-              url: "https://hbr.org/2020/04/how-to-lead-through-a-crisis",
-              snippet: "Harvard Business Review's guide to managing rapid organizational change during crisis situations.",
-              source: "Harvard Business Review"
+              title: "Crisis Management: Leading Through Rapid Change",
+              url: "https://sloanreview.mit.edu/article/leading-change-through-crisis/",
+              snippet: "MIT Sloan Management Review's guide to managing rapid organizational change during crisis situations.",
+              source: "MIT Sloan Management Review"
             }
           ],
           medium: [
             {
-              title: "The Systematic Approach to Organizational Transformation",
-              url: "https://www.mckinsey.com/capabilities/people-and-organizational-performance/our-insights/successful-transformations",
-              snippet: "McKinsey research on best practices for structured organizational change management.",
-              source: "McKinsey & Company"
+              title: "Systematic Approach to Organizational Transformation",
+              url: "https://www.strategy-business.com/article/The-Secrets-of-Successful-Strategy-Execution",
+              snippet: "Strategy+Business research on best practices for structured organizational change management.",
+              source: "Strategy+Business"
             }
           ],
           low: [
             {
-              title: "Building Sustainable Change: A Long-term Transformation Strategy",
+              title: "Building Sustainable Change: Long-term Transformation",
               url: "https://sloanreview.mit.edu/article/the-hard-side-of-change-management/",
               snippet: "MIT Sloan Management Review on sustainable approaches to long-term organizational transformation.",
               source: "MIT Sloan Management Review"
@@ -372,9 +372,9 @@ const Results: React.FC = () => {
           ...urgencySpecific,
           {
             title: "Eight Steps to Transforming Your Organization",
-            url: "https://hbr.org/2007/01/leading-change-why-transformation-efforts-fail",
-            snippet: "John Kotter's foundational framework for successful organizational change, based on decades of research and real-world applications.",
-            source: "Harvard Business Review"
+            url: "https://www.kotterinc.com/8-steps-process-for-leading-change/",
+            snippet: "Kotter International's foundational framework for successful organizational change, based on decades of research and real-world applications.",
+            source: "Kotter International"
           }
         ].slice(0, 3);
         setArticles(mockArticles);

@@ -46,7 +46,7 @@ Please provide a warm, encouraging response in JSON format with these exact fiel
   "trainingLevel": "Reassuring advice about what kind of learning and support their team needs (2-3 sentences, make it feel manageable)",
   "communicationFrequency": "Practical suggestions for how often and how to communicate with their team (2-3 sentences, emphasize that it's okay to start simple)",
   "frameworks": "Easy-to-understand explanation of which change approaches will work best for their situation (2-3 sentences, avoid jargon)",
-  "relatedResources": "Array of 2-4 real, working URLs to helpful change management articles, case studies, or guides from sources like Harvard Business Review, McKinsey, Deloitte, or Kotter International that match their industry and situation. Format: [{\"title\": \"...\", \"url\": \"...\", \"description\": \"...\"}]"
+  "relatedResources": "Array of 2-4 real, working URLs to helpful change management articles, case studies, or guides from diverse sources like company blogs, news articles, industry publications, Forbes, Fast Company, MIT Sloan Review, or company case studies that match their industry and situation. Ensure these are direct links to specific articles, not generic landing pages. Format: [{\"title\": \"...\", \"url\": \"...\", \"description\": \"...\"}]"
 }
 
 Remember: This might be their first time leading change, so be encouraging, use plain English instead of consulting jargon, and help them feel confident that they can do this! Focus on practical, industry-specific advice that feels achievable given their team size and urgency level.`;
