@@ -5,14 +5,15 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Download, RefreshCw, ExternalLink } from 'lucide-react';
 import { FormData } from '@/components/ChangeAssessmentForm';
+import { supabase } from '@/integrations/supabase/client';
 
 
 interface StrategyRecommendation {
-  strategySummary: string;
+  summary: string;
   stakeholderFocus: string;
   trainingLevel: string;
   communicationFrequency: string;
-  frameworks: string[];
+  frameworks: string;
 }
 
 interface ArticleSnippet {
@@ -48,21 +49,31 @@ const Results: React.FC = () => {
   const generateRecommendation = async (data: FormData) => {
     setIsLoading(true);
     
-    // Simulate API call to ChatGPT 4o
-    // In a real implementation, this would call your backend API
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    // Mock recommendation based on form data
-    const mockRecommendation: StrategyRecommendation = {
-      strategySummary: generateStrategySummary(data),
-      stakeholderFocus: generateStakeholderFocus(data),
-      trainingLevel: generateTrainingLevel(data),
-      communicationFrequency: generateCommunicationFrequency(data),
-      frameworks: generateFrameworks(data)
-    };
-    
-    setRecommendation(mockRecommendation);
-    setIsLoading(false);
+    try {
+      const { data: response, error } = await supabase.functions.invoke('generate-strategy', {
+        body: data
+      });
+
+      if (error) {
+        console.error('Error calling generate-strategy function:', error);
+        throw error;
+      }
+
+      setRecommendation(response);
+    } catch (error) {
+      console.error('Failed to generate AI strategy, using fallback:', error);
+      // Fallback to original mock generation
+      const mockRecommendation: StrategyRecommendation = {
+        summary: generateStrategySummary(data),
+        stakeholderFocus: generateStakeholderFocus(data),
+        trainingLevel: generateTrainingLevel(data),
+        communicationFrequency: generateCommunicationFrequency(data),
+        frameworks: generateFrameworks(data).join(', ')
+      };
+      setRecommendation(mockRecommendation);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const generateStrategySummary = (data: FormData): string => {
@@ -299,7 +310,7 @@ const Results: React.FC = () => {
                 <CardTitle className="text-accent">Strategy Summary</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="leading-relaxed">{recommendation.strategySummary}</p>
+                <p className="leading-relaxed">{recommendation.summary}</p>
               </CardContent>
             </Card>
 
@@ -339,16 +350,7 @@ const Results: React.FC = () => {
                 <CardTitle className="text-accent">Recommended Frameworks</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2">
-                  {recommendation.frameworks.map((framework, index) => (
-                    <Badge key={index} variant="secondary" className="mr-2 mb-2">
-                      {framework}
-                    </Badge>
-                  ))}
-                </div>
-                <p className="text-sm text-muted-foreground mt-4">
-                  These frameworks are specifically selected based on your organization's characteristics and change requirements.
-                </p>
+                <p className="leading-relaxed">{recommendation.frameworks}</p>
               </CardContent>
             </Card>
 
