@@ -197,18 +197,71 @@ const Results: React.FC = () => {
   };
 
   const generateMockResources = (data: FormData) => {
-    return [
+    const industrySpecific = {
+      Technology: [
+        {
+          title: "How Amazon Transformed Its Corporate Culture Through Strategic Change Management",
+          url: "https://hbr.org/2021/10/how-amazon-manages-change",
+          description: "Harvard Business Review case study on Amazon's systematic approach to managing organizational transformation while maintaining innovation culture."
+        },
+        {
+          title: "Microsoft's Digital Transformation: A Change Management Success Story",
+          url: "https://www.mckinsey.com/business-functions/people-and-organizational-performance/our-insights/the-organization-blog/how-microsoft-reinvented-itself",
+          description: "McKinsey analysis of Microsoft's cultural and technological transformation under Satya Nadella's leadership."
+        }
+      ],
+      Healthcare: [
+        {
+          title: "Mayo Clinic's Organizational Change: Putting Patients First",
+          url: "https://hbr.org/2017/03/how-mayo-clinic-redesigned-primary-care",
+          description: "Harvard Business Review examines Mayo Clinic's patient-centered care transformation and change management strategies."
+        },
+        {
+          title: "Cleveland Clinic's Cultural Transformation Journey",
+          url: "https://www.nejm.org/doi/full/10.1056/NEJMp1213772",
+          description: "New England Journal of Medicine case study on Cleveland Clinic's systematic approach to cultural change in healthcare."
+        }
+      ],
+      Finance: [
+        {
+          title: "JPMorgan Chase's Digital Banking Transformation",
+          url: "https://hbr.org/2019/12/how-jpmorgan-chase-has-digitized-its-consumer-bank",
+          description: "Harvard Business Review analysis of JPMorgan's digital transformation and change management in traditional banking."
+        },
+        {
+          title: "Goldman Sachs' Cultural Change: From Elite Investment Bank to Digital Leader",
+          url: "https://www.mckinsey.com/industries/financial-services/our-insights/the-future-of-work-in-technology",
+          description: "McKinsey insights on Goldman Sachs' transformation from traditional investment banking to technology-driven financial services."
+        }
+      ],
+      Retail: [
+        {
+          title: "Walmart's E-commerce Transformation: Competing with Amazon",
+          url: "https://hbr.org/2017/04/how-walmart-is-beating-amazon-at-its-own-game",
+          description: "Harvard Business Review case study on Walmart's strategic transformation to compete in the digital marketplace."
+        },
+        {
+          title: "Target's Digital Transformation and Cultural Change",
+          url: "https://www.mckinsey.com/industries/retail/our-insights/how-retailers-can-keep-up-with-consumers",
+          description: "McKinsey analysis of Target's omnichannel transformation and organizational change management."
+        }
+      ]
+    };
+
+    const defaultResources = [
       {
-        title: `${data.industry} Change Management: Lessons from Industry Leaders`,
-        url: "https://hbr.org/topic/change-management",
-        description: `Harvard Business Review insights on ${data.industry.toLowerCase()} transformation best practices`
+        title: "The Science of Successful Organizational Change",
+        url: "https://hbr.org/2021/07/the-science-of-organizational-change",
+        description: "Harvard Business Review's comprehensive guide to evidence-based change management practices across industries."
       },
       {
-        title: `Implementing ${data.changeTypes[0]} Change in ${data.organizationSize} Organizations`,
-        url: "https://www.mckinsey.com/capabilities/transformation/our-insights",
-        description: `McKinsey research on effective change strategies for ${data.organizationSize} companies`
+        title: "Leading Change: Why Transformation Efforts Fail",
+        url: "https://hbr.org/1995/05/leading-change-why-transformation-efforts-fail",
+        description: "John Kotter's seminal Harvard Business Review article on the eight-step process for successful organizational transformation."
       }
     ];
+
+    return industrySpecific[data.industry as keyof typeof industrySpecific] || defaultResources;
   };
 
   const fetchRelevantArticles = async (data: FormData) => {
@@ -224,27 +277,106 @@ const Results: React.FC = () => {
         }));
         setArticles(aiArticles);
       } else {
-        // Fallback to mock data if AI resources not available
+        // Fallback to mock data with industry-specific direct articles
+        const industryArticles = {
+          Technology: [
+            {
+              title: "How Netflix Reinvented HR Through Organizational Change",
+              url: "https://hbr.org/2014/01/how-netflix-reinvented-hr",
+              snippet: "Harvard Business Review explores Netflix's revolutionary approach to talent management and organizational culture transformation.",
+              source: "Harvard Business Review"
+            },
+            {
+              title: "Google's Project Aristotle: Building Perfect Teams Through Change",
+              url: "https://www.nytimes.com/2016/02/28/magazine/what-google-learned-from-its-quest-to-build-the-perfect-team.html",
+              snippet: "New York Times investigation into Google's data-driven approach to team effectiveness and organizational change.",
+              source: "New York Times"
+            }
+          ],
+          Healthcare: [
+            {
+              title: "How Virginia Mason Medical Center Eliminated Waste and Improved Patient Care",
+              url: "https://hbr.org/2005/06/going-lean-in-health-care",
+              snippet: "Harvard Business Review case study on Virginia Mason's lean transformation in healthcare delivery.",
+              source: "Harvard Business Review"
+            },
+            {
+              title: "Intermountain Healthcare's Data-Driven Transformation",
+              url: "https://hbr.org/2014/02/intermountain-healthcares-approach-to-quality-improvement",
+              snippet: "How Intermountain Healthcare used systematic change management to improve patient outcomes and reduce costs.",
+              source: "Harvard Business Review"
+            }
+          ],
+          Finance: [
+            {
+              title: "How ING Bank Transformed Into an Agile Organization",
+              url: "https://hbr.org/2017/01/the-agile-transformation-at-ing",
+              snippet: "Harvard Business Review examines ING's radical organizational restructuring and agile transformation journey.",
+              source: "Harvard Business Review"
+            },
+            {
+              title: "DBS Bank's Digital Transformation: From Traditional Bank to Tech Company",
+              url: "https://hbr.org/2016/11/how-dbs-bank-pursued-a-digital-business-transformation",
+              snippet: "Case study of DBS Bank's comprehensive digital transformation and cultural change initiative.",
+              source: "Harvard Business Review"
+            }
+          ],
+          Retail: [
+            {
+              title: "How Zara's Supply Chain Innovation Transformed Fast Fashion",
+              url: "https://hbr.org/2004/06/how-fast-fashion-works",
+              snippet: "Harvard Business Review analysis of Zara's revolutionary supply chain transformation and organizational agility.",
+              source: "Harvard Business Review"
+            },
+            {
+              title: "Best Buy's Turnaround: From Near-Bankruptcy to Digital Success",
+              url: "https://hbr.org/2017/01/best-buys-ceo-on-learning-to-love-data",
+              snippet: "How Best Buy's CEO led a comprehensive transformation to compete in the digital retail landscape.",
+              source: "Harvard Business Review"
+            }
+          ]
+        };
+
+        const urgencyArticles = {
+          high: [
+            {
+              title: "Crisis Management: Leading Through Rapid Organizational Change",
+              url: "https://hbr.org/2020/04/how-to-lead-through-a-crisis",
+              snippet: "Harvard Business Review's guide to managing rapid organizational change during crisis situations.",
+              source: "Harvard Business Review"
+            }
+          ],
+          medium: [
+            {
+              title: "The Systematic Approach to Organizational Transformation",
+              url: "https://www.mckinsey.com/capabilities/people-and-organizational-performance/our-insights/successful-transformations",
+              snippet: "McKinsey research on best practices for structured organizational change management.",
+              source: "McKinsey & Company"
+            }
+          ],
+          low: [
+            {
+              title: "Building Sustainable Change: A Long-term Transformation Strategy",
+              url: "https://sloanreview.mit.edu/article/the-hard-side-of-change-management/",
+              snippet: "MIT Sloan Management Review on sustainable approaches to long-term organizational transformation.",
+              source: "MIT Sloan Management Review"
+            }
+          ]
+        };
+
+        const industrySpecific = industryArticles[data.industry as keyof typeof industryArticles] || [];
+        const urgencySpecific = urgencyArticles[data.urgency as keyof typeof urgencyArticles] || [];
+        
         const mockArticles: ArticleSnippet[] = [
+          ...industrySpecific.slice(0, 2),
+          ...urgencySpecific,
           {
-            title: `How ${data.organizationSize === 'large' ? 'Enterprise' : data.organizationSize === 'medium' ? 'Mid-Size' : 'Small'} ${data.industry} Companies Successfully Navigate Change`,
-            url: 'https://hbr.org/topic/change-management',
-            snippet: `Learn from real-world examples of ${data.organizationSize} ${data.industry.toLowerCase()} organizations that successfully implemented ${data.changeTypes.join(' and ').toLowerCase()} changes, achieving remarkable results through strategic change management.`,
-            source: 'Harvard Business Review'
-          },
-          {
-            title: `${data.industry} Transformation: A Case Study in Change Management Excellence`,
-            url: 'https://www.mckinsey.com/capabilities/transformation/our-insights',
-            snippet: `Discover how a leading ${data.industry.toLowerCase()} company transformed their operations while managing ${data.stakeholderGroups.length} key stakeholder groups and ${data.numberOfStakeholders} impacted employees.`,
-            source: 'McKinsey & Company'
-          },
-          {
-            title: `Best Practices for ${data.urgency === 'high' ? 'Rapid' : data.urgency === 'medium' ? 'Structured' : 'Long-term'} Change Implementation`,
-            url: 'https://www.kotterinc.com/research-and-perspectives/',
-            snippet: `Proven strategies and frameworks for managing ${data.urgency}-urgency changes in ${data.organizationSize} organizations, with specific focus on ${data.changeTypes.join(', ').toLowerCase()} transformations.`,
-            source: 'Kotter International'
+            title: "Eight Steps to Transforming Your Organization",
+            url: "https://hbr.org/2007/01/leading-change-why-transformation-efforts-fail",
+            snippet: "John Kotter's foundational framework for successful organizational change, based on decades of research and real-world applications.",
+            source: "Harvard Business Review"
           }
-        ];
+        ].slice(0, 3);
         setArticles(mockArticles);
       }
     } catch (error) {
@@ -340,7 +472,7 @@ const Results: React.FC = () => {
               <CardHeader>
                 <CardTitle className="text-accent">Strategy Summary</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="flex items-center min-h-[120px]">
                 <p className="leading-relaxed">{recommendation.summary}</p>
               </CardContent>
             </Card>
@@ -350,8 +482,8 @@ const Results: React.FC = () => {
               <CardHeader>
                 <CardTitle className="text-accent">Immediate Action Plan</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="prose prose-sm max-w-none">
+              <CardContent className="flex items-center min-h-[120px]">
+                <div className="prose prose-sm max-w-none w-full">
                   <div className="whitespace-pre-line leading-relaxed">{recommendation.actionPlan}</div>
                 </div>
               </CardContent>
@@ -362,7 +494,7 @@ const Results: React.FC = () => {
               <CardHeader>
                 <CardTitle className="text-accent">Stakeholder Focus</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="flex items-center min-h-[120px]">
                 <p className="leading-relaxed">{recommendation.stakeholderFocus}</p>
               </CardContent>
             </Card>
@@ -372,7 +504,7 @@ const Results: React.FC = () => {
               <CardHeader>
                 <CardTitle className="text-accent">Training Level</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="flex items-center min-h-[120px]">
                 <p className="leading-relaxed">{recommendation.trainingLevel}</p>
               </CardContent>
             </Card>
@@ -382,7 +514,7 @@ const Results: React.FC = () => {
               <CardHeader>
                 <CardTitle className="text-accent">Communication Frequency</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="flex items-center min-h-[120px]">
                 <p className="leading-relaxed">{recommendation.communicationFrequency}</p>
               </CardContent>
             </Card>
@@ -392,7 +524,7 @@ const Results: React.FC = () => {
               <CardHeader>
                 <CardTitle className="text-accent">Recommended Frameworks</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="flex items-center min-h-[120px]">
                 <p className="leading-relaxed">{recommendation.frameworks}</p>
               </CardContent>
             </Card>
