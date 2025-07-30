@@ -1,11 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, Users, Target, TrendingUp, CheckCircle } from "lucide-react";
+import { ArrowRight, Users, Target, TrendingUp, CheckCircle, LogIn, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 import heroImage from "@/assets/hero-change-management.jpg";
 
 const Index = () => {
   const navigate = useNavigate();
+  const { user, signOut, loading } = useAuth();
   
   const features = [
     {
@@ -42,7 +44,7 @@ const Index = () => {
                 Smart Change Management Planning — Free to Start, Built for Everyone
               </span>
             </div>
-            <div className="hidden md:flex space-x-8">
+            <div className="hidden md:flex space-x-8 items-center">
               <a href="/learn" className="text-foreground/80 hover:text-primary transition-all duration-200 font-medium">
                 Learn More
               </a>
@@ -55,6 +57,32 @@ const Index = () => {
               <a href="/about" className="text-foreground/80 hover:text-primary transition-all duration-200 font-medium">
                 About Us
               </a>
+              
+              {/* Auth buttons */}
+              {loading ? (
+                <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+              ) : user ? (
+                <div className="flex items-center gap-4">
+                  <span className="text-sm text-foreground/70">Welcome, {user.email}</span>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={signOut}
+                    className="flex items-center gap-2"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Sign Out
+                  </Button>
+                </div>
+              ) : (
+                <Button 
+                  onClick={() => navigate('/auth')}
+                  className="flex items-center gap-2 bg-primary hover:bg-primary/90"
+                >
+                  <LogIn className="h-4 w-4" />
+                  Sign In
+                </Button>
+              )}
             </div>
           </div>
         </div>

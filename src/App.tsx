@@ -10,7 +10,9 @@ import Learn from "./pages/Learn";
 import Assessment from "./pages/Assessment";
 import Pricing from "./pages/Pricing";
 import About from "./pages/About";
+import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -22,12 +24,27 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/results" element={<Results />} />
           <Route path="/learn-more" element={<LearnMore />} />
           <Route path="/learn" element={<Learn />} />
-          <Route path="/assessment" element={<Assessment />} />
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/about" element={<About />} />
+          <Route path="/auth" element={<Auth />} />
+          <Route 
+            path="/assessment" 
+            element={
+              <ProtectedRoute>
+                <Assessment />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/results" 
+            element={
+              <ProtectedRoute>
+                <Results />
+              </ProtectedRoute>
+            } 
+          />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

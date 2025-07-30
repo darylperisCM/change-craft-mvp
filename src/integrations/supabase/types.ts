@@ -28,6 +28,7 @@ export type Database = {
           stakeholder_groups: string[]
           strategy_summary: string | null
           training_level: string | null
+          updated_at: string | null
           urgency: string
           user_id: string
         }
@@ -44,6 +45,7 @@ export type Database = {
           stakeholder_groups: string[]
           strategy_summary?: string | null
           training_level?: string | null
+          updated_at?: string | null
           urgency: string
           user_id: string
         }
@@ -60,6 +62,7 @@ export type Database = {
           stakeholder_groups?: string[]
           strategy_summary?: string | null
           training_level?: string | null
+          updated_at?: string | null
           urgency?: string
           user_id?: string
         }
