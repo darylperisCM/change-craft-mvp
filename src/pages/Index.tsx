@@ -103,20 +103,6 @@ const Index = () => {
                 </Button>
               </div>
 
-              <div className="grid grid-cols-3 gap-8 pt-8">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">500+</div>
-                  <div className="text-sm text-foreground/60">Organizations Helped</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">95%</div>
-                  <div className="text-sm text-foreground/60">Success Rate</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">50+</div>
-                  <div className="text-sm text-foreground/60">Industries Served</div>
-                </div>
-              </div>
             </div>
             
             <div className="relative">
