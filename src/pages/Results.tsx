@@ -7,6 +7,60 @@ import { ArrowLeft, Download, RefreshCw, ExternalLink } from 'lucide-react';
 import { FormData } from '@/components/ChangeAssessmentForm';
 import { supabase } from '@/integrations/supabase/client';
 
+const industryResources = {
+  "Information Technology": [
+    { title: "5 Change Management Trends for 2025", url: "https://www.gpstrategies.com/resources/article/5-change-management-trends-for-2025/" },
+    { title: "Your Ultimate Guide to IT Change Management in 2025", url: "https://www.atomicwork.com/itsm/it-change-management-guide" },
+    { title: "ITIL Change Management: Best Practices 2025", url: "https://www.simplilearn.com/itil-change-management-article" }
+  ],
+  "Healthcare": [
+    { title: "Change Management in Healthcare: Examples, Risks", url: "https://whatfix.com/blog/healthcare-change-management/" },
+    { title: "2025 Global Health Care Executive Outlook (Deloitte)", url: "https://www.deloitte.com/us/en/insights/industry/health-care/life-sciences-and-health-care-industry-outlooks/2025-global-health-care-executive-outlook.html" },
+    { title: "Health care transformation and growth: 2025 and beyond (EY)", url: "https://www.ey.com/en_us/insights/strategy/health-care-transformation-and-growth-2025-and-beyond" }
+  ],
+  "Manufacturing": [
+    { title: "Organizational Change Management in 2025", url: "https://www.onindus.com/what-is-organizational-change-management-and-why-does-your-business-need-it-in-2025/" },
+    { title: "9 Proven Change Management Models and Frameworks in 2025", url: "https://lumenalta.com/insights/9-proven-change-management-models-and-frameworks-in-2025" }
+  ],
+  "Financial Services": [
+    { title: "How Leaders Drive Successful Change in Financial Services", url: "https://www.edstellar.com/blog/change-management-in-financial-services" },
+    { title: "What is Financial Services Change Management?", url: "https://www.solvexia.com/glossary/financial-services-change-management" },
+    { title: "Four regulatory priorities to drive financial institutions' focus in 2025 (EY)", url: "https://www.ey.com/en_gl/insights/financial-services/four-regulatory-priorities-to-drive-financial-institutions-focus-in-2025" }
+  ],
+  "Education": [
+    { title: "9 Best Change Management Courses To Take In 2025", url: "https://thedigitalprojectmanager.com/project-management/best-change-management-courses/" }
+  ],
+  "Retail": [
+    { title: "Top 10 Retail Strategy and Change Management Challenges in 2025", url: "https://www.rpesolutions.com/top-10-retail-strategy-and-change-management-challenges-in-2025-ai-data-readiness-transformation/" },
+    { title: "Change Management in Retail: A Corporate Guide (2025) (Shopify)", url: "https://www.shopify.com/in/retail/change-management-in-retail" }
+  ],
+  "Logistics & Transportation": [
+    { title: "Logistics trends 2025: Technologies, AI, challenges and opportunities", url: "https://acrosslogistics.com/blog/en/logistics-trends" },
+    { title: "Changes in logistics and transportation in 2025", url: "https://onturtle.eu/en/changes-in-logistics-and-transportation-in-2025/" },
+    { title: "4 Best Practices for Logistics Managers in 2025", url: "https://www.supplychaindive.com/news/best-practices-for-logistics-managers-in-2025/743509/" }
+  ],
+  "Insurance": [
+    { title: "Digital Transformation in the Insurance Industry: A Change Management Guide", url: "https://www.prosci.com/blog/digital-transformation-in-insurance-industry" },
+    { title: "Navigating 2025: Embracing Change to Build a Resilient Insurance Future", url: "https://riskandinsurance.com/navigating-2025-embracing-change-to-build-a-resilient-commercial-insurance-future/" }
+  ],
+  "Construction": [
+    { title: "Change Management in Construction: Strategies for Success", url: "https://pinnacleinfotech.com/change-management-in-construction/" },
+    { title: "Construction Project Management in 2025: What Will Change? (PDF)", url: "https://www.cmaanet.org/sites/default/files/resource/Construction%20Project.pdf" }
+  ],
+  "Energy & Utilities": [
+    { title: "Transformation in Energy, Utilities, and Resources: Paving the Path to 2025", url: "https://sitsi.pacanalyst.com/transformation-in-energy-utilities-and-resources-paving-the-path-to-2025-and-beyond/" },
+    { title: "2025 Energy and Utilities Trends: Five Key Themes", url: "https://www.capgemini.com/insights/expert-perspectives/2025-energy-and-utilities-trends-five-key-themes-shaping-the-transition/" }
+  ],
+  "Media & Entertainment": [
+    { title: "Digital Transformation in Media & Entertainment for 2025", url: "https://www.edstellar.com/blog/digital-transformation-in-media-entertainment" },
+    { title: "2025 Media and Entertainment Outlook (Deloitte)", url: "https://www.deloitte.com/us/en/insights/industry/technology/technology-media-telecom-outlooks/2025-media-entertainment-outlook.html" }
+  ],
+  "Non-profit": [
+    { title: "The State of Change Management in the Nonprofit Sector 2025", url: "https://stateofchangemanagement.org" },
+    { title: "Best Practices in Change Management for Nonprofit Organizations", url: "https://www.convergentnonprofit.com/blog/p/item/57783/best-practices-in-change-management-for-nonprofit-organizations" }
+  ]
+};
+
 
 interface StrategyRecommendation {
   summary: string;
@@ -262,6 +316,10 @@ const Results: React.FC = () => {
     ];
 
     return industrySpecific[data.industry as keyof typeof industrySpecific] || defaultResources;
+  };
+
+  const getIndustryArticles = (industry: string) => {
+    return industryResources[industry as keyof typeof industryResources] || [];
   };
 
   const fetchRelevantArticles = async (data: FormData) => {
@@ -528,6 +586,41 @@ const Results: React.FC = () => {
                 <p className="leading-relaxed">{recommendation.frameworks}</p>
               </CardContent>
             </Card>
+
+            {/* Industry-Specific Articles */}
+            {getIndustryArticles(formData.industry).length > 0 && (
+              <Card className="shadow-card">
+                <CardHeader>
+                  <CardTitle className="text-accent">Recommended Articles and Resources</CardTitle>
+                  <CardDescription>
+                    Curated articles and resources specifically for the {formData.industry} industry
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {getIndustryArticles(formData.industry).map((resource, index) => (
+                      <div key={index} className="border border-border rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <div className="flex items-start justify-between mb-2">
+                          <h4 className="font-semibold text-sm leading-tight flex-1">{resource.title}</h4>
+                          <ExternalLink className="w-4 h-4 text-muted-foreground ml-2 flex-shrink-0" />
+                        </div>
+                        <div className="flex items-center justify-between mt-3">
+                          <Badge variant="outline" className="text-xs">{formData.industry}</Badge>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-xs p-2 h-auto"
+                            onClick={() => window.open(resource.url, '_blank', 'noopener,noreferrer')}
+                          >
+                            Read Article
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
             {/* Relevant Articles & Case Studies */}
             <Card className="shadow-card">
