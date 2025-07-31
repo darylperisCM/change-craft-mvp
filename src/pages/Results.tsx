@@ -306,61 +306,193 @@ const Results: React.FC = () => {
   };
 
   const generateSuccessStories = (data: FormData): string => {
-    const industryStories = {
-      "Information Technology": [
+    const industrySuccessStories = {
+      "Information Technology": {
+        stories: [
+          {
+            title: "Microsoft's Cultural Transformation Under Satya Nadella",
+            description: "Microsoft transformed from a competitive, know-it-all culture to a growth mindset organization, resulting in increased innovation and market value.",
+            link: "https://www.gpstrategies.com/resources/article/5-change-management-trends-for-2025/"
+          },
+          {
+            title: "IT Change Management Best Practices",
+            description: "Comprehensive guide covering ITIL frameworks and modern change management approaches for technology organizations.",
+            link: "https://www.atomicwork.com/itsm/it-change-management-guide"
+          }
+        ]
+      },
+      "Healthcare": {
+        stories: [
+          {
+            title: "Healthcare Change Management Case Studies",
+            description: "Real-world examples of successful healthcare transformations, including patient safety improvements and operational efficiency gains.",
+            link: "https://whatfix.com/blog/healthcare-change-management/"
+          },
+          {
+            title: "Global Healthcare Executive Insights",
+            description: "Deloitte's comprehensive outlook on healthcare transformation trends and leadership strategies for 2025.",
+            link: "https://www.deloitte.com/us/en/insights/industry/health-care/life-sciences-and-health-care-industry-outlooks/2025-global-health-care-executive-outlook.html"
+          }
+        ]
+      },
+      "Manufacturing": {
+        stories: [
+          {
+            title: "Organizational Change Management in Manufacturing",
+            description: "Industry-specific strategies for managing change in manufacturing environments, focusing on operational efficiency and workforce adaptation.",
+            link: "https://www.onindus.com/what-is-organizational-change-management-and-why-does-your-business-need-it-in-2025/"
+          },
+          {
+            title: "Proven Change Management Models for Manufacturing",
+            description: "Nine frameworks specifically adapted for manufacturing organizations, with implementation guidance and success metrics.",
+            link: "https://lumenalta.com/insights/9-proven-change-management-models-and-frameworks-in-2025"
+          }
+        ]
+      },
+      "Financial Services": {
+        stories: [
+          {
+            title: "Leadership-Driven Change in Financial Services",
+            description: "How financial services leaders successfully navigate regulatory changes, digital transformation, and cultural shifts.",
+            link: "https://www.edstellar.com/blog/change-management-in-financial-services"
+          },
+          {
+            title: "EY's Financial Services Change Strategy",
+            description: "Four key regulatory priorities that financial institutions should focus on for successful change management in 2025.",
+            link: "https://www.ey.com/en_gl/insights/financial-services/four-regulatory-priorities-to-drive-financial-institutions-focus-in-2025"
+          }
+        ]
+      },
+      "Education": {
+        stories: [
+          {
+            title: "Change Management in Educational Settings",
+            description: "Purpose-driven change strategies for educational institutions, focusing on stakeholder engagement and sustainable transformation.",
+            link: "https://www.walkme.com/blog/change-management-in-education/"
+          },
+          {
+            title: "Kotter Model Implementation in High Schools",
+            description: "Research-based results from applying the Kotter Change Management Model in Vietnamese high school education systems.",
+            link: "https://www.researchgate.net/publication/381839168_APPLYING_THE_KOTTER_CHANGE_MANAGEMENT_MODEL_IN_HIGH_SCHOOL_EDUCATION_SOME_INITIAL_RESULTS_IN_HANOI_VIETNAM"
+          }
+        ]
+      },
+      "Retail": {
+        stories: [
+          {
+            title: "Retail Strategy Challenges and Solutions",
+            description: "Top 10 change management challenges facing retail organizations in 2025, with AI and data readiness transformation strategies.",
+            link: "https://www.rpesolutions.com/top-10-retail-strategy-and-change-management-challenges-in-2025-ai-data-readiness-transformation/"
+          },
+          {
+            title: "Shopify's Corporate Change Management Guide",
+            description: "Comprehensive guide for retail change management, covering digital transformation and customer experience optimization.",
+            link: "https://www.shopify.com/in/retail/change-management-in-retail"
+          }
+        ]
+      },
+      "Logistics & Transportation": {
+        stories: [
+          {
+            title: "Logistics Technology Transformation Trends",
+            description: "2025 logistics trends focusing on AI implementation, sustainability challenges, and operational optimization opportunities.",
+            link: "https://acrosslogistics.com/blog/en/logistics-trends"
+          },
+          {
+            title: "Best Practices for Logistics Managers",
+            description: "Four evidence-based practices for logistics managers to successfully manage organizational change and operational improvements.",
+            link: "https://www.supplychaindive.com/news/best-practices-for-logistics-managers-in-2025/743509/"
+          }
+        ]
+      },
+      "Insurance": {
+        stories: [
+          {
+            title: "Digital Transformation in Insurance",
+            description: "Comprehensive change management guide for insurance companies navigating digital transformation and regulatory compliance.",
+            link: "https://www.prosci.com/blog/digital-transformation-in-insurance-industry"
+          },
+          {
+            title: "Building Resilient Insurance Operations",
+            description: "Strategic approaches for embracing change in commercial insurance to build resilience and competitive advantage.",
+            link: "https://riskandinsurance.com/navigating-2025-embracing-change-to-build-a-resilient-commercial-insurance-future/"
+          }
+        ]
+      },
+      "Construction": {
+        stories: [
+          {
+            title: "Construction Change Management Strategies",
+            description: "Industry-specific strategies for managing change in construction projects, focusing on team coordination and project delivery.",
+            link: "https://pinnacleinfotech.com/change-management-in-construction/"
+          },
+          {
+            title: "Future of Construction Project Management",
+            description: "CMAA insights on evolving construction project management practices and change drivers for 2025.",
+            link: "https://www.cmaanet.org/sites/default/files/resource/Construction%20Project.pdf"
+          }
+        ]
+      },
+      "Energy & Utilities": {
+        stories: [
+          {
+            title: "Energy Sector Transformation Roadmap",
+            description: "Comprehensive analysis of transformation challenges and opportunities in energy, utilities, and resources sectors through 2025.",
+            link: "https://sitsi.pacanalyst.com/transformation-in-energy-utilities-and-resources-paving-the-path-to-2025-and-beyond/"
+          },
+          {
+            title: "Capgemini's Energy Utilities Trends",
+            description: "Five key themes shaping the energy transition, including digital transformation and sustainability initiatives.",
+            link: "https://www.capgemini.com/insights/expert-perspectives/2025-energy-and-utilities-trends-five-key-themes-shaping-the-transition/"
+          }
+        ]
+      },
+      "Media & Entertainment": {
+        stories: [
+          {
+            title: "Digital Transformation in Media & Entertainment",
+            description: "Strategic approaches for media companies managing digital transformation, content creation, and audience engagement changes.",
+            link: "https://www.edstellar.com/blog/digital-transformation-in-media-entertainment"
+          },
+          {
+            title: "Deloitte's Media Entertainment Outlook",
+            description: "2025 industry outlook covering technology adoption, consumer behavior changes, and strategic transformation initiatives.",
+            link: "https://www.deloitte.com/us/en/insights/industry/technology/technology-media-telecom-outlooks/2025-media-entertainment-outlook.html"
+          }
+        ]
+      },
+      "Non-profit": {
+        stories: [
+          {
+            title: "Change Management in Nonprofit Sector",
+            description: "State of change management practices in nonprofit organizations, including sector-specific challenges and solutions.",
+            link: "https://stateofchangemanagement.org/"
+          },
+          {
+            title: "Nonprofit Change Management Best Practices",
+            description: "Proven strategies for managing organizational change in nonprofit settings, focusing on mission alignment and stakeholder engagement.",
+            link: "https://www.convergentnonprofit.com/blog/p/item/57783/best-practices-in-change-management-for-nonprofit-organizations"
+          }
+        ]
+      }
+    };
+
+    const defaultStories = {
+      stories: [
         {
-          title: "Microsoft's Cultural Transformation Under Satya Nadella",
-          url: "https://hbr.org/2018/09/how-microsoft-rebuilt-its-company-culture",
-          story: "Microsoft transformed from a competitive, know-it-all culture to a growth mindset organization, resulting in increased innovation and market value.",
-          takeaway: "Focus on leadership modeling and cultural values before implementing technical changes."
+          title: "Cross-Industry Change Management Strategies",
+          description: "General change management best practices applicable across industries, focusing on leadership engagement and communication.",
+          link: "https://www.onindus.com/what-is-organizational-change-management-and-why-does-your-business-need-it-in-2025/"
         },
         {
-          title: "Spotify's Agile Transformation at Scale",
-          url: "https://blog.crisp.se/wp-content/uploads/2012/11/SpotifyScaling.pdf",
-          story: "Spotify successfully scaled their agile culture while maintaining autonomy and innovation across hundreds of teams.",
-          takeaway: "Maintain small, autonomous teams even during rapid growth and change."
-        }
-      ],
-      "Healthcare": [
-        {
-          title: "Virginia Mason's Lean Healthcare Transformation",
-          url: "https://www.lean.org/case-study-virginia-mason/",
-          story: "Virginia Mason Medical Center implemented lean principles to improve patient safety and operational efficiency over a 15-year journey.",
-          takeaway: "Start with patient safety as the north star and engage frontline staff in continuous improvement."
-        },
-        {
-          title: "Cleveland Clinic's Patient Experience Revolution",
-          url: "https://hbr.org/2013/05/the-strategy-that-will-fix-health-care",
-          story: "Cleveland Clinic reorganized around patient needs rather than medical specialties, dramatically improving patient satisfaction.",
-          takeaway: "Reorganize processes around customer/patient value rather than internal convenience."
-        }
-      ],
-      "Financial Services": [
-        {
-          title: "ING's Digital-First Banking Transformation",
-          url: "https://www.mckinsey.com/industries/financial-services/our-insights/ings-agile-transformation",
-          story: "ING dismantled their traditional hierarchical structure and rebuilt as an agile, customer-centric organization.",
-          takeaway: "Sometimes radical organizational restructuring is necessary for true digital transformation."
+          title: "Proven Change Management Frameworks",
+          description: "Nine evidence-based change management models and frameworks with implementation guidance for organizations of all sizes.",
+          link: "https://lumenalta.com/insights/9-proven-change-management-models-and-frameworks-in-2025"
         }
       ]
     };
 
-    const defaultStories = [
-      {
-        title: "Patagonia's Purpose-Driven Change Management",
-        url: "https://hbr.org/2016/04/patagonia-and-the-business-of-saving-the-world",
-        story: "Patagonia successfully aligned their business model with environmental activism, creating employee engagement and customer loyalty.",
-        takeaway: "Align change initiatives with organizational purpose and values for stronger buy-in."
-      },
-      {
-        title: "Southwest Airlines' Culture During Crisis",
-        url: "https://www.strategy-business.com/article/Southwest-Airlines-Crazy-Recipe-for-Business-and-Personal-Success",
-        story: "Southwest maintained their unique culture and employee engagement even during industry downturns and rapid expansion.",
-        takeaway: "Consistent communication and staying true to core values helps navigate difficult changes."
-      }
-    ];
-
-    const relevantStories = industryStories[data.industry as keyof typeof industryStories] || defaultStories;
+    const relevantStories = industrySuccessStories[data.industry as keyof typeof industrySuccessStories] || defaultStories;
     
     const bestPractices = [
       "**Start Small**: Begin with pilot programs to test your approach before full-scale implementation.",
@@ -368,11 +500,11 @@ const Results: React.FC = () => {
       "**Celebrate Quick Wins**: Acknowledge early successes to maintain momentum and motivation."
     ];
 
-    const storiesText = relevantStories.slice(0, 2).map(story => 
-      `**${story.title}**: ${story.story} *Key takeaway: ${story.takeaway}* [Read more](${story.url})`
+    const storiesBlocks = relevantStories.stories.slice(0, 2).map(story => 
+      `### ${story.title}\n${story.description}\n[Learn More](${story.link})`
     ).join('\n\n');
 
-    return `${storiesText}\n\n**Best Practices to Apply Immediately:**\n${bestPractices.join('\n')}`;
+    return `${storiesBlocks}\n\n**Best Practices to Apply Immediately:**\n${bestPractices.join('\n')}`;
   };
 
   const generateMockResources = (data: FormData) => {
@@ -744,21 +876,17 @@ const Results: React.FC = () => {
               <CardHeader>
                 <CardTitle className="text-primary">Success Stories & Best Practices</CardTitle>
               </CardHeader>
-              <CardContent className="flex items-center min-h-[120px]">
-                <div className="prose prose-sm max-w-none text-foreground">
-                  {recommendation.successStories.split('\n').map((line, index) => (
-                    <div key={index} className="mb-2">
-                      {line.includes('**') || line.includes('[') ? (
-                        <div dangerouslySetInnerHTML={{ 
-                          __html: line
-                            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                            .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                            .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary/80 underline">$1</a>')
-                            .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary/80 underline">$1</a>')
-                        }} />
-                      ) : (
-                        line
-                      )}
+              <CardContent className="min-h-[120px]">
+                <div className="prose prose-sm max-w-none text-foreground space-y-4">
+                  {recommendation.successStories.split('\n\n').map((block, index) => (
+                    <div key={index} className="bg-muted/30 p-4 rounded-lg border-l-4 border-primary/30">
+                      <div dangerouslySetInnerHTML={{ 
+                        __html: block
+                          .replace(/### (.*)/g, '<h4 class="font-semibold text-lg mb-2 text-primary">$1</h4>')
+                          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                          .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary/80 underline font-medium">$1</a>')
+                          .replace(/\n/g, '<br>')
+                      }} />
                     </div>
                   ))}
                 </div>
