@@ -646,22 +646,14 @@ const Results: React.FC = () => {
             </Card>
 
             {/* Training Level */}
-            <div className="leading-relaxed">
-  {typeof recommendation.trainingLevel === 'object' && !Array.isArray(recommendation.trainingLevel) ? (
-    // Handle new object format with keys like {Training Recommendations}
-    <div className="space-y-4">
-      {Object.entries(recommendation.trainingLevel).map(([key, value], index) => (
-        <div key={index} className="p-4 bg-muted/30 rounded-lg border-l-4 border-primary">
-          <h4 className="font-semibold text-primary mb-2">{key}</h4>
-          <p className="text-sm">{value}</p>
-        </div>
-      ))}
-    </div>
-  ) : (
-    // Handle string format (fallback)
-    <p className="leading-relaxed">{recommendation.trainingLevel}</p>
-  )}
-</div>
+            <Card className="shadow-card">
+              <CardHeader>
+                <CardTitle className="text-primary">Training Level</CardTitle>
+              </CardHeader>
+              <CardContent className="flex items-center min-h-[120px]">
+                <p className="leading-relaxed">{recommendation.trainingLevel}</p>
+              </CardContent>
+            </Card>
 
             {/* Communication Frequency */}
             <Card className="shadow-card">
@@ -669,7 +661,22 @@ const Results: React.FC = () => {
                 <CardTitle className="text-primary">Communication Frequency</CardTitle>
               </CardHeader>
               <CardContent className="flex items-center min-h-[120px]">
-                <p className="leading-relaxed">{recommendation.communicationFrequency}</p>
+                <div className="leading-relaxed">
+  {typeof recommendation.communicationFrequency === 'object' && !Array.isArray(recommendation.communicationFrequency) ? (
+    // Handle new object format with keys like {Initial Announcement, Weekly Updates, Feedback Sessions}
+    <div className="space-y-4">
+      {Object.entries(recommendation.communicationFrequency).map(([phase, description], index) => (
+        <div key={index} className="p-4 bg-muted/30 rounded-lg border-l-4 border-primary">
+          <h4 className="font-semibold text-primary mb-2">{phase}</h4>
+          <p className="text-sm">{description}</p>
+        </div>
+      ))}
+    </div>
+  ) : (
+    // Handle string format (fallback)
+    <p className="leading-relaxed">{recommendation.communicationFrequency}</p>
+  )}
+</div>
               </CardContent>
             </Card>
 
