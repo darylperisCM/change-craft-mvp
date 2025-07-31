@@ -43,7 +43,7 @@ Here's what you're working with for this organization:
 - Types of Changes: ${formData.changeTypes.join(', ')}
 - Urgency Level: ${formData.urgency}
 
-Please provide your response in JSON format with these exact 8 sections:
+Please provide your response in JSON format with these exact 7 sections:
 
 {
   "summary": "Create a concise 3-4 sentence overview of the recommended change management approach. Base recommendations on the industry type and change type provided in the user input. Use encouraging language that builds confidence. Address the specific context of their situation. Tone: Supportive and reassuring. Format: Brief narrative paragraph.",
@@ -58,9 +58,7 @@ Please provide your response in JSON format with these exact 8 sections:
   
   "recommendedFrameworks": "Suggest 1-2 change management frameworks that are appropriate for small organizations. Provide brief explanation of why each framework fits their situation. Include simplified application guidance. Keep it accessible - avoid overly complex methodologies. Include hyperlinks for the website of the model being referenced. Popular frameworks for small organizations: ADKAR (for individual-focused changes), Kotter's 8-Step (for organizational transformation), Lewin's 3-Stage Model (for simple, straightforward changes), Bridges Transition Model (for emotionally significant changes). Format: Framework names with brief explanations and hyperlinks.",
   
-  "recommendedResources": "Provide 2-3 high-quality, reputable resources relevant to their industry and change type. Include a mix of articles, guides, and tools. Include URLs where possible. Focus on practical, actionable resources for small organizations. Consider industry-specific resources when relevant. Tone: Helpful and practical. Format: List with brief descriptions.",
-  
-  "successStories": "Share hyperlinks to 2-3 brief success stories from similar organizations or change scenarios. Include specific tactics or approaches that worked. Make stories relatable to small organizations. End with 2-3 key best practices they can apply immediately. Include relevant URLs to actual case studies, Harvard Business Review articles, or reputable business publications. Focus on practical examples from their industry when possible. Format: Brief story descriptions with hyperlinks followed by actionable best practices."
+  "recommendedResources": "Provide 2-3 high-quality, reputable resources relevant to their industry and change type. Include a mix of articles, guides, and tools. Include URLs where possible. Focus on practical, actionable resources for small organizations. Consider industry-specific resources when relevant. Tone: Helpful and practical. Format: List with brief descriptions."
 }
 
 Writing Guidelines:
@@ -94,13 +92,12 @@ Important Constraints:
 
 Quality Checklist:
 Before delivering your response, ensure:
-• ✅ All 8 sections are included and properly labeled
+• ✅ All 7 sections are included and properly labeled
 • ✅ Tone is consistently friendly and empathetic
 • ✅ Recommendations are specific to the user's inputs
 • ✅ Language is accessible to change management newcomers
 • ✅ Action items are realistic for small organizations
 • ✅ Content builds confidence rather than overwhelming the reader
-• ✅ Success stories include working hyperlinks to reputable sources
 
 Remember: Your goal is to provide a helpful starting point that empowers the user to take their first confident steps in managing change, while feeling supported throughout the process.`;
 
