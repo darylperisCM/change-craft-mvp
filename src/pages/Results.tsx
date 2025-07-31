@@ -646,14 +646,24 @@ const Results: React.FC = () => {
             </Card>
 
             {/* Training Level */}
-            <Card className="shadow-card">
-              <CardHeader>
-                <CardTitle className="text-primary">Training Level</CardTitle>
-              </CardHeader>
-              <CardContent className="flex items-center min-h-[120px]">
-                <p className="leading-relaxed">{recommendation.trainingLevel}</p>
-              </CardContent>
-            </Card>
+            {/* Fixed Training Level Section */}
+<div className="leading-relaxed">
+  {typeof recommendation.trainingLevel === 'object' && !Array.isArray(recommendation.trainingLevel) ? (
+    // Handle new object format with keys like {Training Recommendations}
+    <div className="space-y-4">
+      {Object.entries(recommendation.trainingLevel).map(([key, value], index) => (
+        <div key={index} className="p-4 bg-muted/30 rounded-lg border-l-4 border-primary">
+          <h4 className="font-semibold text-primary mb-2">{key}</h4>
+          <p className="text-sm">{value}</p>
+        </div>
+      ))}
+    </div>
+  ) : (
+    // Handle string format (fallback)
+    <p className="leading-relaxed">{recommendation.trainingLevel}</p>
+  )}
+</div>
+
 
             {/* Communication Frequency */}
             <Card className="shadow-card">
