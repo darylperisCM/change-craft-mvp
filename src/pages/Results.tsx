@@ -262,13 +262,15 @@ const Results: React.FC = () => {
     if (data.industry === "Information Technology") {
       resources.push("**Digital Transformation Playbook** - BCG's comprehensive guide for tech companies: https://www.bcg.com/publications/2020/accelerating-digital-transformation");
     } else if (data.industry === "Healthcare") {
-      resources.push("**Healthcare Change Management Guide** - Specialized resources for healthcare transformations with patient safety focus");
+      resources.push("**Healthcare Change Management Guide** - Specialized resources for healthcare transformations: https://www.healthleadersmedia.com/innovation/mayo-clinic-shares-lessons-learned-transformation-patient-centered-care");
     } else if (data.industry === "Financial Services") {
-      resources.push("**Financial Services Change Toolkit** - Regulatory-compliant change management for financial organizations");
+      resources.push("**Financial Services Change Toolkit** - Regulatory-compliant change management for financial organizations: https://www.edstellar.com/blog/change-management-in-financial-services");
+    } else {
+      resources.push("**Industry Change Management Best Practices** - Comprehensive change management strategies: https://www.prosci.com/blog/change-management-best-practices");
     }
     
     // General high-quality resources
-    resources.push("**Harvard Business Review Change Management Collection** - Evidence-based articles and case studies for practical implementation");
+    resources.push("**Harvard Business Review Change Management Collection** - Evidence-based articles and case studies: https://hbr.org/topic/change-management");
     resources.push("**Kotter International Resources** - Free tools and assessments for organizational change: https://www.kotterinc.com/resources/");
     
     return resources.join("\n\n");
