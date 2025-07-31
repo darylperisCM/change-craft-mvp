@@ -341,8 +341,8 @@ const Results: React.FC = () => {
     const defaultResources = [
       {
         title: "The Science of Successful Organizational Change",
-        url: "https://sloanreview.mit.edu/article/the-hard-side-of-change-management/",
-        description: "MIT Sloan Management Review's comprehensive guide to evidence-based change management practices across industries."
+        url: "https://www.bcg.com/publications/2019/science-organizational-change",
+        description: "BCG's comprehensive guide to evidence-based change management practices across industries."
       },
       {
         title: "Leading Change: Eight-Step Process for Transformation",
@@ -425,9 +425,9 @@ const Results: React.FC = () => {
           high: [
             {
               title: "Crisis Management: Leading Through Rapid Change",
-              url: "https://sloanreview.mit.edu/article/leading-change-through-crisis/",
-              snippet: "MIT Sloan Management Review's guide to managing rapid organizational change during crisis situations.",
-              source: "MIT Sloan Management Review"
+              url: "https://www.bcg.com/publications/2019/science-organizational-change",
+              snippet: "BCG's guide to managing rapid organizational change during crisis situations.",
+              source: "BCG"
             }
           ],
           medium: [
@@ -441,9 +441,9 @@ const Results: React.FC = () => {
           low: [
             {
               title: "Building Sustainable Change: Long-term Transformation",
-              url: "https://sloanreview.mit.edu/article/the-hard-side-of-change-management/",
-              snippet: "MIT Sloan Management Review on sustainable approaches to long-term organizational transformation.",
-              source: "MIT Sloan Management Review"
+              url: "https://www.bcg.com/publications/2019/science-organizational-change",
+              snippet: "BCG on sustainable approaches to long-term organizational transformation.",
+              source: "BCG"
             }
           ]
         };
