@@ -875,20 +875,69 @@ const Results: React.FC = () => {
             <Card className="shadow-card">
               <CardHeader>
                 <CardTitle className="text-primary">Success Stories & Best Practices</CardTitle>
+                <CardDescription>
+                  Real-world examples and proven strategies for your {formData?.industry} organization
+                </CardDescription>
               </CardHeader>
-              <CardContent className="min-h-[120px]">
-                <div className="prose prose-sm max-w-none text-foreground space-y-4">
-                  {recommendation.successStories.split('\n\n').map((block, index) => (
-                    <div key={index} className="bg-muted/30 p-4 rounded-lg border-l-4 border-primary/30">
-                      <div dangerouslySetInnerHTML={{ 
-                        __html: block
-                          .replace(/### (.*)/g, '<h4 class="font-semibold text-lg mb-2 text-primary">$1</h4>')
-                          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                          .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary/80 underline font-medium">$1</a>')
-                          .replace(/\n/g, '<br>')
-                      }} />
-                    </div>
-                  ))}
+              <CardContent className="min-h-[120px] space-y-4">
+                {/* Success Story Cards */}
+                <div className="grid gap-4 md:grid-cols-2">
+                  {recommendation.successStories.split('\n\n').slice(0, 2).map((block, index) => {
+                    const lines = block.split('\n');
+                    const titleMatch = lines[0]?.match(/### (.*)/);
+                    const title = titleMatch ? titleMatch[1] : '';
+                    const description = lines[1] || '';
+                    const linkMatch = block.match(/\[([^\]]+)\]\(([^)]+)\)/);
+                    const linkUrl = linkMatch ? linkMatch[2] : '';
+                    
+                    if (!title) return null;
+                    
+                    return (
+                      <Card key={index} className="border border-border/50 hover:border-primary/30 transition-colors">
+                        <CardContent className="p-4">
+                          <div className="flex items-start justify-between mb-2">
+                            <h4 className="font-semibold text-base leading-tight pr-2">{title}</h4>
+                            <ExternalLink className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                          </div>
+                          <p className="text-sm text-muted-foreground mb-3 leading-relaxed">
+                            {description}
+                          </p>
+                          <div className="flex items-center justify-between">
+                            <Badge variant="secondary" className="text-xs">
+                              Case Study
+                            </Badge>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="text-xs h-7"
+                              onClick={() => window.open(linkUrl, '_blank')}
+                            >
+                              Learn More
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+
+                {/* Best Practices Section */}
+                <div className="mt-6 p-4 bg-muted/30 rounded-lg border">
+                  <h4 className="font-semibold text-base mb-3 text-primary">Best Practices to Apply Immediately</h4>
+                  <div className="space-y-2">
+                    {[
+                      "**Start Small**: Begin with pilot programs to test your approach before full-scale implementation.",
+                      "**Communicate Why**: Always explain the reasoning behind changes to build understanding and buy-in.",
+                      "**Celebrate Quick Wins**: Acknowledge early successes to maintain momentum and motivation."
+                    ].map((practice, index) => (
+                      <div key={index} className="flex items-start gap-2">
+                        <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
+                        <p className="text-sm" dangerouslySetInnerHTML={{ 
+                          __html: practice.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                        }} />
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </CardContent>
             </Card>
