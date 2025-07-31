@@ -617,18 +617,31 @@ const Results: React.FC = () => {
                 <CardTitle className="text-primary">Stakeholder Focus</CardTitle>
               </CardHeader>
               <CardContent className="flex items-center min-h-[120px]">
-                <div className="prose prose-sm max-w-none text-foreground">
-                  {typeof recommendation.stakeholderFocus === 'object' && recommendation.stakeholderFocus !== null ? (
-                    Object.entries(recommendation.stakeholderFocus).map(([stakeholder, focus], index) => (
-                      <div key={index} className="mb-3">
-                        <h4 className="font-semibold text-primary mb-1">{stakeholder}:</h4>
-                        <p className="leading-relaxed">{String(focus)}</p>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="leading-relaxed">{recommendation.stakeholderFocus}</p>
-                  )}
-                </div>
+                <div className="leading-relaxed">
+  {typeof recommendation.stakeholderFocus === 'object' && !Array.isArray(recommendation.stakeholderFocus) ? (
+    // Handle new object format with keys like {Leadership, Customers}
+    <div className="space-y-4">
+      {Object.entries(recommendation.stakeholderFocus).map(([stakeholder, description], index) => (
+        <div key={index} className="p-4 bg-muted/30 rounded-lg border-l-4 border-primary">
+          <h4 className="font-semibold text-primary mb-2">{stakeholder}</h4>
+          <p className="text-sm">{description}</p>
+        </div>
+      ))}
+    </div>
+  ) : Array.isArray(recommendation.stakeholderFocus) ? (
+    // Handle array format
+    <div className="space-y-3">
+      {recommendation.stakeholderFocus.map((focus: string, index: number) => (
+        <div key={index} className="p-3 bg-muted/30 rounded-lg">
+          <p>{focus}</p>
+        </div>
+      ))}
+    </div>
+  ) : (
+    // Handle string format (fallback)
+    <p>{recommendation.stakeholderFocus}</p>
+  )}
+</div>
               </CardContent>
             </Card>
 
