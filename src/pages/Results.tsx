@@ -606,21 +606,8 @@ const Results: React.FC = () => {
               </CardHeader>
               <CardContent className="flex items-center min-h-[120px]">
                 <div className="prose prose-sm max-w-none w-full">
-  {Array.isArray(recommendation.immediateActionPlan) ? (
-    // Handle new structured format (array of strings)
-    <ol className="list-decimal list-inside space-y-2">
-      {recommendation.immediateActionPlan.map((action: string, index: number) => (
-        <li key={index} className="leading-relaxed">
-          {action.replace(/^\d+\.\s*/, '')} {/* Remove numbering if present */}
-        </li>
-      ))}
-    </ol>
-  ) : (
-    // Handle old format (string)
-    <div className="whitespace-pre-line leading-relaxed">{recommendation.immediateActionPlan}</div>
-  )}
-</div>
-
+                  <div className="whitespace-pre-line leading-relaxed">{recommendation.immediateActionPlan}</div>
+                </div>
               </CardContent>
             </Card>
 
@@ -630,22 +617,7 @@ const Results: React.FC = () => {
                 <CardTitle className="text-primary">Stakeholder Focus</CardTitle>
               </CardHeader>
               <CardContent className="flex items-center min-h-[120px]">
-                <div className="leading-relaxed">
-  {Array.isArray(recommendation.stakeholderFocus) ? (
-    // Handle new structured format (array of strings)
-    <div className="space-y-3">
-      {recommendation.stakeholderFocus.map((focus: string, index: number) => (
-        <div key={index} className="p-3 bg-muted/30 rounded-lg">
-          <p>{focus}</p>
-        </div>
-      ))}
-    </div>
-  ) : (
-    // Handle old format (string)
-    <p>{recommendation.stakeholderFocus}</p>
-  )}
-</div>
-
+                <p className="leading-relaxed">{recommendation.stakeholderFocus}</p>
               </CardContent>
             </Card>
 
@@ -676,17 +648,52 @@ const Results: React.FC = () => {
               </CardHeader>
               <CardContent className="flex items-center min-h-[120px]">
                 <div className="prose prose-sm max-w-none text-foreground">
-  {Array.isArray(recommendation.recommendedFrameworks) ? (
+                  {recommendation.recommendedFrameworks.split('\n').map((line, index) => (
+                    <div key={index} className="mb-2">
+                      {line.includes('**') ? (
+                        <div dangerouslySetInnerHTML={{ 
+                          __html: line
+                            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                            .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary/80 underline">$1</a>')
+                        }} />
+                      ) : (
+                        line
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Recommended Resources */}
+            <Card className="shadow-card">
+              <CardHeader>
+                <CardTitle className="text-primary">Recommended Resources</CardTitle>
+              </CardHeader>
+              <CardContent className="flex items-center min-h-[120px]">
+                <div className="prose prose-sm max-w-none text-foreground">
+  {Array.isArray(recommendation.recommendedResources) ? (
     // Handle new structured format (array of objects)
-    recommendation.recommendedFrameworks.map((framework: any, index: number) => (
-      <div key={index} className="mb-4 p-3 border border-border rounded-lg">
-        <h4 className="font-semibold text-primary mb-2">{framework.name}</h4>
-        <p className="text-sm">{framework.explanation}</p>
-      </div>
-    ))
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {recommendation.recommendedResources.map((resource: any, index: number) => (
+        <div key={index} className="border border-border rounded-lg p-4 hover:shadow-md transition-shadow">
+          <h4 className="font-semibold text-primary mb-2">{resource.title}</h4>
+          <p className="text-sm text-muted-foreground mb-3">{resource.description}</p>
+          <a 
+            href={resource.url} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="inline-flex items-center text-primary hover:text-primary/80 text-sm"
+          >
+            Visit Resource
+            <ExternalLink className="w-3 h-3 ml-1" />
+          </a>
+        </div>
+      ))}
+    </div>
   ) : (
     // Handle old format (string)
-    recommendation.recommendedFrameworks.split('\n').map((line: string, index: number) => (
+    recommendation.recommendedResources.split('\n').map((line: string, index: number) => (
       <div key={index} className="mb-2">
         {line.includes('**') ? (
           <div dangerouslySetInnerHTML={{ 
@@ -702,28 +709,6 @@ const Results: React.FC = () => {
   )}
 </div>
 
-              </CardContent>
-            </Card>
-
-            {/* Recommended Resources */}
-            <Card className="shadow-card">
-              <CardHeader>
-                <CardTitle className="text-primary">Recommended Resources</CardTitle>
-              </CardHeader>
-              <CardContent className="flex items-center min-h-[120px]">
-                <div className="prose prose-sm max-w-none text-foreground">
-                  {recommendation.recommendedResources.split('\n').map((line, index) => (
-                    <div key={index} className="mb-2">
-                      {line.includes('**') ? (
-                        <div dangerouslySetInnerHTML={{ 
-                          __html: line
-                            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                            .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary/80 underline">$1</a>')
-                        }} />
-                      ) : (
-                        line
-                      )}
-                    </div>
                   ))}
                 </div>
               </CardContent>
