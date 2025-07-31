@@ -606,8 +606,21 @@ const Results: React.FC = () => {
               </CardHeader>
               <CardContent className="flex items-center min-h-[120px]">
                 <div className="prose prose-sm max-w-none w-full">
-                  <div className="whitespace-pre-line leading-relaxed">{recommendation.immediateActionPlan}</div>
-                </div>
+  {Array.isArray(recommendation.immediateActionPlan) ? (
+    // Handle new structured format (array of strings)
+    <ol className="list-decimal list-inside space-y-2">
+      {recommendation.immediateActionPlan.map((action: string, index: number) => (
+        <li key={index} className="leading-relaxed">
+          {action.replace(/^\d+\.\s*/, '')} {/* Remove numbering if present */}
+        </li>
+      ))}
+    </ol>
+  ) : (
+    // Handle old format (string)
+    <div className="whitespace-pre-line leading-relaxed">{recommendation.immediateActionPlan}</div>
+  )}
+</div>
+
               </CardContent>
             </Card>
 
@@ -617,7 +630,22 @@ const Results: React.FC = () => {
                 <CardTitle className="text-primary">Stakeholder Focus</CardTitle>
               </CardHeader>
               <CardContent className="flex items-center min-h-[120px]">
-                <p className="leading-relaxed">{recommendation.stakeholderFocus}</p>
+                <div className="leading-relaxed">
+  {Array.isArray(recommendation.stakeholderFocus) ? (
+    // Handle new structured format (array of strings)
+    <div className="space-y-3">
+      {recommendation.stakeholderFocus.map((focus: string, index: number) => (
+        <div key={index} className="p-3 bg-muted/30 rounded-lg">
+          <p>{focus}</p>
+        </div>
+      ))}
+    </div>
+  ) : (
+    // Handle old format (string)
+    <p>{recommendation.stakeholderFocus}</p>
+  )}
+</div>
+
               </CardContent>
             </Card>
 
@@ -648,20 +676,32 @@ const Results: React.FC = () => {
               </CardHeader>
               <CardContent className="flex items-center min-h-[120px]">
                 <div className="prose prose-sm max-w-none text-foreground">
-                  {recommendation.recommendedFrameworks.split('\n').map((line, index) => (
-                    <div key={index} className="mb-2">
-                      {line.includes('**') ? (
-                        <div dangerouslySetInnerHTML={{ 
-                          __html: line
-                            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                            .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary/80 underline">$1</a>')
-                        }} />
-                      ) : (
-                        line
-                      )}
-                    </div>
-                  ))}
-                </div>
+  {Array.isArray(recommendation.recommendedFrameworks) ? (
+    // Handle new structured format (array of objects)
+    recommendation.recommendedFrameworks.map((framework: any, index: number) => (
+      <div key={index} className="mb-4 p-3 border border-border rounded-lg">
+        <h4 className="font-semibold text-primary mb-2">{framework.name}</h4>
+        <p className="text-sm">{framework.explanation}</p>
+      </div>
+    ))
+  ) : (
+    // Handle old format (string)
+    recommendation.recommendedFrameworks.split('\n').map((line: string, index: number) => (
+      <div key={index} className="mb-2">
+        {line.includes('**') ? (
+          <div dangerouslySetInnerHTML={{ 
+            __html: line
+              .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+              .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary/80 underline">$1</a>')
+          }} />
+        ) : (
+          line
+        )}
+      </div>
+    ))
+  )}
+</div>
+
               </CardContent>
             </Card>
 
