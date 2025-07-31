@@ -688,7 +688,21 @@ const Results: React.FC = () => {
                 <CardTitle className="text-primary">Communication Frequency</CardTitle>
               </CardHeader>
               <CardContent className="flex items-center min-h-[120px]">
-                <p className="leading-relaxed">{recommendation.communicationFrequency}</p>
+                <div className="leading-relaxed">
+                  {typeof recommendation.communicationFrequency === 'object' && !Array.isArray(recommendation.communicationFrequency) ? (
+                    // Handle object format with keys like {Internal (Leadership), External (Customers)}
+                    <div className="space-y-4">
+                      {Object.entries(recommendation.communicationFrequency).map(([audience, frequency], index) => (
+                        <div key={index} className="p-4 bg-muted/30 rounded-lg border-l-4 border-primary">
+                          <h4 className="font-semibold text-primary mb-2">{audience}</h4>
+                          <p className="text-sm">{String(frequency)}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p>{String(recommendation.communicationFrequency)}</p>
+                  )}
+                </div>
               </CardContent>
             </Card>
 
