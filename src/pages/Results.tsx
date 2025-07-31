@@ -115,64 +115,86 @@ const Results: React.FC = () => {
   }, [recommendation, formData]);
 
   const generateRecommendation = async (data: FormData, email?: string | null) => {
-    setIsLoading(true);
+  setIsLoading(true);
+  
+  try {
+    console.log('Invoking generate-strategy with data:', data);
     
-    try {
-      const { data: response, error } = await supabase.functions.invoke('generate-strategy', {
-        body: data
-      });
+    const { data: response, error } = await supabase.functions.invoke('generate-strategy', {
+      body: { data } // Wrap data in object - important change
+    });
 
-      if (error) {
-        console.error('Error calling generate-strategy function:', error);
-        throw error;
-      }
+    console.log('Supabase response:', response, 'Error:', error);
 
-      setRecommendation(response);
-      
-      // Send email with strategy if email is provided
-      if (email && response) {
-        try {
-          await supabase.functions.invoke('send-strategy-email', {
-            body: {
-              email,
-              strategyData: response,
-              assessmentData: data
-            }
-          });
-        } catch (emailError) {
-          console.error('Failed to send email:', emailError);
-        }
+    if (error) {
+      console.error('Supabase function error:', error);
+      throw error;
+    }
+
+    // Check if response has the expected structure - CRITICAL FIX
+    if (!response || typeof response !== 'object') {
+      console.error('Invalid response format:', response);
+      throw new Error('Invalid response format from generate-strategy function');
+    }
+
+    // Validate required fields - CRITICAL FIX
+    const requiredFields = ['summary', 'immediateActionPlan', 'stakeholderFocus', 'trainingLevel', 'communicationFrequency', 'recommendedFrameworks', 'recommendedResources'];
+    const missingFields = requiredFields.filter(field => !response[field]);
+    
+    if (missingFields.length > 0) {
+      console.error('Response missing required fields:', missingFields);
+      throw new Error(`Response missing required fields: ${missingFields.join(', ')}`);
+    }
+
+    console.log('✅ SUCCESS: Using AI-generated response');
+    setRecommendation(response);
+    
+    // Send email with strategy if email is provided
+    if (email && response) {
+      try {
+        await supabase.functions.invoke('send-strategy-email', {
+          body: {
+            email,
+            strategyData: response,
+            assessmentData: data
+          }
+        });
+      } catch (emailError) {
+        console.error('Failed to send email:', emailError);
       }
-    } catch (error) {
-      console.error('Failed to generate AI strategy, using fallback:', error);
-      // Fallback to original mock generation
-      const mockRecommendation: StrategyRecommendation = {
-        summary: generateStrategySummary(data),
-        immediateActionPlan: generateActionPlan(data),
-        stakeholderFocus: generateStakeholderFocus(data),
-        trainingLevel: generateTrainingLevel(data),
-        communicationFrequency: generateCommunicationFrequency(data),
-        recommendedFrameworks: generateFrameworks(data).join(', '),
-        recommendedResources: generateRecommendedResources(data)
-      };
-      setRecommendation(mockRecommendation);
-      
-      // Send email with strategy if email is provided (for fallback case)
-      if (email && mockRecommendation) {
-        try {
-          await supabase.functions.invoke('send-strategy-email', {
-            body: {
-              email,
-              strategyData: mockRecommendation,
-              assessmentData: data
-            }
-          });
-        } catch (emailError) {
-          console.error('Failed to send email:', emailError);
-        }
+    }
+    
+  } catch (error) {
+    console.error('❌ FALLBACK: Using hardcoded template responses due to error:', error);
+    
+    // Only use fallback if absolutely necessary
+    const mockRecommendation: StrategyRecommendation = {
+      summary: generateStrategySummary(data),
+      immediateActionPlan: generateActionPlan(data),
+      stakeholderFocus: generateStakeholderFocus(data),
+      trainingLevel: generateTrainingLevel(data),
+      communicationFrequency: generateCommunicationFrequency(data),
+      recommendedFrameworks: generateFrameworks(data).join(', '),
+      recommendedResources: generateRecommendedResources(data)
+    };
+    setRecommendation(mockRecommendation);
+    
+    // Send email with fallback strategy if email is provided
+    if (email && mockRecommendation) {
+      try {
+        await supabase.functions.invoke('send-strategy-email', {
+          body: {
+            email,
+            strategyData: mockRecommendation,
+            assessmentData: data
+          }
+        });
+      } catch (emailError) {
+        console.error('Failed to send email:', emailError);
       }
-    } finally {
-      setIsLoading(false);
+    }
+  } finally {
+    setIsLoading(false);
     }
   };
 
