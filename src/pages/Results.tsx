@@ -732,22 +732,32 @@ const Results: React.FC = () => {
                         )}
                       </div>
                     ))
+                  ) : typeof recommendation.recommendedResources === 'object' && !Array.isArray(recommendation.recommendedResources) ? (
+                    // Handle object format with keys like {Urgency, Recommendations}
+                    <div className="space-y-4">
+                      {Object.entries(recommendation.recommendedResources).map(([key, value], index) => (
+                        <div key={index} className="p-4 bg-muted/30 rounded-lg border-l-4 border-primary">
+                          <h4 className="font-semibold text-primary mb-2">{key}</h4>
+                          <p className="text-sm">{String(value)}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : typeof recommendation.recommendedResources === 'string' ? (
+                    recommendation.recommendedResources.split('\n').map((line, index) => (
+                      <div key={index} className="mb-2">
+                        {line.includes('**') ? (
+                          <div dangerouslySetInnerHTML={{ 
+                            __html: line
+                              .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                              .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary/80 underline">$1</a>')
+                          }} />
+                        ) : (
+                          line
+                        )}
+                      </div>
+                    ))
                   ) : (
-                    typeof recommendation.recommendedResources === 'string' 
-                      ? recommendation.recommendedResources.split('\n').map((line, index) => (
-                          <div key={index} className="mb-2">
-                            {line.includes('**') ? (
-                              <div dangerouslySetInnerHTML={{ 
-                                __html: line
-                                  .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                                  .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary/80 underline">$1</a>')
-                              }} />
-                            ) : (
-                              line
-                            )}
-                          </div>
-                        ))
-                      : <p>{recommendation.recommendedResources}</p>
+                    <p>{String(recommendation.recommendedResources)}</p>
                   )}
                 </div>
               </CardContent>
