@@ -624,7 +624,7 @@ const Results: React.FC = () => {
       {Object.entries(recommendation.stakeholderFocus).map(([stakeholder, description], index) => (
         <div key={index} className="p-4 bg-muted/30 rounded-lg border-l-4 border-primary">
           <h4 className="font-semibold text-primary mb-2">{stakeholder}</h4>
-          <p className="text-sm">{description}</p>
+          <p className="text-sm">{String(description)}</p>
         </div>
       ))}
     </div>
@@ -668,7 +668,7 @@ const Results: React.FC = () => {
       {Object.entries(recommendation.communicationFrequency).map(([phase, description], index) => (
         <div key={index} className="p-4 bg-muted/30 rounded-lg border-l-4 border-primary">
           <h4 className="font-semibold text-primary mb-2">{phase}</h4>
-          <p className="text-sm">{description}</p>
+          <p className="text-sm">{String(description)}</p>
         </div>
       ))}
     </div>
