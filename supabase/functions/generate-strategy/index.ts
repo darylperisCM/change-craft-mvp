@@ -43,7 +43,7 @@ Here's what you're working with for this organization:
 - Types of Changes: ${formData.changeTypes.join(', ')}
 - Urgency Level: ${formData.urgency}
 
-Please provide your response in JSON format with these exact 8 sections:
+Please provide your response in JSON format with these exact 7 sections:
 
 {
   "summary": "Create a concise 3-4 sentence overview of the recommended change management approach. Base recommendations on the industry type and change type provided. Use encouraging language that builds confidence and address the specific context of their situation. Be supportive and reassuring.",
@@ -57,8 +57,6 @@ Please provide your response in JSON format with these exact 8 sections:
   "communicationFrequency": "Recommend communication frequency based on change urgency. Provide specific schedule suggestions (daily, weekly, bi-weekly, monthly). Include types of communication for each frequency. Balance keeping people informed without overwhelming them. Guidelines: High urgency = Daily updates during critical phases, weekly otherwise; Medium urgency = Weekly updates with bi-weekly meetings; Low urgency = Bi-weekly updates with monthly check-ins.",
   
   "frameworks": "Suggest 1-2 change management frameworks appropriate for small organizations. Provide brief explanation of why each framework fits their situation. Include simplified application guidance. Keep it accessible - avoid overly complex methodologies. Popular frameworks: ADKAR (individual-focused), Kotter's 8-Step (organizational transformation), Lewin's 3-Stage (simple changes), Bridges Transition Model (emotionally significant changes).",
-  
-  "successStories": "Share 2-3 brief success stories from similar organizations or change scenarios. Include specific tactics or approaches that worked. Make stories relatable to small organizations. End with 2-3 key best practices they can apply immediately. Be inspiring but realistic with short case examples followed by key takeaways.",
   
   "relatedResources": "Provide 3-5 specific, actionable resources. Include a mix of quick reads and comprehensive guides. Prioritize free, accessible resources. Match resources to their specific change type and organization size. Format: [{\"title\": \"...\", \"url\": \"...\", \"description\": \"Brief description and why it's relevant\"}]"
 }
