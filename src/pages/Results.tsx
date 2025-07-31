@@ -648,19 +648,23 @@ const Results: React.FC = () => {
               </CardHeader>
               <CardContent className="flex items-center min-h-[120px]">
                 <div className="prose prose-sm max-w-none text-foreground">
-                  {recommendation.recommendedFrameworks.map((framework: any, index: number) => (
-                    <div key={index} className="mb-2">
-                      {line.includes('**') ? (
-                        <div dangerouslySetInnerHTML={{ 
-                          __html: line
-                            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                            .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary/80 underline">$1</a>')
-                        }} />
-                      ) : (
-                        line
-                      )}
-                    </div>
-                  ))}
+                  {Array.isArray(recommendation.recommendedFrameworks) ? (
+                    recommendation.recommendedFrameworks.map((framework: any, index: number) => (
+                      <div key={index} className="mb-2">
+                        {typeof framework === 'string' && framework.includes('**') ? (
+                          <div dangerouslySetInnerHTML={{ 
+                            __html: framework
+                              .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                              .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary/80 underline">$1</a>')
+                          }} />
+                        ) : (
+                          <p>{typeof framework === 'string' ? framework : framework.name || 'Framework'}</p>
+                        )}
+                      </div>
+                    ))
+                  ) : (
+                    <p>{recommendation.recommendedFrameworks}</p>
+                  )}
                 </div>
               </CardContent>
             </Card>
