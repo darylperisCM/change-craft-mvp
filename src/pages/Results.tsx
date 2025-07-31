@@ -648,7 +648,7 @@ const Results: React.FC = () => {
               </CardHeader>
               <CardContent className="flex items-center min-h-[120px]">
                 <div className="prose prose-sm max-w-none text-foreground">
-                  {recommendation.recommendedFrameworks.split('\n').map((line, index) => (
+                  {recommendation.recommendedFrameworks.map((framework: any, index: number) => (
                     <div key={index} className="mb-2">
                       {line.includes('**') ? (
                         <div dangerouslySetInnerHTML={{ 
@@ -667,38 +667,27 @@ const Results: React.FC = () => {
 
             {/* Recommended Resources */}
             <Card className="shadow-card">
-  <CardHeader>
-    <CardTitle className="text-primary">Recommended Frameworks</CardTitle>
-  </CardHeader>
-  <CardContent className="flex items-center min-h-[120px]">
-    <div className="prose prose-sm max-w-none text-foreground">
-      {Array.isArray(recommendation.recommendedFrameworks) ? (
-        // Handle new structured format (array of objects)
-        recommendation.recommendedFrameworks.map((framework: any, index: number) => (
-          <div key={index} className="mb-4 p-3 border border-border rounded-lg">
-            <h4 className="font-semibold text-primary mb-2">{framework.name}</h4>
-            <p className="text-sm">{framework.explanation}</p>
-          </div>
-        ))
-      ) : (
-        // Handle old format (string) - fallback compatibility
-        recommendation.recommendedFrameworks.split('\n').map((line: string, index: number) => (
-          <div key={index} className="mb-2">
-            {line.includes('**') ? (
-              <div dangerouslySetInnerHTML={{ 
-                __html: line
-                  .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                  .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary/80 underline">$1</a>')
-              }} />
-            ) : (
-              line
-            )}
-          </div>
-        ))
-      )}
-    </div>
-  </CardContent>
-</Card>
+              <CardHeader>
+                <CardTitle className="text-primary">Recommended Resources</CardTitle>
+              </CardHeader>
+              <CardContent className="flex items-center min-h-[120px]">
+                <div className="prose prose-sm max-w-none text-foreground">
+                  {recommendation.recommendedResources.split('\n').map((line, index) => (
+                    <div key={index} className="mb-2">
+                      {line.includes('**') ? (
+                        <div dangerouslySetInnerHTML={{ 
+                          __html: line
+                            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                            .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary/80 underline">$1</a>')
+                        }} />
+                      ) : (
+                        line
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
 
 
             {/* Industry-Specific Articles */}
