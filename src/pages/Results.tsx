@@ -601,15 +601,28 @@ const Results: React.FC = () => {
 
             {/* Immediate Action Plan */}
             <Card className="shadow-card">
-              <CardHeader>
-                <CardTitle className="text-primary">Immediate Action Plan</CardTitle>
-              </CardHeader>
-              <CardContent className="flex items-center min-h-[120px]">
-                <div className="prose prose-sm max-w-none w-full">
-                  <div className="whitespace-pre-line leading-relaxed">{recommendation.immediateActionPlan}</div>
-                </div>
-              </CardContent>
-            </Card>
+  <CardHeader>
+    <CardTitle className="text-primary">Immediate Action Plan</CardTitle>
+  </CardHeader>
+  <CardContent className="flex items-center min-h-[120px]">
+    <div className="prose prose-sm max-w-none w-full">
+      {Array.isArray(recommendation.immediateActionPlan) ? (
+        // Handle new structured format (array of strings) with proper formatting
+        <ol className="list-decimal list-inside space-y-4 leading-relaxed">
+          {recommendation.immediateActionPlan.map((action: string, index: number) => (
+            <li key={index} className="pl-2 mb-4 text-sm leading-relaxed">
+              {/* Remove existing numbering if present and clean up the text */}
+              {action.replace(/^\d+\.\s*/, '').trim()}
+            </li>
+          ))}
+        </ol>
+      ) : (
+        // Handle old format (string) as fallback
+        <div className="whitespace-pre-line leading-relaxed">{recommendation.immediateActionPlan}</div>
+      )}
+    </div>
+  </CardContent>
+</Card>
 
             {/* Stakeholder Focus */}
             <Card className="shadow-card">
@@ -624,7 +637,7 @@ const Results: React.FC = () => {
       {Object.entries(recommendation.stakeholderFocus).map(([stakeholder, description], index) => (
         <div key={index} className="p-4 bg-muted/30 rounded-lg border-l-4 border-primary">
           <h4 className="font-semibold text-primary mb-2">{stakeholder}</h4>
-          <p className="text-sm">{String(description)}</p>
+          <p className="text-sm">{description}</p>
         </div>
       ))}
     </div>
@@ -651,22 +664,7 @@ const Results: React.FC = () => {
                 <CardTitle className="text-primary">Training Level</CardTitle>
               </CardHeader>
               <CardContent className="flex items-center min-h-[120px]">
-                <div className="leading-relaxed">
-                  {typeof recommendation.trainingLevel === 'object' && !Array.isArray(recommendation.trainingLevel) ? (
-                    // Handle new object format with keys like {Leadership Training, Customer Training}
-                    <div className="space-y-4">
-                      {Object.entries(recommendation.trainingLevel).map(([training, description], index) => (
-                        <div key={index} className="p-4 bg-muted/30 rounded-lg border-l-4 border-primary">
-                          <h4 className="font-semibold text-primary mb-2">{training}</h4>
-                          <p className="text-sm">{String(description)}</p>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    // Handle string format (fallback)
-                    <p className="leading-relaxed">{recommendation.trainingLevel}</p>
-                  )}
-                </div>
+                <p className="leading-relaxed">{recommendation.trainingLevel}</p>
               </CardContent>
             </Card>
 
@@ -676,22 +674,7 @@ const Results: React.FC = () => {
                 <CardTitle className="text-primary">Communication Frequency</CardTitle>
               </CardHeader>
               <CardContent className="flex items-center min-h-[120px]">
-                <div className="leading-relaxed">
-  {typeof recommendation.communicationFrequency === 'object' && !Array.isArray(recommendation.communicationFrequency) ? (
-    // Handle new object format with keys like {Initial Announcement, Weekly Updates, Feedback Sessions}
-    <div className="space-y-4">
-      {Object.entries(recommendation.communicationFrequency).map(([phase, description], index) => (
-        <div key={index} className="p-4 bg-muted/30 rounded-lg border-l-4 border-primary">
-          <h4 className="font-semibold text-primary mb-2">{phase}</h4>
-          <p className="text-sm">{String(description)}</p>
-        </div>
-      ))}
-    </div>
-  ) : (
-    // Handle string format (fallback)
-    <p className="leading-relaxed">{recommendation.communicationFrequency}</p>
-  )}
-</div>
+                <p className="leading-relaxed">{recommendation.communicationFrequency}</p>
               </CardContent>
             </Card>
 
@@ -747,32 +730,22 @@ const Results: React.FC = () => {
                         )}
                       </div>
                     ))
-                  ) : typeof recommendation.recommendedResources === 'object' && !Array.isArray(recommendation.recommendedResources) ? (
-                    // Handle object format with keys like {Urgency, Recommendations}
-                    <div className="space-y-4">
-                      {Object.entries(recommendation.recommendedResources).map(([key, value], index) => (
-                        <div key={index} className="p-4 bg-muted/30 rounded-lg border-l-4 border-primary">
-                          <h4 className="font-semibold text-primary mb-2">{key}</h4>
-                          <p className="text-sm">{String(value)}</p>
-                        </div>
-                      ))}
-                    </div>
-                  ) : typeof recommendation.recommendedResources === 'string' ? (
-                    recommendation.recommendedResources.split('\n').map((line, index) => (
-                      <div key={index} className="mb-2">
-                        {line.includes('**') ? (
-                          <div dangerouslySetInnerHTML={{ 
-                            __html: line
-                              .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                              .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary/80 underline">$1</a>')
-                          }} />
-                        ) : (
-                          line
-                        )}
-                      </div>
-                    ))
                   ) : (
-                    <p>{String(recommendation.recommendedResources)}</p>
+                    typeof recommendation.recommendedResources === 'string' 
+                      ? recommendation.recommendedResources.split('\n').map((line, index) => (
+                          <div key={index} className="mb-2">
+                            {line.includes('**') ? (
+                              <div dangerouslySetInnerHTML={{ 
+                                __html: line
+                                  .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                                  .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary/80 underline">$1</a>')
+                              }} />
+                            ) : (
+                              line
+                            )}
+                          </div>
+                        ))
+                      : <p>{recommendation.recommendedResources}</p>
                   )}
                 </div>
               </CardContent>
