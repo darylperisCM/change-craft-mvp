@@ -267,7 +267,7 @@ export const ChangeAssessmentForm: React.FC = () => {
               className="w-full font-bold text-lg animate-scale-in"
               disabled={loading}
             >
-              {loading ? "Generating Strategy..." : "Generate Change Management Strategy"}
+              {loading ? "Preparing Your Summary..." : "Generate Summary"}
             </Button>
           </div>
         </form>
