@@ -70,6 +70,7 @@ interface StrategyRecommendation {
   communicationFrequency: string;
   recommendedFrameworks: string;
   recommendedResources: string;
+  successStories: string;
 }
 
 interface ArticleSnippet {
@@ -153,7 +154,8 @@ const Results: React.FC = () => {
         trainingLevel: generateTrainingLevel(data),
         communicationFrequency: generateCommunicationFrequency(data),
         recommendedFrameworks: generateFrameworks(data).join(', '),
-        recommendedResources: generateRecommendedResources(data)
+        recommendedResources: generateRecommendedResources(data),
+        successStories: generateSuccessStories(data)
       };
       setRecommendation(mockRecommendation);
       
@@ -301,6 +303,76 @@ const Results: React.FC = () => {
     ];
 
     return urgencyActions[data.urgency].concat(commonActions).join('\n');
+  };
+
+  const generateSuccessStories = (data: FormData): string => {
+    const industryStories = {
+      "Information Technology": [
+        {
+          title: "Microsoft's Cultural Transformation Under Satya Nadella",
+          url: "https://hbr.org/2018/09/how-microsoft-rebuilt-its-company-culture",
+          story: "Microsoft transformed from a competitive, know-it-all culture to a growth mindset organization, resulting in increased innovation and market value.",
+          takeaway: "Focus on leadership modeling and cultural values before implementing technical changes."
+        },
+        {
+          title: "Spotify's Agile Transformation at Scale",
+          url: "https://blog.crisp.se/wp-content/uploads/2012/11/SpotifyScaling.pdf",
+          story: "Spotify successfully scaled their agile culture while maintaining autonomy and innovation across hundreds of teams.",
+          takeaway: "Maintain small, autonomous teams even during rapid growth and change."
+        }
+      ],
+      "Healthcare": [
+        {
+          title: "Virginia Mason's Lean Healthcare Transformation",
+          url: "https://www.lean.org/case-study-virginia-mason/",
+          story: "Virginia Mason Medical Center implemented lean principles to improve patient safety and operational efficiency over a 15-year journey.",
+          takeaway: "Start with patient safety as the north star and engage frontline staff in continuous improvement."
+        },
+        {
+          title: "Cleveland Clinic's Patient Experience Revolution",
+          url: "https://hbr.org/2013/05/the-strategy-that-will-fix-health-care",
+          story: "Cleveland Clinic reorganized around patient needs rather than medical specialties, dramatically improving patient satisfaction.",
+          takeaway: "Reorganize processes around customer/patient value rather than internal convenience."
+        }
+      ],
+      "Financial Services": [
+        {
+          title: "ING's Digital-First Banking Transformation",
+          url: "https://www.mckinsey.com/industries/financial-services/our-insights/ings-agile-transformation",
+          story: "ING dismantled their traditional hierarchical structure and rebuilt as an agile, customer-centric organization.",
+          takeaway: "Sometimes radical organizational restructuring is necessary for true digital transformation."
+        }
+      ]
+    };
+
+    const defaultStories = [
+      {
+        title: "Patagonia's Purpose-Driven Change Management",
+        url: "https://hbr.org/2016/04/patagonia-and-the-business-of-saving-the-world",
+        story: "Patagonia successfully aligned their business model with environmental activism, creating employee engagement and customer loyalty.",
+        takeaway: "Align change initiatives with organizational purpose and values for stronger buy-in."
+      },
+      {
+        title: "Southwest Airlines' Culture During Crisis",
+        url: "https://www.strategy-business.com/article/Southwest-Airlines-Crazy-Recipe-for-Business-and-Personal-Success",
+        story: "Southwest maintained their unique culture and employee engagement even during industry downturns and rapid expansion.",
+        takeaway: "Consistent communication and staying true to core values helps navigate difficult changes."
+      }
+    ];
+
+    const relevantStories = industryStories[data.industry as keyof typeof industryStories] || defaultStories;
+    
+    const bestPractices = [
+      "**Start Small**: Begin with pilot programs to test your approach before full-scale implementation.",
+      "**Communicate Why**: Always explain the reasoning behind changes to build understanding and buy-in.",
+      "**Celebrate Quick Wins**: Acknowledge early successes to maintain momentum and motivation."
+    ];
+
+    const storiesText = relevantStories.slice(0, 2).map(story => 
+      `**${story.title}**: ${story.story} *Key takeaway: ${story.takeaway}* [Read more](${story.url})`
+    ).join('\n\n');
+
+    return `${storiesText}\n\n**Best Practices to Apply Immediately:**\n${bestPractices.join('\n')}`;
   };
 
   const generateMockResources = (data: FormData) => {
@@ -656,6 +728,32 @@ const Results: React.FC = () => {
                         <div dangerouslySetInnerHTML={{ 
                           __html: line
                             .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                            .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary/80 underline">$1</a>')
+                        }} />
+                      ) : (
+                        line
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Success Stories & Best Practices */}
+            <Card className="shadow-card">
+              <CardHeader>
+                <CardTitle className="text-primary">Success Stories & Best Practices</CardTitle>
+              </CardHeader>
+              <CardContent className="flex items-center min-h-[120px]">
+                <div className="prose prose-sm max-w-none text-foreground">
+                  {recommendation.successStories.split('\n').map((line, index) => (
+                    <div key={index} className="mb-2">
+                      {line.includes('**') || line.includes('[') ? (
+                        <div dangerouslySetInnerHTML={{ 
+                          __html: line
+                            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                            .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                            .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary/80 underline">$1</a>')
                             .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary/80 underline">$1</a>')
                         }} />
                       ) : (
