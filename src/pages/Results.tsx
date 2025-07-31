@@ -664,7 +664,21 @@ const Results: React.FC = () => {
                 <CardTitle className="text-primary">Training Level</CardTitle>
               </CardHeader>
               <CardContent className="flex items-center min-h-[120px]">
-                <p className="leading-relaxed">{recommendation.trainingLevel}</p>
+                <div className="leading-relaxed">
+                  {typeof recommendation.trainingLevel === 'object' && !Array.isArray(recommendation.trainingLevel) ? (
+                    // Handle object format with keys like {Training Recommendations}
+                    <div className="space-y-4">
+                      {Object.entries(recommendation.trainingLevel).map(([category, description], index) => (
+                        <div key={index} className="p-4 bg-muted/30 rounded-lg border-l-4 border-primary">
+                          <h4 className="font-semibold text-primary mb-2">{category}</h4>
+                          <p className="text-sm">{String(description)}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p>{String(recommendation.trainingLevel)}</p>
+                  )}
+                </div>
               </CardContent>
             </Card>
 
