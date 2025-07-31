@@ -69,6 +69,7 @@ interface StrategyRecommendation {
   trainingLevel: string;
   communicationFrequency: string;
   recommendedFrameworks: string;
+  recommendedResources: string;
 }
 
 interface ArticleSnippet {
@@ -151,7 +152,8 @@ const Results: React.FC = () => {
         stakeholderFocus: generateStakeholderFocus(data),
         trainingLevel: generateTrainingLevel(data),
         communicationFrequency: generateCommunicationFrequency(data),
-        recommendedFrameworks: generateFrameworks(data).join(', ')
+        recommendedFrameworks: generateFrameworks(data).join(', '),
+        recommendedResources: generateRecommendedResources(data)
       };
       setRecommendation(mockRecommendation);
       
@@ -251,6 +253,25 @@ const Results: React.FC = () => {
     }
     
     return frameworks;
+  };
+
+  const generateRecommendedResources = (data: FormData): string => {
+    const resources = [];
+    
+    // Industry-specific resources
+    if (data.industry === "Information Technology") {
+      resources.push("**Digital Transformation Playbook** - BCG's comprehensive guide for tech companies: https://www.bcg.com/publications/2020/accelerating-digital-transformation");
+    } else if (data.industry === "Healthcare") {
+      resources.push("**Healthcare Change Management Guide** - Specialized resources for healthcare transformations with patient safety focus");
+    } else if (data.industry === "Financial Services") {
+      resources.push("**Financial Services Change Toolkit** - Regulatory-compliant change management for financial organizations");
+    }
+    
+    // General high-quality resources
+    resources.push("**Harvard Business Review Change Management Collection** - Evidence-based articles and case studies for practical implementation");
+    resources.push("**Kotter International Resources** - Free tools and assessments for organizational change: https://www.kotterinc.com/resources/");
+    
+    return resources.join("\n\n");
   };
 
   const generateActionPlan = (data: FormData): string => {
@@ -602,10 +623,47 @@ const Results: React.FC = () => {
                 <CardTitle className="text-primary">Recommended Frameworks</CardTitle>
               </CardHeader>
               <CardContent className="flex items-center min-h-[120px]">
-                <p className="leading-relaxed">{recommendation.recommendedFrameworks}</p>
+                <div className="prose prose-sm max-w-none text-foreground">
+                  {recommendation.recommendedFrameworks.split('\n').map((line, index) => (
+                    <div key={index} className="mb-2">
+                      {line.includes('**') ? (
+                        <div dangerouslySetInnerHTML={{ 
+                          __html: line
+                            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                            .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary/80 underline">$1</a>')
+                        }} />
+                      ) : (
+                        line
+                      )}
+                    </div>
+                  ))}
+                </div>
               </CardContent>
             </Card>
 
+            {/* Recommended Resources */}
+            <Card className="shadow-card">
+              <CardHeader>
+                <CardTitle className="text-primary">Recommended Resources</CardTitle>
+              </CardHeader>
+              <CardContent className="flex items-center min-h-[120px]">
+                <div className="prose prose-sm max-w-none text-foreground">
+                  {recommendation.recommendedResources.split('\n').map((line, index) => (
+                    <div key={index} className="mb-2">
+                      {line.includes('**') ? (
+                        <div dangerouslySetInnerHTML={{ 
+                          __html: line
+                            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                            .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary/80 underline">$1</a>')
+                        }} />
+                      ) : (
+                        line
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Industry-Specific Articles */}
             {getIndustryArticles(formData.industry).length > 0 && (

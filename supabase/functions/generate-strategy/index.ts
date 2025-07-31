@@ -43,7 +43,7 @@ Here's what you're working with for this organization:
 - Types of Changes: ${formData.changeTypes.join(', ')}
 - Urgency Level: ${formData.urgency}
 
-Please provide your response in JSON format with these exact 6 sections:
+Please provide your response in JSON format with these exact 7 sections:
 
 {
   "summary": "Create a concise 3-4 sentence overview of the recommended change management approach. Base recommendations on the industry type and change type provided in the user input. Use encouraging language that builds confidence. Address the specific context of their situation. Tone: Supportive and reassuring. Format: Brief narrative paragraph.",
@@ -56,7 +56,9 @@ Please provide your response in JSON format with these exact 6 sections:
   
   "communicationFrequency": "Recommend communication frequency based on change urgency provided. Provide specific schedule suggestions (daily, weekly, bi-weekly, monthly). Include types of communication for each frequency. Balance keeping people informed without overwhelming them. Guidelines: High urgency: Daily updates during critical phases, weekly otherwise; Medium urgency: Weekly updates with bi-weekly team meetings; Low urgency: Bi-weekly updates with monthly check-ins. Tone: Clear and organized. Format: Structured recommendation with timing details.",
   
-  "recommendedFrameworks": "Suggest 1-2 change management frameworks that are appropriate for small organizations. Provide brief explanation of why each framework fits their situation. Include simplified application guidance. Keep it accessible - avoid overly complex methodologies. Include hyperlinks for the website of the model being referenced. Popular frameworks for small organizations: ADKAR (for individual-focused changes), Kotter's 8-Step (for organizational transformation), Lewin's 3-Stage Model (for simple, straightforward changes), Bridges Transition Model (for emotionally significant changes). Format: Framework names with brief explanations and hyperlinks."
+  "recommendedFrameworks": "Suggest 1-2 change management frameworks that are appropriate for small organizations. Provide brief explanation of why each framework fits their situation. Include simplified application guidance. Keep it accessible - avoid overly complex methodologies. Include hyperlinks for the website of the model being referenced. Popular frameworks for small organizations: ADKAR (for individual-focused changes), Kotter's 8-Step (for organizational transformation), Lewin's 3-Stage Model (for simple, straightforward changes), Bridges Transition Model (for emotionally significant changes). Format: Framework names with brief explanations and hyperlinks.",
+  
+  "recommendedResources": "Provide 2-3 high-quality, reputable resources relevant to their industry and change type. Include a mix of articles, guides, and tools. Include URLs where possible. Focus on practical, actionable resources for small organizations. Consider industry-specific resources when relevant. Tone: Helpful and practical. Format: List with brief descriptions."
 }
 
 Writing Guidelines:
@@ -90,7 +92,7 @@ Important Constraints:
 
 Quality Checklist:
 Before delivering your response, ensure:
-• ✅ All 6 sections are included and properly labeled
+• ✅ All 7 sections are included and properly labeled
 • ✅ Tone is consistently friendly and empathetic
 • ✅ Recommendations are specific to the user's inputs
 • ✅ Language is accessible to change management newcomers
