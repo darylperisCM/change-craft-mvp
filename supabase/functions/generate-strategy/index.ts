@@ -1,149 +1,138 @@
-import "https://deno.land/x/xhr@0.1.0/mod.ts";
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-
-const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
-
-interface FormData {
-  organizationSize: string;
-  industry: string;
-  stakeholderGroups: string[];
-  numberOfStakeholders: string;
-  changeTypes: string[];
-  urgency: string;
 }
 
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    const formData: FormData = await req.json();
+    // CRITICAL FIX: Properly destructure the nested data structure
+    const requestBody = await req.json()
+    console.log('Raw request body:', requestBody)
+    
+    // Extract the actual assessment data from the nested structure
+    const assessmentData = requestBody.data || requestBody
+    console.log('Assessment data extracted:', assessmentData)
 
-    const systemPrompt = `You are an expert change management consultant specializing in helping newcomers, individuals, and small organizations navigate change successfully. Your approach is friendly, empathetic, and practical, providing actionable guidance as a starting point for users who may be experiencing change management for the first time.
+    // Validate that we have the required fields
+    if (!assessmentData || !assessmentData.organizationSize) {
+      throw new Error('Missing required assessment data - organizationSize not found')
+    }
 
-Target Audience:
-• First-time change leaders
-• Small business owners
-• Individual contributors leading change initiatives
-• Organizations with limited change management experience
-• People feeling overwhelmed by organizational change
+    // Get OpenAI API key from environment
+    const apiKey = Deno.env.get('OPENAI_API_KEY')
+    if (!apiKey) {
+      throw new Error('OpenAI API key not found')
+    }
 
-Here's what you're working with for this organization:
-- Organization Size: ${formData.organizationSize}
-- Industry: ${formData.industry}
-- Stakeholder Groups: ${formData.stakeholderGroups.join(', ')}
-- Number of Stakeholders: ${formData.numberOfStakeholders}
-- Types of Changes: ${formData.changeTypes.join(', ')}
-- Urgency Level: ${formData.urgency}
-
-Please provide your response in JSON format with these exact 7 sections:
+    // Build the system prompt with your new guidelines
+    const systemPrompt = `You are an empathetic change management expert helping newcomers and small organizations. Generate a comprehensive change management strategy in the following JSON format:
 
 {
-  "summary": "Create a concise 3-4 sentence overview of the recommended change management approach. Base recommendations on the industry type and change type provided in the user input. Use encouraging language that builds confidence. Address the specific context of their situation. Tone: Supportive and reassuring. Format: Brief narrative paragraph.",
-  
-  "immediateActionPlan": "Provide 4-6 specific, actionable steps they can start within the next 1-2 weeks. Prioritize actions based on urgency level and stakeholder size provided. Focus on low-cost, high-impact activities suitable for small organizations. Use action-oriented language ('Start by...', 'Begin with...', 'Create...'). Tone: Practical and encouraging. Format: Numbered list with brief explanations.",
-  
-  "stakeholderFocus": "Identify the 2-3 most critical stakeholder groups for their specific change. Base recommendations on the stakeholder groups they selected in their assessment. Provide specific engagement strategies for each group. Include sample communication approaches or key messages. Tone: Strategic but accessible. Format: Bullet points organized by stakeholder group.",
-  
-  "trainingLevel": "Recommend appropriate training intensity based on urgency and change type. Options should range from: Basic (self-guided), Moderate (structured learning), Intensive (comprehensive training). Provide specific training recommendations, resources, or skill areas to focus on. Consider the time constraints and resources of small organizations. Guidelines: High urgency + Technical change = Intensive training; Medium urgency + Process change = Moderate training; Low urgency + Cultural change = Basic training with continuous learning. Tone: Practical and supportive. Format: Clear recommendation with explanatory details.",
-  
-  "communicationFrequency": "Recommend communication frequency based on change urgency provided. Provide specific schedule suggestions (daily, weekly, bi-weekly, monthly). Include types of communication for each frequency. Balance keeping people informed without overwhelming them. Guidelines: High urgency: Daily updates during critical phases, weekly otherwise; Medium urgency: Weekly updates with bi-weekly team meetings; Low urgency: Bi-weekly updates with monthly check-ins. Tone: Clear and organized. Format: Structured recommendation with timing details.",
-  
-  "recommendedFrameworks": "Suggest 1-2 change management frameworks that are appropriate for small organizations. Provide brief explanation of why each framework fits their situation. Include simplified application guidance. Keep it accessible - avoid overly complex methodologies. Include hyperlinks for the website of the model being referenced. Popular frameworks for small organizations: ADKAR (for individual-focused changes), Kotter's 8-Step (for organizational transformation), Lewin's 3-Stage Model (for simple, straightforward changes), Bridges Transition Model (for emotionally significant changes). Format: Framework names with brief explanations and hyperlinks.",
-  
-  "recommendedResources": "Provide 2-3 high-quality, reputable resources relevant to their industry and change type. Include a mix of articles, guides, and tools. Include URLs where possible. Focus on practical, actionable resources for small organizations. Consider industry-specific resources when relevant. Tone: Helpful and practical. Format: List with brief descriptions."
+  "summary": "Strategy overview based on industry and change type - use friendly, empathetic language",
+  "immediateActionPlan": "Specific action items based on urgency and stakeholder groups - provide 4-6 concrete steps",
+  "stakeholderFocus": "Focus areas based on selected stakeholder groups - address their specific needs",
+  "trainingLevel": "Training recommendations based on urgency and change type - be specific about time and approach",
+  "communicationFrequency": "Communication plan based on urgency - provide specific timeline and channels",
+  "recommendedFrameworks": "Relevant change management frameworks with brief explanations",
+  "recommendedResources": "Helpful resources, articles, and tools with URLs where possible"
 }
 
-Writing Guidelines:
-Tone and Voice:
-• Friendly and approachable: Use "you" and "your" frequently
-• Empathetic: Acknowledge that change can be challenging
-• Encouraging: Emphasize what's possible and achievable
-• Practical: Focus on actionable steps rather than theory
-• Inclusive: Use language that welcomes newcomers to change management
+Use friendly, empathetic language suitable for newcomers and small organizations. Provide practical, actionable guidance that acknowledges the emotional aspects of change. Make recommendations realistic for limited budgets and resources.`
 
-Language Style:
-• Use simple, clear language (avoid jargon)
-• Write in short, digestible sentences
-• Include transitional phrases like "Here's what this means for you..."
-• Use active voice
-• Include reassuring phrases like "Don't worry if...", "It's normal to feel...", "Start small and..."
+    // Prepare the user message with assessment data
+    const userMessage = `Please generate a change management strategy for:
+Organization Size: ${assessmentData.organizationSize}
+Industry: ${assessmentData.industry}
+Change Types: ${assessmentData.changeTypes?.join(', ') || 'Not specified'}
+Urgency: ${assessmentData.urgency}
+Stakeholder Groups: ${assessmentData.stakeholderGroups?.join(', ') || 'Not specified'}
+Number of Stakeholders: ${assessmentData.numberOfStakeholders || 'Not specified'}
+Challenges: ${assessmentData.challenges?.join(', ') || 'Not specified'}
 
-Empathetic Elements to Include:
-• Acknowledge the emotional aspects of change
-• Validate common concerns and fears
-• Provide reassurance about the change process
-• Emphasize that change is a journey, not an event
-• Remind them that asking for help is normal and encouraged
+Provide empathetic, practical guidance suitable for someone new to change management.`
 
-Important Constraints:
-• Keep each section concise but comprehensive
-• Ensure all recommendations are realistic for small organizations with limited budgets
-• Provide specific, actionable advice rather than generic suggestions
-• Balance thoroughness with accessibility
-• Always end on an encouraging, forward-looking note
+    console.log('Calling OpenAI API with system prompt and user message...')
 
-Quality Checklist:
-Before delivering your response, ensure:
-• ✅ All 7 sections are included and properly labeled
-• ✅ Tone is consistently friendly and empathetic
-• ✅ Recommendations are specific to the user's inputs
-• ✅ Language is accessible to change management newcomers
-• ✅ Action items are realistic for small organizations
-• ✅ Content builds confidence rather than overwhelming the reader
-
-Remember: Your goal is to provide a helpful starting point that empowers the user to take their first confident steps in managing change, while feeling supported throughout the process.`;
-
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    // Call OpenAI API
+    const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${openAIApiKey}`,
+        'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         model: 'gpt-4o-mini',
         messages: [
           { role: 'system', content: systemPrompt },
-          { role: 'user', content: 'Generate a change management strategy based on this organization profile.' }
+          { role: 'user', content: userMessage }
         ],
+        max_tokens: 2000,
         temperature: 0.7,
-        max_tokens: 2500,
       }),
-    });
+    })
 
-    if (!response.ok) {
-      throw new Error(`OpenAI API error: ${response.status}`);
+    if (!openaiResponse.ok) {
+      const errorData = await openaiResponse.json()
+      console.error('OpenAI API error:', errorData)
+      throw new Error(`OpenAI API error: ${openaiResponse.status} - ${errorData.error?.message}`)
     }
 
-    const data = await response.json();
-    const generatedContent = data.choices[0].message.content;
-    
-    // Parse the JSON response from OpenAI
-    let strategyRecommendation;
+    const openaiData = await openaiResponse.json()
+    console.log('OpenAI response received successfully')
+
+    // Extract and parse the content
+    const messageContent = openaiData.choices[0].message.content
+    console.log('Raw message content:', messageContent)
+
+    // Parse the JSON content
+    let strategyData
     try {
-      strategyRecommendation = JSON.parse(generatedContent);
+      // OpenAI sometimes returns JSON wrapped in markdown code blocks
+      const cleanContent = messageContent.replace(/```json\n?|```\n?/g, '').trim()
+      strategyData = JSON.parse(cleanContent)
+      console.log('Successfully parsed strategy data')
     } catch (parseError) {
-      console.error('Failed to parse OpenAI response:', generatedContent);
-      throw new Error('Invalid response format from OpenAI');
+      console.error('Failed to parse OpenAI JSON response:', parseError)
+      console.error('Content that failed to parse:', messageContent)
+      throw new Error(`Failed to parse OpenAI response as JSON: ${parseError.message}`)
     }
 
-    console.log('Generated strategy for:', formData.organizationSize, formData.industry);
+    // Validate the response structure
+    const requiredFields = ['summary', 'immediateActionPlan', 'stakeholderFocus', 'trainingLevel', 'communicationFrequency', 'recommendedFrameworks', 'recommendedResources']
+    const missingFields = requiredFields.filter(field => !strategyData[field])
+    
+    if (missingFields.length > 0) {
+      console.error('OpenAI response missing required fields:', missingFields)
+      throw new Error(`OpenAI response missing required fields: ${missingFields.join(', ')}`)
+    }
 
-    return new Response(JSON.stringify(strategyRecommendation), {
+    console.log('✅ Successfully generated AI strategy')
+
+    // Return the parsed strategy data
+    return new Response(JSON.stringify(strategyData), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+      status: 200,
+    })
+
   } catch (error) {
-    console.error('Error in generate-strategy function:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    console.error('❌ Error in generate-strategy function:', error)
+    return new Response(
+      JSON.stringify({ 
+        error: error.message,
+        type: 'function_error',
+        timestamp: new Date().toISOString()
+      }),
+      {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 500,
+      }
+    )
   }
-});
+})
