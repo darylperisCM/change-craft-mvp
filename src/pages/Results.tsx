@@ -64,12 +64,16 @@ const industryResources = {
 
 interface StrategyRecommendation {
   summary: string;
-  immediateActionPlan: string;
+  actionPlan: string;
   stakeholderFocus: string;
   trainingLevel: string;
   communicationFrequency: string;
-  recommendedFrameworks: string;
-  recommendedResources: string;
+  frameworks: string;
+  relatedResources?: Array<{
+    title: string;
+    url: string;
+    description: string;
+  }>;
 }
 
 interface ArticleSnippet {
@@ -148,12 +152,12 @@ const Results: React.FC = () => {
       // Fallback to original mock generation
       const mockRecommendation: StrategyRecommendation = {
         summary: generateStrategySummary(data),
-        immediateActionPlan: generateActionPlan(data),
+        actionPlan: generateActionPlan(data),
         stakeholderFocus: generateStakeholderFocus(data),
         trainingLevel: generateTrainingLevel(data),
         communicationFrequency: generateCommunicationFrequency(data),
-        recommendedFrameworks: generateFrameworks(data).join(', '),
-        recommendedResources: generateRecommendedResources(data)
+        frameworks: generateFrameworks(data).join(', '),
+        relatedResources: generateMockResources(data)
       };
       setRecommendation(mockRecommendation);
       
@@ -253,25 +257,6 @@ const Results: React.FC = () => {
     }
     
     return frameworks;
-  };
-
-  const generateRecommendedResources = (data: FormData): string => {
-    const resources = [];
-    
-    // Industry-specific resources
-    if (data.industry === "Information Technology") {
-      resources.push("**Digital Transformation Playbook** - BCG's comprehensive guide for tech companies: https://www.bcg.com/publications/2020/accelerating-digital-transformation");
-    } else if (data.industry === "Healthcare") {
-      resources.push("**Healthcare Change Management Guide** - Specialized resources for healthcare transformations with patient safety focus");
-    } else if (data.industry === "Financial Services") {
-      resources.push("**Financial Services Change Toolkit** - Regulatory-compliant change management for financial organizations");
-    }
-    
-    // General high-quality resources
-    resources.push("**Harvard Business Review Change Management Collection** - Evidence-based articles and case studies for practical implementation");
-    resources.push("**Kotter International Resources** - Free tools and assessments for organizational change: https://www.kotterinc.com/resources/");
-    
-    return resources.join("\n\n");
   };
 
   const generateActionPlan = (data: FormData): string => {
@@ -575,14 +560,14 @@ const Results: React.FC = () => {
               </CardContent>
             </Card>
 
-            {/* Immediate Action Plan */}
+            {/* Action Plan */}
             <Card className="shadow-card">
               <CardHeader>
                 <CardTitle className="text-primary">Immediate Action Plan</CardTitle>
               </CardHeader>
               <CardContent className="flex items-center min-h-[120px]">
                 <div className="prose prose-sm max-w-none w-full">
-                  <div className="whitespace-pre-line leading-relaxed">{recommendation.immediateActionPlan}</div>
+                  <div className="whitespace-pre-line leading-relaxed">{recommendation.actionPlan}</div>
                 </div>
               </CardContent>
             </Card>
@@ -617,53 +602,51 @@ const Results: React.FC = () => {
               </CardContent>
             </Card>
 
-            {/* Recommended Frameworks */}
+            {/* Frameworks */}
             <Card className="shadow-card">
               <CardHeader>
                 <CardTitle className="text-primary">Recommended Frameworks</CardTitle>
               </CardHeader>
               <CardContent className="flex items-center min-h-[120px]">
-                <div className="prose prose-sm max-w-none text-foreground">
-                  {recommendation.recommendedFrameworks.split('\n').map((line, index) => (
-                    <div key={index} className="mb-2">
-                      {line.includes('**') ? (
-                        <div dangerouslySetInnerHTML={{ 
-                          __html: line
-                            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                            .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary/80 underline">$1</a>')
-                        }} />
-                      ) : (
-                        line
-                      )}
-                    </div>
-                  ))}
-                </div>
+                <p className="leading-relaxed">{recommendation.frameworks}</p>
               </CardContent>
             </Card>
 
-            {/* Recommended Resources */}
-            <Card className="shadow-card">
-              <CardHeader>
-                <CardTitle className="text-primary">Recommended Resources</CardTitle>
-              </CardHeader>
-              <CardContent className="flex items-center min-h-[120px]">
-                <div className="prose prose-sm max-w-none text-foreground">
-                  {recommendation.recommendedResources.split('\n').map((line, index) => (
-                    <div key={index} className="mb-2">
-                      {line.includes('**') ? (
-                        <div dangerouslySetInnerHTML={{ 
-                          __html: line
-                            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                            .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary/80 underline">$1</a>')
-                        }} />
-                      ) : (
-                        line
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+            {/* AI-Generated Resources */}
+            {recommendation.relatedResources && recommendation.relatedResources.length > 0 && (
+              <Card className="shadow-card">
+                <CardHeader>
+                  <CardTitle className="text-primary">Recommended Resources</CardTitle>
+                  <CardDescription>
+                    Curated resources specifically tailored to your change management needs
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {recommendation.relatedResources.map((resource, index) => (
+                      <div key={index} className="border border-border rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <div className="flex items-start justify-between mb-2">
+                          <h4 className="font-semibold text-sm leading-tight flex-1">{resource.title}</h4>
+                          <ExternalLink className="w-4 h-4 text-muted-foreground ml-2 flex-shrink-0" />
+                        </div>
+                        <p className="text-sm text-muted-foreground mb-3 line-clamp-3">{resource.description}</p>
+                        <div className="flex items-center justify-between">
+                          <Badge variant="outline" className="text-xs">AI-Recommended</Badge>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-xs p-2 h-auto"
+                            onClick={() => window.open(resource.url, '_blank', 'noopener,noreferrer')}
+                          >
+                            Visit Resource
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
             {/* Industry-Specific Articles */}
             {getIndustryArticles(formData.industry).length > 0 && (
