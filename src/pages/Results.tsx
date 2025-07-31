@@ -713,7 +713,17 @@ const Results: React.FC = () => {
               </CardHeader>
               <CardContent className="flex items-center min-h-[120px]">
                 <div className="prose prose-sm max-w-none text-foreground">
-                  {Array.isArray(recommendation.recommendedFrameworks) ? (
+                  {typeof recommendation.recommendedFrameworks === 'object' && !Array.isArray(recommendation.recommendedFrameworks) ? (
+                    // Handle object format with keys like {ADKAR, Kotter's 8-Step Process}
+                    <div className="space-y-4">
+                      {Object.entries(recommendation.recommendedFrameworks).map(([framework, description], index) => (
+                        <div key={index} className="p-4 bg-muted/30 rounded-lg border-l-4 border-primary">
+                          <h4 className="font-semibold text-primary mb-2">{framework}</h4>
+                          <p className="text-sm">{String(description)}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : Array.isArray(recommendation.recommendedFrameworks) ? (
                     recommendation.recommendedFrameworks.map((framework: any, index: number) => (
                       <div key={index} className="mb-2">
                         {typeof framework === 'string' && framework.includes('**') ? (
@@ -728,7 +738,7 @@ const Results: React.FC = () => {
                       </div>
                     ))
                   ) : (
-                    <p>{recommendation.recommendedFrameworks}</p>
+                    <p>{String(recommendation.recommendedFrameworks)}</p>
                   )}
                 </div>
               </CardContent>
