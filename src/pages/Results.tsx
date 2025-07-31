@@ -676,19 +676,40 @@ const Results: React.FC = () => {
               </CardHeader>
               <CardContent className="flex items-center min-h-[120px]">
                 <div className="prose prose-sm max-w-none text-foreground">
-                  {recommendation.recommendedResources.split('\n').map((line, index) => (
-                    <div key={index} className="mb-2">
-                      {line.includes('**') ? (
-                        <div dangerouslySetInnerHTML={{ 
-                          __html: line
-                            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                            .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary/80 underline">$1</a>')
-                        }} />
-                      ) : (
-                        line
-                      )}
-                    </div>
-                  ))}
+                  {Array.isArray(recommendation.recommendedResources) ? (
+                    recommendation.recommendedResources.map((resource: any, index: number) => (
+                      <div key={index} className="mb-2">
+                        {resource.url ? (
+                          <a 
+                            href={resource.url} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="text-primary hover:text-primary/80 underline"
+                          >
+                            {resource.title || resource.url}
+                          </a>
+                        ) : (
+                          <p>{typeof resource === 'string' ? resource : resource.title || 'Resource'}</p>
+                        )}
+                      </div>
+                    ))
+                  ) : (
+                    typeof recommendation.recommendedResources === 'string' 
+                      ? recommendation.recommendedResources.split('\n').map((line, index) => (
+                          <div key={index} className="mb-2">
+                            {line.includes('**') ? (
+                              <div dangerouslySetInnerHTML={{ 
+                                __html: line
+                                  .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                                  .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary/80 underline">$1</a>')
+                              }} />
+                            ) : (
+                              line
+                            )}
+                          </div>
+                        ))
+                      : <p>{recommendation.recommendedResources}</p>
+                  )}
                 </div>
               </CardContent>
             </Card>
