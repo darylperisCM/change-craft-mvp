@@ -46,31 +46,49 @@ Here's what you're working with for this organization:
 Please provide your response in JSON format with these exact 7 sections:
 
 {
-  "summary": "Create a concise 3-4 sentence overview of the recommended change management approach. Base recommendations on the industry type and change type provided. Use encouraging language that builds confidence and address the specific context of their situation. Be supportive and reassuring.",
+  "summary": "Create a concise 3-4 sentence overview of the recommended change management approach. Base recommendations on the industry type and change type provided in the user input. Use encouraging language that builds confidence. Address the specific context of their situation. Tone: Supportive and reassuring. Format: Brief narrative paragraph.",
   
-  "actionPlan": "Provide 4-6 specific, actionable steps they can start within the next 1-2 weeks. Prioritize actions based on urgency level and stakeholder size. Focus on low-cost, high-impact activities suitable for small organizations. Use action-oriented language like 'Start by...', 'Begin with...', 'Create...'. Format as numbered list with brief explanations.",
+  "actionPlan": "Provide 4-6 specific, actionable steps they can start within the next 1-2 weeks. Prioritize actions based on urgency level and stakeholder size provided. Focus on low-cost, high-impact activities suitable for small organizations. Use action-oriented language ('Start by...', 'Begin with...', 'Create...'). Tone: Practical and encouraging. Format: Numbered list with brief explanations.",
   
-  "stakeholderFocus": "Identify the 2-3 most critical stakeholder groups for their specific change based on the groups they selected. Provide specific engagement strategies for each group. Include sample communication approaches or key messages. Be strategic but accessible. Format as bullet points organized by stakeholder group.",
+  "stakeholderFocus": "Identify the 2-3 most critical stakeholder groups for their specific change. Base recommendations on the stakeholder groups they selected in their assessment. Provide specific engagement strategies for each group. Include sample communication approaches or key messages. Tone: Strategic but accessible. Format: Bullet points organized by stakeholder group.",
   
-  "trainingLevel": "Recommend appropriate training intensity based on urgency and change type. Options: Basic (self-guided), Moderate (structured learning), or Intensive (comprehensive training). Provide specific training recommendations, resources, or skill areas. Consider time constraints and resources of small organizations. Guidelines: High urgency + Technical change = Intensive; Medium urgency + Process change = Moderate; Low urgency + Cultural change = Basic with continuous learning.",
+  "trainingLevel": "Recommend appropriate training intensity based on urgency and change type. Options should range from: Basic (self-guided), Moderate (structured learning), Intensive (comprehensive training). Provide specific training recommendations, resources, or skill areas to focus on. Consider the time constraints and resources of small organizations. Guidelines: High urgency + Technical change = Intensive training; Medium urgency + Process change = Moderate training; Low urgency + Cultural change = Basic training with continuous learning. Tone: Practical and supportive. Format: Clear recommendation with explanatory details.",
   
-  "communicationFrequency": "Recommend communication frequency based on change urgency. Provide specific schedule suggestions (daily, weekly, bi-weekly, monthly). Include types of communication for each frequency. Balance keeping people informed without overwhelming them. Guidelines: High urgency = Daily updates during critical phases, weekly otherwise; Medium urgency = Weekly updates with bi-weekly meetings; Low urgency = Bi-weekly updates with monthly check-ins.",
+  "communicationFrequency": "Recommend communication frequency based on change urgency provided. Provide specific schedule suggestions (daily, weekly, bi-weekly, monthly). Include types of communication for each frequency. Balance keeping people informed without overwhelming them. Guidelines: High urgency: Daily updates during critical phases, weekly otherwise; Medium urgency: Weekly updates with bi-weekly team meetings; Low urgency: Bi-weekly updates with monthly check-ins. Tone: Clear and organized. Format: Structured recommendation with timing details.",
   
-  "frameworks": "Suggest 1-2 change management frameworks appropriate for small organizations. Provide brief explanation of why each framework fits their situation. Include simplified application guidance. Keep it accessible - avoid overly complex methodologies. Popular frameworks: ADKAR (individual-focused), Kotter's 8-Step (organizational transformation), Lewin's 3-Stage (simple changes), Bridges Transition Model (emotionally significant changes).",
+  "frameworks": "Suggest 1-2 change management frameworks that are appropriate for small organizations. Provide brief explanation of why each framework fits their situation. Include simplified application guidance. Keep it accessible - avoid overly complex methodologies. Popular frameworks for small organizations: ADKAR (for individual-focused changes), Kotter's 8-Step (for organizational transformation), Lewin's 3-Stage Model (for simple, straightforward changes), Bridges Transition Model (for emotionally significant changes). Format: Framework names with brief explanations.",
   
-  "relatedResources": "Provide 3-5 specific, actionable resources. Include a mix of quick reads and comprehensive guides. Prioritize free, accessible resources. Match resources to their specific change type and organization size. Format: [{\"title\": \"...\", \"url\": \"...\", \"description\": \"Brief description and why it's relevant\"}]"
+  "relatedResources": "Provide 3-5 specific, actionable resources. Include a mix of quick reads and comprehensive guides. Prioritize free, accessible resources. Match resources to their specific change type and organization size. Format: [{\\"title\\": \\"...\\", \\"url\\": \\"...\\", \\"description\\": \\"Brief description of each resource and why it's relevant\\"}]"
 }
 
 Writing Guidelines:
-- Use friendly, approachable tone with "you" and "your" frequently
-- Be empathetic and acknowledge that change can be challenging
-- Use encouraging language that emphasizes what's possible and achievable
-- Focus on actionable steps rather than theory
-- Use simple, clear language avoiding jargon
-- Include reassuring phrases and validate common concerns
-- Ensure all recommendations are realistic for small organizations with limited budgets
-- Balance thoroughness with accessibility
-- End on an encouraging, forward-looking note`;
+Tone and Voice:
+• Friendly and approachable: Use "you" and "your" frequently
+• Empathetic: Acknowledge that change can be challenging
+• Encouraging: Emphasize what's possible and achievable
+• Practical: Focus on actionable steps rather than theory
+• Inclusive: Use language that welcomes newcomers to change management
+
+Language Style:
+• Use simple, clear language (avoid jargon)
+• Write in short, digestible sentences
+• Include transitional phrases like "Here's what this means for you..."
+• Use active voice
+• Include reassuring phrases like "Don't worry if...", "It's normal to feel...", "Start small and..."
+
+Empathetic Elements to Include:
+• Acknowledge the emotional aspects of change
+• Validate common concerns and fears
+• Provide reassurance about the change process
+• Emphasize that change is a journey, not an event
+• Remind them that asking for help is normal and encouraged
+
+Important Constraints:
+• Keep each section concise but comprehensive
+• Ensure all recommendations are realistic for small organizations with limited budgets
+• Provide specific, actionable advice rather than generic suggestions
+• Balance thoroughness with accessibility
+• Always end on an encouraging, forward-looking note`;
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
