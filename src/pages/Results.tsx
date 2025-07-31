@@ -69,6 +69,7 @@ interface StrategyRecommendation {
   trainingLevel: string;
   communicationFrequency: string;
   frameworks: string;
+  successStories: string;
   relatedResources?: Array<{
     title: string;
     url: string;
@@ -157,6 +158,7 @@ const Results: React.FC = () => {
         trainingLevel: generateTrainingLevel(data),
         communicationFrequency: generateCommunicationFrequency(data),
         frameworks: generateFrameworks(data).join(', '),
+        successStories: generateSuccessStories(data),
         relatedResources: generateMockResources(data)
       };
       setRecommendation(mockRecommendation);
@@ -257,6 +259,28 @@ const Results: React.FC = () => {
     }
     
     return frameworks;
+  };
+
+  const generateSuccessStories = (data: FormData): string => {
+    const storyTemplates = {
+      'Technology': `• **TechStart Solutions (50 employees)**: Implemented new CRM system in 3 weeks by creating peer champions and daily 15-minute check-ins. Result: 95% user adoption within first month.
+• **CloudFirst Inc (30 employees)**: Successfully migrated to cloud infrastructure by pairing technical experts with end-users for hands-on training. Result: Zero downtime and improved productivity.
+
+**Key practices you can apply**: Start with willing early adopters, provide hands-on support, and celebrate small wins daily.`,
+      'Healthcare': `• **Regional Medical Center (200 staff)**: Transformed patient care protocols by involving frontline nurses in design process. Result: 40% reduction in patient wait times.
+• **Community Health Practice (25 providers)**: Implemented electronic health records by training in small groups during lunch sessions. Result: Smooth transition with minimal disruption.
+
+**Key practices you can apply**: Include frontline staff in planning, use familiar meeting times for training, and focus on patient benefits.`,
+      'Manufacturing': `• **Precision Parts Co (75 employees)**: Introduced lean manufacturing by starting with one production line pilot program. Result: 25% efficiency improvement company-wide.
+• **Local Assembly Works (40 workers)**: Changed safety protocols by having team leads demonstrate new procedures daily. Result: Zero safety incidents in first year.
+
+**Key practices you can apply**: Start with pilot programs, use peer-to-peer training, and connect changes to safety and efficiency.`
+    };
+
+    return storyTemplates[data.industry as keyof typeof storyTemplates] || `• **SmallBiz Corp (45 employees)**: Successfully implemented process changes by involving all stakeholders in planning and providing clear communication throughout. Result: 90% employee satisfaction with change process.
+• **Local Services Ltd (25 staff)**: Transformed workflow by creating cross-training opportunities and regular feedback sessions. Result: Improved flexibility and employee engagement.
+
+**Key practices you can apply**: Involve everyone in planning, communicate clearly and frequently, and focus on mutual benefits for all stakeholders.`;
   };
 
   const generateActionPlan = (data: FormData): string => {
@@ -361,18 +385,8 @@ const Results: React.FC = () => {
   const fetchRelevantArticles = async (data: FormData) => {
     setIsLoadingArticles(true);
     try {
-      // Use AI-generated resources if available, otherwise fallback to mock
-      if (recommendation?.relatedResources && recommendation.relatedResources.length > 0) {
-        const aiArticles: ArticleSnippet[] = recommendation.relatedResources.map(resource => ({
-          title: resource.title,
-          url: resource.url,
-          snippet: resource.description,
-          source: "AI-Generated Resource"
-        }));
-        setArticles(aiArticles);
-      } else {
-        // Fallback to mock data with industry-specific direct articles
-        const industryArticles = {
+      // Generate additional case study articles (separate from AI-generated resources)
+      const industryArticles = {
           Technology: [
             {
               title: "How Netflix Reinvented HR Through Organizational Change",
@@ -461,18 +475,17 @@ const Results: React.FC = () => {
         const industrySpecific = industryArticles[data.industry as keyof typeof industryArticles] || [];
         const urgencySpecific = urgencyArticles[data.urgency as keyof typeof urgencyArticles] || [];
         
-        const mockArticles: ArticleSnippet[] = [
-          ...industrySpecific.slice(0, 2),
-          ...urgencySpecific,
-          {
-            title: "Eight Steps to Transforming Your Organization",
-            url: "https://www.kotterinc.com/8-steps-process-for-leading-change/",
-            snippet: "Kotter International's foundational framework for successful organizational change, based on decades of research and real-world applications.",
-            source: "Kotter International"
-          }
-        ].slice(0, 3);
-        setArticles(mockArticles);
-      }
+      const mockArticles: ArticleSnippet[] = [
+        ...industrySpecific.slice(0, 2),
+        ...urgencySpecific,
+        {
+          title: "Eight Steps to Transforming Your Organization",
+          url: "https://www.kotterinc.com/8-steps-process-for-leading-change/",
+          snippet: "Kotter International's foundational framework for successful organizational change, based on decades of research and real-world applications.",
+          source: "Kotter International"
+        }
+      ].slice(0, 3);
+      setArticles(mockArticles);
     } catch (error) {
       console.error('Error setting up articles:', error);
     } finally {
@@ -623,6 +636,57 @@ const Results: React.FC = () => {
               </CardContent>
             </Card>
 
+            {/* Success Stories */}
+            <Card className="shadow-card">
+              <CardHeader>
+                <CardTitle className="text-primary">Success Stories & Best Practices</CardTitle>
+                <CardDescription>
+                  Learn from organizations similar to yours who have successfully implemented change management programs
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="flex items-center min-h-[120px]">
+                <div className="prose prose-sm max-w-none w-full">
+                  <div className="whitespace-pre-line leading-relaxed">{recommendation.successStories}</div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* AI-Generated Resources */}
+            {recommendation.relatedResources && recommendation.relatedResources.length > 0 && (
+              <Card className="shadow-card">
+                <CardHeader>
+                  <CardTitle className="text-primary">Recommended Resources</CardTitle>
+                  <CardDescription>
+                    Curated resources specifically tailored to your change management needs
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {recommendation.relatedResources.map((resource, index) => (
+                      <div key={index} className="border border-border rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <div className="flex items-start justify-between mb-2">
+                          <h4 className="font-semibold text-sm leading-tight flex-1">{resource.title}</h4>
+                          <ExternalLink className="w-4 h-4 text-muted-foreground ml-2 flex-shrink-0" />
+                        </div>
+                        <p className="text-sm text-muted-foreground mb-3 line-clamp-3">{resource.description}</p>
+                        <div className="flex items-center justify-between">
+                          <Badge variant="outline" className="text-xs">AI-Recommended</Badge>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-xs p-2 h-auto"
+                            onClick={() => window.open(resource.url, '_blank', 'noopener,noreferrer')}
+                          >
+                            Visit Resource
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Industry-Specific Articles */}
             {getIndustryArticles(formData.industry).length > 0 && (
               <Card className="shadow-card">
@@ -658,12 +722,12 @@ const Results: React.FC = () => {
               </Card>
             )}
 
-            {/* Relevant Articles & Case Studies */}
+            {/* Additional Articles & Case Studies */}
             <Card className="shadow-card">
               <CardHeader>
-                <CardTitle className="text-primary">Success Stories & Best Practices</CardTitle>
+                <CardTitle className="text-primary">Additional Case Studies</CardTitle>
                 <CardDescription>
-                  Learn from organizations similar to yours who have successfully implemented change management programs
+                  Explore more success stories and insights from change management professionals
                 </CardDescription>
               </CardHeader>
               <CardContent>

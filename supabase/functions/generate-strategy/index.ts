@@ -87,7 +87,7 @@ Writing Guidelines:
           { role: 'user', content: 'Generate a change management strategy based on this organization profile.' }
         ],
         temperature: 0.7,
-        max_tokens: 1000,
+        max_tokens: 2500,
       }),
     });
 
