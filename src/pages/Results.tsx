@@ -64,16 +64,11 @@ const industryResources = {
 
 interface StrategyRecommendation {
   summary: string;
-  actionPlan: string;
+  immediateActionPlan: string;
   stakeholderFocus: string;
   trainingLevel: string;
   communicationFrequency: string;
-  frameworks: string;
-  relatedResources?: Array<{
-    title: string;
-    url: string;
-    description: string;
-  }>;
+  recommendedFrameworks: string;
 }
 
 interface ArticleSnippet {
@@ -152,12 +147,11 @@ const Results: React.FC = () => {
       // Fallback to original mock generation
       const mockRecommendation: StrategyRecommendation = {
         summary: generateStrategySummary(data),
-        actionPlan: generateActionPlan(data),
+        immediateActionPlan: generateActionPlan(data),
         stakeholderFocus: generateStakeholderFocus(data),
         trainingLevel: generateTrainingLevel(data),
         communicationFrequency: generateCommunicationFrequency(data),
-        frameworks: generateFrameworks(data).join(', '),
-        relatedResources: generateMockResources(data)
+        recommendedFrameworks: generateFrameworks(data).join(', ')
       };
       setRecommendation(mockRecommendation);
       
@@ -560,14 +554,14 @@ const Results: React.FC = () => {
               </CardContent>
             </Card>
 
-            {/* Action Plan */}
+            {/* Immediate Action Plan */}
             <Card className="shadow-card">
               <CardHeader>
                 <CardTitle className="text-primary">Immediate Action Plan</CardTitle>
               </CardHeader>
               <CardContent className="flex items-center min-h-[120px]">
                 <div className="prose prose-sm max-w-none w-full">
-                  <div className="whitespace-pre-line leading-relaxed">{recommendation.actionPlan}</div>
+                  <div className="whitespace-pre-line leading-relaxed">{recommendation.immediateActionPlan}</div>
                 </div>
               </CardContent>
             </Card>
@@ -602,51 +596,16 @@ const Results: React.FC = () => {
               </CardContent>
             </Card>
 
-            {/* Frameworks */}
+            {/* Recommended Frameworks */}
             <Card className="shadow-card">
               <CardHeader>
                 <CardTitle className="text-primary">Recommended Frameworks</CardTitle>
               </CardHeader>
               <CardContent className="flex items-center min-h-[120px]">
-                <p className="leading-relaxed">{recommendation.frameworks}</p>
+                <p className="leading-relaxed">{recommendation.recommendedFrameworks}</p>
               </CardContent>
             </Card>
 
-            {/* AI-Generated Resources */}
-            {recommendation.relatedResources && recommendation.relatedResources.length > 0 && (
-              <Card className="shadow-card">
-                <CardHeader>
-                  <CardTitle className="text-primary">Recommended Resources</CardTitle>
-                  <CardDescription>
-                    Curated resources specifically tailored to your change management needs
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {recommendation.relatedResources.map((resource, index) => (
-                      <div key={index} className="border border-border rounded-lg p-4 hover:shadow-md transition-shadow">
-                        <div className="flex items-start justify-between mb-2">
-                          <h4 className="font-semibold text-sm leading-tight flex-1">{resource.title}</h4>
-                          <ExternalLink className="w-4 h-4 text-muted-foreground ml-2 flex-shrink-0" />
-                        </div>
-                        <p className="text-sm text-muted-foreground mb-3 line-clamp-3">{resource.description}</p>
-                        <div className="flex items-center justify-between">
-                          <Badge variant="outline" className="text-xs">AI-Recommended</Badge>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="text-xs p-2 h-auto"
-                            onClick={() => window.open(resource.url, '_blank', 'noopener,noreferrer')}
-                          >
-                            Visit Resource
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
 
             {/* Industry-Specific Articles */}
             {getIndustryArticles(formData.industry).length > 0 && (

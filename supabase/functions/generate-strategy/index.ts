@@ -43,12 +43,12 @@ Here's what you're working with for this organization:
 - Types of Changes: ${formData.changeTypes.join(', ')}
 - Urgency Level: ${formData.urgency}
 
-Please provide your response in JSON format with these exact 7 sections:
+Please provide your response in JSON format with these exact 6 sections:
 
 {
   "summary": "Create a concise 3-4 sentence overview of the recommended change management approach. Base recommendations on the industry type and change type provided in the user input. Use encouraging language that builds confidence. Address the specific context of their situation. Tone: Supportive and reassuring. Format: Brief narrative paragraph.",
   
-  "actionPlan": "Provide 4-6 specific, actionable steps they can start within the next 1-2 weeks. Prioritize actions based on urgency level and stakeholder size provided. Focus on low-cost, high-impact activities suitable for small organizations. Use action-oriented language ('Start by...', 'Begin with...', 'Create...'). Tone: Practical and encouraging. Format: Numbered list with brief explanations.",
+  "immediateActionPlan": "Provide 4-6 specific, actionable steps they can start within the next 1-2 weeks. Prioritize actions based on urgency level and stakeholder size provided. Focus on low-cost, high-impact activities suitable for small organizations. Use action-oriented language ('Start by...', 'Begin with...', 'Create...'). Tone: Practical and encouraging. Format: Numbered list with brief explanations.",
   
   "stakeholderFocus": "Identify the 2-3 most critical stakeholder groups for their specific change. Base recommendations on the stakeholder groups they selected in their assessment. Provide specific engagement strategies for each group. Include sample communication approaches or key messages. Tone: Strategic but accessible. Format: Bullet points organized by stakeholder group.",
   
@@ -56,9 +56,7 @@ Please provide your response in JSON format with these exact 7 sections:
   
   "communicationFrequency": "Recommend communication frequency based on change urgency provided. Provide specific schedule suggestions (daily, weekly, bi-weekly, monthly). Include types of communication for each frequency. Balance keeping people informed without overwhelming them. Guidelines: High urgency: Daily updates during critical phases, weekly otherwise; Medium urgency: Weekly updates with bi-weekly team meetings; Low urgency: Bi-weekly updates with monthly check-ins. Tone: Clear and organized. Format: Structured recommendation with timing details.",
   
-  "frameworks": "Suggest 1-2 change management frameworks that are appropriate for small organizations. Provide brief explanation of why each framework fits their situation. Include simplified application guidance. Keep it accessible - avoid overly complex methodologies. Popular frameworks for small organizations: ADKAR (for individual-focused changes), Kotter's 8-Step (for organizational transformation), Lewin's 3-Stage Model (for simple, straightforward changes), Bridges Transition Model (for emotionally significant changes). Format: Framework names with brief explanations.",
-  
-  "relatedResources": "Provide 3-5 specific, actionable resources. Include a mix of quick reads and comprehensive guides. Prioritize free, accessible resources. Match resources to their specific change type and organization size. Format: [{\\"title\\": \\"...\\", \\"url\\": \\"...\\", \\"description\\": \\"Brief description of each resource and why it's relevant\\"}]"
+  "recommendedFrameworks": "Suggest 1-2 change management frameworks that are appropriate for small organizations. Provide brief explanation of why each framework fits their situation. Include simplified application guidance. Keep it accessible - avoid overly complex methodologies. Include hyperlinks for the website of the model being referenced. Popular frameworks for small organizations: ADKAR (for individual-focused changes), Kotter's 8-Step (for organizational transformation), Lewin's 3-Stage Model (for simple, straightforward changes), Bridges Transition Model (for emotionally significant changes). Format: Framework names with brief explanations and hyperlinks."
 }
 
 Writing Guidelines:
@@ -88,7 +86,18 @@ Important Constraints:
 • Ensure all recommendations are realistic for small organizations with limited budgets
 • Provide specific, actionable advice rather than generic suggestions
 • Balance thoroughness with accessibility
-• Always end on an encouraging, forward-looking note`;
+• Always end on an encouraging, forward-looking note
+
+Quality Checklist:
+Before delivering your response, ensure:
+• ✅ All 6 sections are included and properly labeled
+• ✅ Tone is consistently friendly and empathetic
+• ✅ Recommendations are specific to the user's inputs
+• ✅ Language is accessible to change management newcomers
+• ✅ Action items are realistic for small organizations
+• ✅ Content builds confidence rather than overwhelming the reader
+
+Remember: Your goal is to provide a helpful starting point that empowers the user to take their first confident steps in managing change, while feeling supported throughout the process.`;
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
