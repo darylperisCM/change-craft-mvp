@@ -646,8 +646,7 @@ const Results: React.FC = () => {
             </Card>
 
             {/* Training Level */}
-            {/* Fixed Training Level Section */}
-<div className="leading-relaxed">
+            <div className="leading-relaxed">
   {typeof recommendation.trainingLevel === 'object' && !Array.isArray(recommendation.trainingLevel) ? (
     // Handle new object format with keys like {Training Recommendations}
     <div className="space-y-4">
@@ -663,7 +662,6 @@ const Results: React.FC = () => {
     <p className="leading-relaxed">{recommendation.trainingLevel}</p>
   )}
 </div>
-
 
             {/* Communication Frequency */}
             <Card className="shadow-card">
