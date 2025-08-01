@@ -7,6 +7,20 @@ import { ArrowLeft, Download, RefreshCw, ExternalLink } from 'lucide-react';
 import { FormData } from '@/components/ChangeAssessmentForm';
 import { supabase } from '@/integrations/supabase/client';
 
+// Framework website mapping
+const FRAMEWORK_WEBSITES: { [key: string]: string } = {
+  "ADKAR": "https://www.prosci.com/methodology/adkar",
+  "Kotter's 8-Step Process": "https://www.kotterinc.com/8-steps-process-for-leading-change/",
+  "Kotter's 8-Step": "https://www.kotterinc.com/8-steps-process-for-leading-change/",
+  "Lean Change Management": "https://leanchange.org/",
+  "Bridge Transition Model": "https://wmbridges.com/about/what-is-transition/",
+  "Bridges Transition Model": "https://wmbridges.com/about/what-is-transition/",
+  "Design Thinking": "https://www.ideou.com/pages/design-thinking",
+  "Agile Change Management": "https://www.agilealliance.org/agile101/",
+  "McKinsey 7-S Framework": "https://www.mckinsey.com/business-functions/strategy-and-corporate-finance/our-insights/enduring-ideas-the-7-s-framework",
+  "Nudge Theory": "https://www.behaviouralinsights.co.uk/publications/nudge-techniques/",
+};
+
 const industryResources = {
   "Information Technology": [
     { title: "5 Change Management Trends for 2025", url: "https://www.gpstrategies.com/resources/article/5-change-management-trends-for-2025/" },
@@ -713,16 +727,31 @@ const Results: React.FC = () => {
               </CardHeader>
               <CardContent className="flex items-center min-h-[120px]">
                 <div className="prose prose-sm max-w-none text-foreground">
-                  {typeof recommendation.recommendedFrameworks === 'object' && !Array.isArray(recommendation.recommendedFrameworks) ? (
-                    // Handle object format with keys like {ADKAR, Kotter's 8-Step Process}
-                    <div className="space-y-4">
-                      {Object.entries(recommendation.recommendedFrameworks).map(([framework, description], index) => (
-                        <div key={index} className="p-4 bg-muted/30 rounded-lg border-l-4 border-primary">
-                          <h4 className="font-semibold text-primary mb-2">{framework}</h4>
-                          <p className="text-sm">{String(description)}</p>
-                        </div>
-                      ))}
-                    </div>
+                   {typeof recommendation.recommendedFrameworks === 'object' && !Array.isArray(recommendation.recommendedFrameworks) ? (
+                     // Handle object format with keys like {ADKAR, Kotter's 8-Step Process}
+                     <div className="space-y-4">
+                       {Object.entries(recommendation.recommendedFrameworks).map(([framework, description], index) => {
+                         const websiteUrl = FRAMEWORK_WEBSITES[framework];
+                         return (
+                           <div key={index} className="p-4 bg-muted/30 rounded-lg border-l-4 border-primary">
+                             <div className="flex items-center gap-2 mb-2">
+                               <h4 className="font-semibold text-primary">{framework}</h4>
+                               {websiteUrl && (
+                                 <a 
+                                   href={websiteUrl} 
+                                   target="_blank" 
+                                   rel="noopener noreferrer"
+                                   className="text-xs text-primary hover:text-primary/80 underline"
+                                 >
+                                   (Official Website)
+                                 </a>
+                               )}
+                             </div>
+                             <p className="text-sm">{String(description)}</p>
+                           </div>
+                         )
+                       })}
+                     </div>
                   ) : Array.isArray(recommendation.recommendedFrameworks) ? (
                     recommendation.recommendedFrameworks.map((framework: any, index: number) => (
                       <div key={index} className="mb-2">
@@ -744,50 +773,6 @@ const Results: React.FC = () => {
               </CardContent>
             </Card>
 
-            {/* Recommended Resources */}
-            <Card className="shadow-card">
-              <CardHeader>
-                <CardTitle className="text-primary">Recommended Resources</CardTitle>
-              </CardHeader>
-              <CardContent className="flex items-center min-h-[120px]">
-                <div className="prose prose-sm max-w-none text-foreground">
-                  {Array.isArray(recommendation.recommendedResources) ? (
-                    recommendation.recommendedResources.map((resource: any, index: number) => (
-                      <div key={index} className="mb-2">
-                        {resource.url ? (
-                          <a 
-                            href={resource.url} 
-                            target="_blank" 
-                            rel="noopener noreferrer" 
-                            className="text-primary hover:text-primary/80 underline"
-                          >
-                            {resource.title || resource.url}
-                          </a>
-                        ) : (
-                          <p>{typeof resource === 'string' ? resource : resource.title || 'Resource'}</p>
-                        )}
-                      </div>
-                    ))
-                  ) : (
-                    typeof recommendation.recommendedResources === 'string' 
-                      ? recommendation.recommendedResources.split('\n').map((line, index) => (
-                          <div key={index} className="mb-2">
-                            {line.includes('**') ? (
-                              <div dangerouslySetInnerHTML={{ 
-                                __html: line
-                                  .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                                  .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary/80 underline">$1</a>')
-                              }} />
-                            ) : (
-                              line
-                            )}
-                          </div>
-                        ))
-                      : <p>{recommendation.recommendedResources}</p>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
 
 
             {/* Industry-Specific Articles */}
