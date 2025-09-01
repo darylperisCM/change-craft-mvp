@@ -15,7 +15,7 @@ export interface StakeholderInput {
   likelihood: number // 1–5
   notes?: string
 }
- 
+
 export interface FormData {
   organizationSize: string
   industry: string
@@ -43,43 +43,35 @@ const industries = [
   'Other',
 ]
 
-const stakeholderGroupsMap = {
-  Internal: [
-    'Board / Investors',
-    'Executive Leadership',
-    'Senior Management',
-    'Middle Management',
-    'Team Leads',
-    'Frontline Employees',
-  ],
-  Functions: [
-    'IT / Engineering',
-    'Product / R&D',
-    'Operations',
-    'HR / People',
-    'Finance',
-    'Sales',
-    'Marketing',
-    'Customer Support / Success',
-    'Legal / Compliance',
-    'Facilities / EHS',
-    'Supply Chain / Procurement',
-  ],
-  External: [
-    'Customers',
-    'Partners',
-    'Vendors / Suppliers',
-    'Regulators',
-    'Unions / Works Council',
-  ],
-} as const;
-
-// (Optional) If you still need a flat list elsewhere:
 const stakeholderOptions = [
-  ...stakeholderGroupsMap.Internal,
-  ...stakeholderGroupsMap.Functions,
-  ...stakeholderGroupsMap.External,
-];
+  // Internal
+  'Board / Investors',
+  'Executive Leadership',
+  'Senior Management',
+  'Middle Management',
+  'Team Leads',
+  'Frontline Employees',
+
+  // Functions (pick what’s relevant)
+  'IT / Engineering',
+  'Product / R&D',
+  'Operations',
+  'HR / People',
+  'Finance',
+  'Sales',
+  'Marketing',
+  'Customer Support / Success',
+  'Legal / Compliance',
+  'Facilities / EHS',
+  'Supply Chain / Procurement',
+
+  // External
+  'Customers',
+  'Partners',
+  'Vendors / Suppliers',
+  'Regulators',
+  'Unions / Works Council',
+]
 
 
 const changeTypeOptions = [
@@ -266,83 +258,29 @@ export const ChangeAssessmentForm: React.FC = () => {
             </Select>
           </div>
 
-          {/* Stakeholder Groups (Grouped) */}
-<div className="space-y-6">
-  <Label className="text-xl font-bold text-foreground">Affected Stakeholder Groups *</Label>
-
-  {/* Internal */}
-  <div className="space-y-3">
-    <div className="text-sm font-semibold text-muted-foreground">Internal</div>
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-      {stakeholderGroupsMap.Internal.map((group) => (
-        <div
-          key={group}
-          className="flex items-center space-x-3 p-4 glass-card rounded-modern hover:bg-white/20 transition-all duration-300 card-hover"
-        >
-          <Checkbox
-            id={group}
-            checked={formData.stakeholderGroups.includes(group)}
-            onCheckedChange={(checked) =>
-              handleStakeholderGroupChange(group, Boolean(checked))
-            }
-          />
-          <Label htmlFor={group} className="font-semibold cursor-pointer text-foreground">
-            {group}
-          </Label>
-        </div>
-      ))}
-    </div>
-  </div>
-
-  {/* Functions */}
-  <div className="space-y-3">
-    <div className="text-sm font-semibold text-muted-foreground">Functions</div>
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-      {stakeholderGroupsMap.Functions.map((group) => (
-        <div
-          key={group}
-          className="flex items-center space-x-3 p-4 glass-card rounded-modern hover:bg-white/20 transition-all duration-300 card-hover"
-        >
-          <Checkbox
-            id={group}
-            checked={formData.stakeholderGroups.includes(group)}
-            onCheckedChange={(checked) =>
-              handleStakeholderGroupChange(group, Boolean(checked))
-            }
-          />
-          <Label htmlFor={group} className="font-semibold cursor-pointer text-foreground">
-            {group}
-          </Label>
-        </div>
-      ))}
-    </div>
-  </div>
-
-  {/* External */}
-  <div className="space-y-3">
-    <div className="text-sm font-semibold text-muted-foreground">External</div>
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-      {stakeholderGroupsMap.External.map((group) => (
-        <div
-          key={group}
-          className="flex items-center space-x-3 p-4 glass-card rounded-modern hover:bg-white/20 transition-all duration-300 card-hover"
-        >
-          <Checkbox
-            id={group}
-            checked={formData.stakeholderGroups.includes(group)}
-            onCheckedChange={(checked) =>
-              handleStakeholderGroupChange(group, Boolean(checked))
-            }
-          />
-          <Label htmlFor={group} className="font-semibold cursor-pointer text-foreground">
-            {group}
-          </Label>
-        </div>
-      ))}
-    </div>
-  </div>
-</div>
-
+          {/* Stakeholder Groups */}
+          <div className="space-y-6">
+            <Label className="text-xl font-bold text-foreground">Affected Stakeholder Groups *</Label>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {stakeholderOptions.map((group) => {
+                const checked = formData.stakeholderGroups.includes(group)
+                return (
+                  <div
+                    key={group}
+                    className="flex items-center space-x-3 p-6 glass-card rounded-modern hover:bg-white/20 transition-all duration-300 card-hover"
+                  >
+                    <Checkbox
+                      id={group}
+                      checked={checked}
+                      onCheckedChange={(c) => handleStakeholderGroupChange(group, Boolean(c))}
+                    />
+                    <Label htmlFor={group} className="font-semibold cursor-pointer text-foreground">
+                      {group}
+                    </Label>
+                  </div>
+                )
+              })}
+            </div>
 
             {/* NEW: Severity & Likelihood sliders for selected groups */}
             {formData.stakeholderGroups.length > 0 && (
