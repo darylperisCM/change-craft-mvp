@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { ArrowLeft, Download, RefreshCw, ExternalLink } from 'lucide-react';
 import { FormData } from '@/components/ChangeAssessmentForm';
 import { supabase } from '@/integrations/supabase/client';
@@ -137,8 +136,6 @@ const Results: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingArticles, setIsLoadingArticles] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
-  const [currentSlide, setCurrentSlide] = useState(1);
-  const [emblaApi, setEmblaApi] = useState<any>(null);
 
   useEffect(() => {
     const storedData = sessionStorage.getItem('changeAssessmentData');
@@ -464,347 +461,218 @@ const Results: React.FC = () => {
           </Card>
         ) : recommendation ? (
           <div className="space-y-6">
-            {/* Carousel with 5 slides */}
-            <div className="relative">
-              <Carousel 
-                className="w-full" 
-                setApi={(api) => {
-                  if (api) {
-                    setEmblaApi(api);
-                    
-                    const updateCurrentSlide = () => {
-                      setCurrentSlide(api.selectedScrollSnap() + 1);
-                    };
-                    
-                    // Set initial slide
-                    updateCurrentSlide();
-                    
-                    // Listen for slide changes
-                    api.on('select', updateCurrentSlide);
-                    
-                    // Cleanup listener
-                    return () => {
-                      api.off('select', updateCurrentSlide);
-                    };
-                  }
-                }}
-              >
-                <CarouselContent>
-                  {/* Slide 1: Strategy Summary + Stakeholder Focus */}
-                  <CarouselItem>
-                    <div className="space-y-6">
-                      {/* Strategy Summary */}
-                      <Card className="shadow-card">
-                        <CardHeader>
-                          <CardTitle className="text-primary">Strategy Summary</CardTitle>
-                        </CardHeader>
-                        <CardContent className="min-h-[120px] space-y-3">
-                          <p className="leading-relaxed">{String(recommendation.summary)}</p>
-                          {/* People-first emphasis */}
-                          <PeopleFirstStrip />
-                        </CardContent>
-                      </Card>
+            {/* Strategy Summary */}
+            <Card className="shadow-card">
+              <CardHeader>
+                <CardTitle className="text-primary">Strategy Summary</CardTitle>
+              </CardHeader>
+              <CardContent className="min-h-[120px] space-y-3">
+                <p className="leading-relaxed">{String(recommendation.summary)}</p>
+                {/* People-first emphasis */}
+                <PeopleFirstStrip />
+              </CardContent>
+            </Card>
 
-                      {/* Stakeholder Focus */}
-                      <Card className="shadow-card">
-                        <CardHeader>
-                          <CardTitle className="text-primary">Stakeholder Focus</CardTitle>
-                        </CardHeader>
-                        <CardContent className="flex items-center min-h-[120px]">
-                          <div className="leading-relaxed w-full">
-                            {typeof recommendation.stakeholderFocus === 'object' && !Array.isArray(recommendation.stakeholderFocus) ? (
-                              <div className="space-y-4">
-                                {Object.entries(recommendation.stakeholderFocus).map(([stakeholder, description], index) => (
-                                  <div key={index} className="p-4 bg-muted/30 rounded-lg border-l-4 border-primary">
-                                    <h4 className="font-semibold text-primary mb-2">{stakeholder}</h4>
-                                    <p className="text-sm">{String(description)}</p>
-                                  </div>
-                                ))}
-                              </div>
-                            ) : Array.isArray(recommendation.stakeholderFocus) ? (
-                              <div className="space-y-3">
-                                {recommendation.stakeholderFocus.map((focus: string, index: number) => (
-                                  <div key={index} className="p-3 bg-muted/30 rounded-lg">
-                                    <p>{focus}</p>
-                                  </div>
-                                ))}
-                              </div>
-                            ) : (
-                              <p>{String(recommendation.stakeholderFocus)}</p>
-                            )}
-                          </div>
-                        </CardContent>
-                      </Card>
+            {/* Immediate Action Plan */}
+            <Card className="shadow-card">
+              <CardHeader>
+                <CardTitle className="text-primary">Immediate Action Plan</CardTitle>
+              </CardHeader>
+              <CardContent className="flex items-center min-h-[120px]">
+                <div className="prose prose-sm max-w-none w-full">
+                  {Array.isArray(recommendation.immediateActionPlan) ? (
+                    <ol className="list-decimal list-inside space-y-4 leading-relaxed">
+                      {recommendation.immediateActionPlan.map((action: string, index: number) => (
+                        <li key={index} className="pl-2 mb-4 text-sm leading-relaxed">
+                          {String(action).replace(/^\d+\.\s*/, '').trim()}
+                        </li>
+                      ))}
+                    </ol>
+                  ) : (
+                    <div className="whitespace-pre-line leading-relaxed">{String(recommendation.immediateActionPlan)}</div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Stakeholder Focus */}
+            <Card className="shadow-card">
+              <CardHeader>
+                <CardTitle className="text-primary">Stakeholder Focus</CardTitle>
+              </CardHeader>
+              <CardContent className="flex items-center min-h-[120px]">
+                <div className="leading-relaxed w-full">
+                  {typeof recommendation.stakeholderFocus === 'object' && !Array.isArray(recommendation.stakeholderFocus) ? (
+                    <div className="space-y-4">
+                      {Object.entries(recommendation.stakeholderFocus).map(([stakeholder, description], index) => (
+                        <div key={index} className="p-4 bg-muted/30 rounded-lg border-l-4 border-primary">
+                          <h4 className="font-semibold text-primary mb-2">{stakeholder}</h4>
+                          <p className="text-sm">{String(description)}</p>
+                        </div>
+                      ))}
                     </div>
-                  </CarouselItem>
-
-                  {/* Slide 2: Immediate Action Plan + Recommended Frameworks */}
-                  <CarouselItem>
-                    <div className="space-y-6">
-                      {/* Immediate Action Plan */}
-                      <Card className="shadow-card">
-                        <CardHeader>
-                          <CardTitle className="text-primary">Immediate Action Plan</CardTitle>
-                        </CardHeader>
-                        <CardContent className="flex items-center min-h-[120px]">
-                          <div className="prose prose-sm max-w-none w-full">
-                            {Array.isArray(recommendation.immediateActionPlan) ? (
-                              <ol className="list-decimal list-inside space-y-4 leading-relaxed">
-                                {recommendation.immediateActionPlan.map((action: string, index: number) => (
-                                  <li key={index} className="pl-2 mb-4 text-sm leading-relaxed">
-                                    {String(action).replace(/^\d+\.\s*/, '').trim()}
-                                  </li>
-                                ))}
-                              </ol>
-                            ) : (
-                              <div className="whitespace-pre-line leading-relaxed">{String(recommendation.immediateActionPlan)}</div>
-                            )}
-                          </div>
-                        </CardContent>
-                      </Card>
-
-                      {/* Recommended Frameworks */}
-                      <Card className="shadow-card">
-                        <CardHeader>
-                          <CardTitle className="text-primary">Recommended Frameworks</CardTitle>
-                        </CardHeader>
-                        <CardContent className="flex items-center min-h-[120px]">
-                          <div className="prose prose-sm max-w-none text-foreground w-full">
-                            {typeof recommendation.recommendedFrameworks === 'object' && !Array.isArray(recommendation.recommendedFrameworks) ? (
-                              <div className="space-y-4">
-                                {Object.entries(recommendation.recommendedFrameworks).map(([framework, description], index) => {
-                                  const websiteUrl = FRAMEWORK_WEBSITES[framework];
-                                  return (
-                                    <div key={index} className="p-4 bg-muted/30 rounded-lg border-l-4 border-primary">
-                                      <div className="flex items-center gap-2 mb-2">
-                                        <h4 className="font-semibold text-primary">{framework}</h4>
-                                        {websiteUrl && (
-                                          <a 
-                                            href={websiteUrl} 
-                                            target="_blank" 
-                                            rel="noopener noreferrer"
-                                            className="text-xs text-primary hover:text-primary/80 underline"
-                                          >
-                                            (Official Website)
-                                          </a>
-                                        )}
-                                      </div>
-                                      <p className="text-sm">{String(description)}</p>
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            ) : Array.isArray(recommendation.recommendedFrameworks) ? (
-                              recommendation.recommendedFrameworks.map((framework: any, index: number) => (
-                                <div key={index} className="mb-2">
-                                  {typeof framework === 'string' && framework.includes('**') ? (
-                                    <div dangerouslySetInnerHTML={{ 
-                                      __html: framework
-                                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                                        .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary/80 underline">$1</a>')
-                                    }} />
-                                  ) : (
-                                    <p>{typeof framework === 'string' ? framework : framework.name || 'Framework'}</p>
-                                  )}
-                                </div>
-                              ))
-                            ) : (
-                              <p>{String(recommendation.recommendedFrameworks)}</p>
-                            )}
-                          </div>
-                        </CardContent>
-                      </Card>
+                  ) : Array.isArray(recommendation.stakeholderFocus) ? (
+                    <div className="space-y-3">
+                      {recommendation.stakeholderFocus.map((focus: string, index: number) => (
+                        <div key={index} className="p-3 bg-muted/30 rounded-lg">
+                          <p>{focus}</p>
+                        </div>
+                      ))}
                     </div>
-                  </CarouselItem>
+                  ) : (
+                    <p>{String(recommendation.stakeholderFocus)}</p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
 
-                  {/* Slide 3: Training Level + Communication Frequency */}
-                  <CarouselItem>
-                    <div className="space-y-6">
-                      {/* Training Level */}
-                      <Card className="shadow-card">
-                        <CardHeader>
-                          <CardTitle className="text-primary">Training Level</CardTitle>
-                        </CardHeader>
-                        <CardContent className="flex items-center min-h-[120px]">
-                          <div className="leading-relaxed w-full">
-                            {typeof recommendation.trainingLevel === 'object' && !Array.isArray(recommendation.trainingLevel) ? (
-                              <div className="space-y-4">
-                                {Object.entries(recommendation.trainingLevel).map(([category, description], index) => (
-                                  <div key={index} className="p-4 bg-muted/30 rounded-lg border-l-4 border-primary">
-                                    <h4 className="font-semibold text-primary mb-2">{category}</h4>
-                                    <p className="text-sm">{String(description)}</p>
-                                  </div>
-                                ))}
-                              </div>
-                            ) : (
-                              <p>{String(recommendation.trainingLevel)}</p>
-                            )}
-                          </div>
-                        </CardContent>
-                      </Card>
-
-                      {/* Communication Frequency */}
-                      <Card className="shadow-card">
-                        <CardHeader>
-                          <CardTitle className="text-primary">Communication Frequency</CardTitle>
-                        </CardHeader>
-                        <CardContent className="flex items-center min-h-[120px]">
-                          <div className="leading-relaxed w-full">
-                            {typeof recommendation.communicationFrequency === 'object' && !Array.isArray(recommendation.communicationFrequency) ? (
-                              <div className="space-y-4">
-                                {Object.entries(recommendation.communicationFrequency).map(([audience, frequency], index) => (
-                                  <div key={index} className="p-4 bg-muted/30 rounded-lg border-l-4 border-primary">
-                                    <h4 className="font-semibold text-primary mb-2">{audience}</h4>
-                                    <p className="text-sm">{String(frequency)}</p>
-                                  </div>
-                                ))}
-                              </div>
-                            ) : (
-                              <p>{String(recommendation.communicationFrequency)}</p>
-                            )}
-                          </div>
-                        </CardContent>
-                      </Card>
+            {/* Training Level */}
+            <Card className="shadow-card">
+              <CardHeader>
+                <CardTitle className="text-primary">Training Level</CardTitle>
+              </CardHeader>
+              <CardContent className="flex items-center min-h-[120px]">
+                <div className="leading-relaxed w-full">
+                  {typeof recommendation.trainingLevel === 'object' && !Array.isArray(recommendation.trainingLevel) ? (
+                    <div className="space-y-4">
+                      {Object.entries(recommendation.trainingLevel).map(([category, description], index) => (
+                        <div key={index} className="p-4 bg-muted/30 rounded-lg border-l-4 border-primary">
+                          <h4 className="font-semibold text-primary mb-2">{category}</h4>
+                          <p className="text-sm">{String(description)}</p>
+                        </div>
+                      ))}
                     </div>
-                  </CarouselItem>
+                  ) : (
+                    <p>{String(recommendation.trainingLevel)}</p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
 
-                  {/* Slide 4: Stakeholder Impact Matrix */}
-                  <CarouselItem>
-                    <div className="space-y-6">
-                      {recommendation.stakeholderImpact ? (
-                        <Card className="shadow-card">
-                          <CardHeader>
-                            <CardTitle className="text-primary">Stakeholder Impact Matrix (Likelihood × Severity)</CardTitle>
-                          </CardHeader>
-                          <CardContent className="space-y-4">
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
-                              <div className="p-3 rounded-xl bg-red-50 text-red-700">Red: {recommendation.stakeholderImpact.summary.reds}</div>
-                              <div className="p-3 rounded-xl bg-yellow-50 text-yellow-700">Amber: {recommendation.stakeholderImpact.summary.ambers}</div>
-                              <div className="p-3 rounded-xl bg-green-50 text-green-700">Green: {recommendation.stakeholderImpact.summary.greens}</div>
+            {/* Communication Frequency */}
+            <Card className="shadow-card">
+              <CardHeader>
+                <CardTitle className="text-primary">Communication Frequency</CardTitle>
+              </CardHeader>
+              <CardContent className="flex items-center min-h-[120px]">
+                <div className="leading-relaxed w-full">
+                  {typeof recommendation.communicationFrequency === 'object' && !Array.isArray(recommendation.communicationFrequency) ? (
+                    <div className="space-y-4">
+                      {Object.entries(recommendation.communicationFrequency).map(([audience, frequency], index) => (
+                        <div key={index} className="p-4 bg-muted/30 rounded-lg border-l-4 border-primary">
+                          <h4 className="font-semibold text-primary mb-2">{audience}</h4>
+                          <p className="text-sm">{String(frequency)}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p>{String(recommendation.communicationFrequency)}</p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Recommended Frameworks */}
+            <Card className="shadow-card">
+              <CardHeader>
+                <CardTitle className="text-primary">Recommended Frameworks</CardTitle>
+              </CardHeader>
+              <CardContent className="flex items-center min-h-[120px]">
+                <div className="prose prose-sm max-w-none text-foreground w-full">
+                  {typeof recommendation.recommendedFrameworks === 'object' && !Array.isArray(recommendation.recommendedFrameworks) ? (
+                    <div className="space-y-4">
+                      {Object.entries(recommendation.recommendedFrameworks).map(([framework, description], index) => {
+                        const websiteUrl = FRAMEWORK_WEBSITES[framework];
+                        return (
+                          <div key={index} className="p-4 bg-muted/30 rounded-lg border-l-4 border-primary">
+                            <div className="flex items-center gap-2 mb-2">
+                              <h4 className="font-semibold text-primary">{framework}</h4>
+                              {websiteUrl && (
+                                <a 
+                                  href={websiteUrl} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  className="text-xs text-primary hover:text-primary/80 underline"
+                                >
+                                  (Official Website)
+                                </a>
+                              )}
                             </div>
-                            <HeatmapTable matrix={recommendation.stakeholderImpact.matrix} />
-                          </CardContent>
-                        </Card>
-                      ) : (
-                        <Card className="shadow-card">
-                          <CardContent className="flex items-center justify-center py-12">
-                            <div className="text-center">
-                              <p className="text-lg font-medium">No Stakeholder Impact Data Available</p>
-                              <p className="text-sm text-muted-foreground mt-2">This analysis is generated when detailed stakeholder information is provided.</p>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      )}
-                    </div>
-                  </CarouselItem>
-
-                  {/* Slide 5: Mitigation Strategy + Upgrade CTA */}
-                  <CarouselItem>
-                    <div className="space-y-6">
-                      {/* Mitigation Strategy per Stakeholder */}
-                      {(recommendation.stakeholderMitigations?.length ?? 0) > 0 ? (
-                        <Card className="shadow-card">
-                          <CardHeader>
-                            <CardTitle className="text-primary">Mitigation Strategy by Stakeholder</CardTitle>
-                          </CardHeader>
-                          <CardContent className="space-y-4">
-                            {recommendation.stakeholderMitigations!.map((m, i) => {    
-                              const rag = recommendation.stakeholderImpact?.stakeholders.find(s => s.name === m.name)?.rag;
-                              const importance = rag ? importanceByRAG[rag] : "Maintain engagement and keep communication open.";
-                              return (
-                                <div key={`${m.name}-${i}`} className="p-4 border rounded-xl">
-                                  <div className="flex items-center justify-between">
-                                    <div className="font-medium">{m.name}</div>
-                                    <RAGBadge rag={rag} />
-                                  </div>
-                                  <p className="mt-2 text-sm italic text-muted-foreground">{importance}</p>
-                                  {Array.isArray(m.mitigation) ? (
-                                    <ul className="mt-2 list-disc list-inside text-sm space-y-1">
-                                      {m.mitigation.map((li, j) => <li key={j}>{li}</li>)}
-                                    </ul>
-                                  ) : (
-                                    <p className="mt-2 text-sm leading-relaxed">{m.mitigation}</p>
-                                  )}
-                                </div>
-                              );
-                            })}
-                          </CardContent>
-                        </Card>
-                      ) : (
-                        <Card className="shadow-card">
-                          <CardContent className="flex items-center justify-center py-12">
-                            <div className="text-center">
-                              <p className="text-lg font-medium">No Specific Mitigation Strategies Available</p>
-                              <p className="text-sm text-muted-foreground mt-2">General change management best practices apply.</p>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      )}
-
-                      {/* Upgrade CTA */}
-                      <Card className="shadow-card">
-                        <CardContent className="flex items-center justify-between flex-col md:flex-row gap-4 py-6">
-                          <div>
-                            <div className="text-lg font-semibold">Want the full Toolkit pre-filled for your change?</div>
-                            <p className="text-sm text-muted-foreground">
-                              Download a customized Excel with Stakeholder Map, Impact, Comms Plan, and Training Plan auto-populated from your answers.
-                            </p>
+                            <p className="text-sm">{String(description)}</p>
                           </div>
-                          <Button size="lg" onClick={() => navigate('/pricing')}>Upgrade & Download</Button>
-                        </CardContent>
-                      </Card>
-
-                      {/* Action Buttons */}
-                      <div className="flex gap-4 justify-center pt-6">
-                        <Button onClick={() => window.print()} variant="outline">
-                          <Download className="w-4 h-4 mr-2" />
-                          Download Report
-                        </Button>
-                        <Button onClick={() => navigate('/')} className="bg-primary hover:bg-primary/90 text-primary-foreground">
-                          New Assessment
-                        </Button>
+                        );
+                      })}
+                    </div>
+                  ) : Array.isArray(recommendation.recommendedFrameworks) ? (
+                    recommendation.recommendedFrameworks.map((framework: any, index: number) => (
+                      <div key={index} className="mb-2">
+                        {typeof framework === 'string' && framework.includes('**') ? (
+                          <div dangerouslySetInnerHTML={{ 
+                            __html: framework
+                              .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                              .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary/80 underline">$1</a>')
+                          }} />
+                        ) : (
+                          <p>{typeof framework === 'string' ? framework : framework.name || 'Framework'}</p>
+                        )}
                       </div>
-                    </div>
-                  </CarouselItem>
-                </CarouselContent>
-                
-                {/* Desktop Navigation Arrows */}
-                <div className="hidden md:block">
-                  <CarouselPrevious className="absolute -left-16 top-1/2 -translate-y-1/2" />
-                  <CarouselNext className="absolute -right-16 top-1/2 -translate-y-1/2" />
+                    ))
+                  ) : (
+                    <p>{String(recommendation.recommendedFrameworks)}</p>
+                  )}
                 </div>
-              </Carousel>
+              </CardContent>
+            </Card>
 
-              {/* Progress Indicators */}
-              <div className="mt-6 flex flex-col items-center gap-4">
-                {/* Step counter */}
-                <div className="text-sm text-muted-foreground">
-                  {currentSlide} of 5
-                </div>
-                
-                {/* Clickable dots */}
-                <div className="flex gap-2">
-                  {[1, 2, 3, 4, 5].map((slide) => (
-                    <button
-                      key={slide}
-                      onClick={() => {
-                        if (emblaApi) {
-                          emblaApi.scrollTo(slide - 1);
-                        }
-                      }}
-                      className={`w-3 h-3 rounded-full transition-colors ${
-                        currentSlide === slide 
-                          ? 'bg-primary' 
-                          : 'bg-muted hover:bg-muted-foreground/50'
-                      }`}
-                      aria-label={`Go to slide ${slide}`}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
+            {/* Stakeholder Impact (RAG heatmap) */}
+            {recommendation.stakeholderImpact && (
+              <Card className="shadow-card">
+                <CardHeader>
+                  <CardTitle className="text-primary">Stakeholder Impact Matrix (Likelihood × Severity)</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
+                    <div className="p-3 rounded-xl bg-red-50 text-red-700">Red: {recommendation.stakeholderImpact.summary.reds}</div>
+                    <div className="p-3 rounded-xl bg-yellow-50 text-yellow-700">Amber: {recommendation.stakeholderImpact.summary.ambers}</div>
+                    <div className="p-3 rounded-xl bg-green-50 text-green-700">Green: {recommendation.stakeholderImpact.summary.greens}</div>
+                  </div>
+                  <HeatmapTable matrix={recommendation.stakeholderImpact.matrix} />
+                </CardContent>
+              </Card>
+            )}
 
-            {/* Industry-Specific Articles (outside carousel) */}
+            {/* Mitigation Strategy per Stakeholder */}
+            {(recommendation.stakeholderMitigations?.length ?? 0) > 0 && (
+              <Card className="shadow-card">
+                <CardHeader>
+                  <CardTitle className="text-primary">Mitigation Strategy by Stakeholder</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {recommendation.stakeholderMitigations!.map((m, i) => {    
+                const rag = recommendation.stakeholderImpact?.stakeholders.find(s => s.name === m.name)?.rag;
+                const importance = rag ? importanceByRAG[rag] : "Maintain engagement and keep communication open.";
+                    return (
+                      <div key={`${m.name}-${i}`} className="p-4 border rounded-xl">
+                        <div className="flex items-center justify-between">
+                          <div className="font-medium">{m.name}</div>
+                          <RAGBadge rag={rag} />
+                        </div>
+                        {/* Importance line based on RAG */} <p className="mt-2 text-sm italic text-muted-foreground">{importance}</p>
+                        {Array.isArray(m.mitigation) ? (
+                          <ul className="mt-2 list-disc list-inside text-sm space-y-1">
+                            {m.mitigation.map((li, j) => <li key={j}>{li}</li>)}
+                          </ul>
+                        ) : (
+                          <p className="mt-2 text-sm leading-relaxed">{m.mitigation}</p>
+                        )}
+                      </div>
+                    );
+                  })}
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Industry-Specific Articles */}
             {getIndustryArticles(formData.industry).length > 0 && (
               <Card className="shadow-card">
                 <CardHeader>
@@ -838,6 +706,30 @@ const Results: React.FC = () => {
                 </CardContent>
               </Card>
             )}
+
+            {/* Upgrade CTA */}
+            <Card className="shadow-card">
+              <CardContent className="flex items-center justify-between flex-col md:flex-row gap-4 py-6">
+                <div>
+                  <div className="text-lg font-semibold">Want the full Toolkit pre-filled for your change?</div>
+                  <p className="text-sm text-muted-foreground">
+                    Download a customized Excel with Stakeholder Map, Impact, Comms Plan, and Training Plan auto-populated from your answers.
+                  </p>
+                </div>
+                <Button size="lg" onClick={() => navigate('/pricing')}>Upgrade & Download</Button>
+              </CardContent>
+            </Card>
+
+            {/* Action Buttons */}
+            <div className="flex gap-4 justify-center pt-6">
+              <Button onClick={() => window.print()} variant="outline">
+                <Download className="w-4 h-4 mr-2" />
+                Download Report
+              </Button>
+              <Button onClick={() => navigate('/')} className="bg-primary hover:bg-primary/90 text-primary-foreground">
+                New Assessment
+              </Button>
+            </div>
           </div>
         ) : null}
       </div>
