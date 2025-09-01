@@ -44,12 +44,35 @@ const industries = [
 ]
 
 const stakeholderOptions = [
-  'Leadership',
+  // Internal
+  'Board / Investors',
+  'Executive Leadership',
+  'Senior Management',
+  'Middle Management',
+  'Team Leads',
   'Frontline Employees',
+
+  // Functions (pick what’s relevant)
+  'IT / Engineering',
+  'Product / R&D',
+  'Operations',
+  'HR / People',
+  'Finance',
+  'Sales',
+  'Marketing',
+  'Customer Support / Success',
+  'Legal / Compliance',
+  'Facilities / EHS',
+  'Supply Chain / Procurement',
+
+  // External
   'Customers',
-  'Suppliers',
   'Partners',
+  'Vendors / Suppliers',
+  'Regulators',
+  'Unions / Works Council',
 ]
+
 
 const changeTypeOptions = [
   'Technology',
