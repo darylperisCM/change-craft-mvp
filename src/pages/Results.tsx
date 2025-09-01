@@ -644,7 +644,14 @@ const Results: React.FC = () => {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {recommendation.stakeholderMitigations!.map((m, i) => {
-                    const rag = recommendation.stakeholderImpact?.stakeholders.find(s => s.name === m.name)?.rag;
+                const importanceByRAG: Record<"Red"|"Amber"|"Green", string> = {
+  Red:   "Critical stakeholder group — very high likelihood and severity. Needs executive sponsorship, visible support, and intensive engagement.",
+  Amber: "Important stakeholder group — moderate-to-high risk. Address concerns early, clarify WIIFM, and keep engagement consistent.",
+  Green: "Supportive/low-risk stakeholder group. Maintain awareness and momentum with recognition, light-touch updates, and opportunities to contribute."
+};
+    
+                const rag = recommendation.stakeholderImpact?.stakeholders.find(s => s.name === m.name)?.rag;
+                const importance = rag ? importanceByRAG[rag] : "Maintain engagement and keep communication open.";
                 const importance = rag ? importanceByRAG[rag] : "Maintain engagement and keep communication two-way.";
                     return (
                       <div key={`${m.name}-${i}`} className="p-4 border rounded-xl">
