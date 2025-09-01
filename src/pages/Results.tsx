@@ -756,18 +756,10 @@ function RAGBadge({ rag }: { rag?: RAG }) {
   return <span className={`px-2 py-1 rounded-full text-xs ${cls}`}>{rag}</span>;
 }
 
-/* === Pretty, tile-style heatmap === */
+/* === Pretty, tile-style heatmap (Likelihood × Severity) === */
 function PrettyHeatmap({ matrix }: { matrix: StakeholderResult[][][] }) {
-  const likelihoodLabels = ["Never", "Rarely", "Sometimes", "Often", "Always"];
-  const severityLabels   = ["Very Light", "Light", "Medium", "Heavy", "Very Heavy"];
-
-  const riskLabel = (value: number) => {
-    if (value >= 20) return "Very Significant";
-    if (value >= 12) return "Significant";
-    if (value >= 6)  return "Moderate";
-    if (value >= 3)  return "Minor";
-    return "Insignificant";
-  };
+  const likelihoodLabels = ["Never", "Rarely", "Sometimes", "Often", "Always"]; // 1..5
+  const severityLabels   = ["Very Light", "Light", "Medium", "Heavy", "Very Heavy"]; // 1..5
 
   const tileColor = (value: number) => {
     if (value >= 20) return "bg-red-500";
@@ -780,14 +772,13 @@ function PrettyHeatmap({ matrix }: { matrix: StakeholderResult[][][] }) {
     return "bg-green-700";
   };
 
-  const textColor = (value: number) => (value >= 16 ? "text-white" : "text-black/80");
-
-  const rows = [5, 4, 3, 2, 1]; // Likelihood top→bottom
-  const cols = [1, 2, 3, 4, 5]; // Severity left→right
+  const rows = [5, 4, 3, 2, 1]; // Likelihood high→low
+  const cols = [1, 2, 3, 4, 5]; // Severity low→high
 
   return (
     <div className="w-full overflow-x-auto">
       <div className="min-w-[720px]">
+        {/* Severity (X-axis) */}
         <div className="grid grid-cols-[120px_repeat(5,minmax(0,1fr))] gap-3 items-center mb-2">
           <div />
           {cols.map((s) => (
@@ -797,32 +788,30 @@ function PrettyHeatmap({ matrix }: { matrix: StakeholderResult[][][] }) {
           ))}
         </div>
 
+        {/* Matrix grid */}
         <div className="grid gap-3">
           {rows.map((l) => (
             <div key={l} className="grid grid-cols-[120px_repeat(5,minmax(0,1fr))] gap-3">
+              {/* Likelihood label */}
               <div className="flex items-center justify-end pr-2 text-sm font-medium text-muted-foreground">
                 {likelihoodLabels[l-1]}
               </div>
+
               {cols.map((s) => {
                 const cell = matrix[l-1][s-1];
-                const value = s * l; // display number like in your example
-                const label = riskLabel(value);
-                const title = cell.length ? cell.map(r => r.name).join(", ") : "No stakeholders";
+                const value = s * l; // Severity × Likelihood
                 return (
                   <div
                     key={`${l}-${s}`}
-                    title={title}
-                    className={`relative h-24 rounded-xl ${tileColor(value)} shadow-sm transition-transform hover:scale-[1.01]`}
+                    className={`relative h-24 rounded-2xl ${tileColor(value)} shadow-sm transition-transform hover:scale-[1.01]`}
                   >
-                    <div className={`absolute inset-0 flex flex-col items-center justify-center ${textColor(value)} select-none`}>
-                      <div className="text-sm font-semibold">{label}</div>
-                      <div className="text-[11px] opacity-90">Value: {value}</div>
-                    </div>
-                    <div className="absolute bottom-1 right-1">
-                      <span className={`px-2 py-0.5 rounded-full text-[10px] bg-white/80 text-black/80 shadow`}>
-                        {cell.length} {cell.length === 1 ? "grp" : "grps"}
-                      </span>
-                    </div>
+                    {cell.length > 0 && (
+                      <div className="absolute inset-0 flex flex-col items-center justify-center p-2 text-center">
+                        <div className="text-white text-sm font-semibold leading-tight whitespace-pre-line">
+                          {cell.map(r => r.name).join("\n")}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 );
               })}
@@ -830,11 +819,12 @@ function PrettyHeatmap({ matrix }: { matrix: StakeholderResult[][][] }) {
           ))}
         </div>
 
+        {/* Axis labels */}
         <div className="mt-3 grid grid-cols-[120px_repeat(5,minmax(0,1fr))]">
           <div />
-          <div className="col-span-5 text-center text-sm text-muted-foreground">Consequence</div>
+          <div className="col-span-5 text-center text-sm text-muted-foreground">Severity</div>
         </div>
-        <div className="-mt-[160px] -rotate-90 origin-left translate-x-[-120px] text-sm text-muted-foreground hidden md:block">
+        <div className="-mt-[140px] -rotate-90 origin-left translate-x-[-120px] text-sm text-muted-foreground hidden md:block">
           Likelihood
         </div>
       </div>
