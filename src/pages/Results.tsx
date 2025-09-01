@@ -754,57 +754,104 @@ function RAGBadge({ rag }: { rag?: RAG }) {
   return <span className={`px-2 py-1 rounded-full text-xs ${cls}`}>{rag}</span>;
 }
 
-function HeatmapTable({ matrix }: { matrix: StakeholderResult[][][] }) {
-  // Render Likelihood rows 5→1 and Severity cols 1→5
-  const rows = useMemo(() => [5, 4, 3, 2, 1], []);
-  const cols = useMemo(() => [1, 2, 3, 4, 5], []);
+/* Replace old HeatmapTable with this prettier, tile-style grid */
+function PrettyHeatmap({ matrix }: { matrix: StakeholderResult[][][] }) {
+  // Labels (5=top/leftmost per your data)
+  const likelihoodLabels = ["Never", "Rarely", "Sometimes", "Often", "Always"];       // index 0..4 => 1..5
+  const severityLabels   = ["Very Light", "Light", "Medium", "Heavy", "Very Heavy"];  // index 0..4 => 1..5
 
-  const cellBg = (stakeholders: StakeholderResult[]) => {
-    const worst = stakeholders.reduce((m, s) => Math.max(m, s.riskScore), 0);
-    if (worst >= 16) return "bg-red-100";
-    if (worst >= 9) return "bg-yellow-100";
-    if (worst > 0) return "bg-green-100";
-    return "";
+  // compute display risk label for a severity×likelihood value
+  const riskLabel = (value: number) => {
+    if (value >= 20) return "Very Significant";
+    if (value >= 12) return "Significant";
+    if (value >= 6)  return "Moderate";
+    if (value >= 3)  return "Minor";
+    return "Insignificant";
   };
 
+  // background color “buckets” inspired by your example
+  const tileColor = (value: number) => {
+    if (value >= 20) return "bg-red-500";       // 20–25
+    if (value >= 16) return "bg-red-400";       // 16–19
+    if (value >= 12) return "bg-amber-400";     // 12–15
+    if (value >= 8)  return "bg-yellow-300";    // 8–11
+    if (value >= 5)  return "bg-lime-300";      // 5–7
+    if (value >= 3)  return "bg-green-400";     // 3–4
+    if (value >= 2)  return "bg-green-600";     // 2
+    return "bg-green-700";                      // 1
+  };
+
+  // text color to keep contrast readable
+  const textColor = (value: number) => (value >= 16 ? "text-white" : "text-black/80");
+
+  // we render Likelihood 5→1 (top to bottom), Severity 1→5 (left to right)
+  const rows = [5, 4, 3, 2, 1];
+  const cols = [1, 2, 3, 4, 5];
+
   return (
-    <div className="overflow-auto">
-      <table className="min-w-full border rounded-xl">
-        <thead>
-          <tr>
-            <th className="p-2 text-left text-xs">Likelihood \\ Severity</th>
-            {cols.map((s) => (
-              <th key={s} className="p-2 text-xs font-medium">{s}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
+    <div className="w-full overflow-x-auto">
+      <div className="min-w-[720px]">
+        {/* Header spacing */}
+        <div className="grid grid-cols-[120px_repeat(5,minmax(0,1fr))] gap-3 items-center mb-2">
+          <div /> 
+          {cols.map((s) => (
+            <div key={s} className="text-center text-sm font-medium text-muted-foreground">
+              {severityLabels[s-1]}
+            </div>
+          ))}
+        </div>
+
+        {/* Rows */}
+        <div className="grid gap-3">
           {rows.map((l) => (
-            <tr key={l}>
-              <td className="p-2 text-xs font-medium">{l}</td>
+            <div key={l} className="grid grid-cols-[120px_repeat(5,minmax(0,1fr))] gap-3">
+              {/* Likelihood label */}
+              <div className="flex items-center justify-end pr-2 text-sm font-medium text-muted-foreground">
+                {likelihoodLabels[l-1]}
+              </div>
+
+              {/* 5 tiles for each severity */}
               {cols.map((s) => {
-                const cell = matrix[l - 1][s - 1];
+                const cell = matrix[l-1][s-1];
+                // representative value = s*l (max risk in that cell also works if you prefer)
+                const value = s * l;
+                const label = riskLabel(value);
+                // Tooltip: show stakeholder names on hover
+                const title = cell.length ? `${cell.map((r) => r.name).join(", ")}` : "No stakeholders";
+
                 return (
-                  <td key={`${l}-${s}`} className={`align-top p-2 text-xs border ${cellBg(cell)}`}>
-                    {cell.length ? (
-                      <ul className="space-y-1">
-                        {cell.map((r) => (
-                          <li key={`${r.name}-${r.riskScore}`} className="leading-snug">
-                            <span className="font-medium">{r.name}</span>
-                            <span className="ml-1 text-[11px] text-muted-foreground">RS:{r.riskScore}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <span className="text-muted-foreground">–</span>
-                    )}
-                  </td>
+                  <div
+                    key={`${l}-${s}`}
+                    title={title}
+                    className={`relative h-24 rounded-xl ${tileColor(value)} shadow-sm transition-transform hover:scale-[1.01]`}
+                  >
+                    <div className={`absolute inset-0 flex flex-col items-center justify-center ${textColor(value)} select-none`}>
+                      <div className="text-sm font-semibold">{label}</div>
+                      <div className="text-[11px] opacity-90">Value: {value}</div>
+                    </div>
+
+                    {/* Bottom-right small badge with count */}
+                    <div className="absolute bottom-1 right-1">
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] bg-white/80 ${textColor(1)} shadow`}>
+                        {cell.length} {cell.length === 1 ? "grp" : "grps"}
+                      </span>
+                    </div>
+                  </div>
                 );
               })}
-            </tr>
+            </div>
           ))}
-        </tbody>
-      </table>
+        </div>
+
+        {/* Axes labels */}
+        <div className="mt-3 grid grid-cols-[120px_repeat(5,minmax(0,1fr))]">
+          <div />
+          <div className="col-span-5 text-center text-sm text-muted-foreground">Consequence</div>
+        </div>
+        <div className="-mt-[160px] -rotate-90 origin-left translate-x-[-120px] text-sm text-muted-foreground hidden md:block">
+          Likelihood
+        </div>
+      </div>
     </div>
   );
 }
