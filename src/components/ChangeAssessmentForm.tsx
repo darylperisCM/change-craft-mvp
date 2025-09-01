@@ -43,7 +43,7 @@ const industries = [
   'Other',
 ]
 
-const stakeholderGroupsMap = {
+export const stakeholderGroupsMap = {
   Internal: [
     'Board / Investors',
     'Executive Leadership',
@@ -73,7 +73,12 @@ const stakeholderGroupsMap = {
     'Unions / Works Council',
   ],
 } as const
-
+// Flat list for any legacy code that still references stakeholderOptions
+export const stakeholderOptions = [
+  ...stakeholderGroupsMap.Internal,
+  ...stakeholderGroupsMap.Functions,
+  ...stakeholderGroupsMap.External,
+]
 
 const changeTypeOptions = [
   'Technology',
