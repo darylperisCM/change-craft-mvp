@@ -645,12 +645,14 @@ const Results: React.FC = () => {
                 <CardContent className="space-y-4">
                   {recommendation.stakeholderMitigations!.map((m, i) => {
                     const rag = recommendation.stakeholderImpact?.stakeholders.find(s => s.name === m.name)?.rag;
+                const importance = rag ? importanceByRAG[rag] : "Maintain engagement and keep communication two-way.";
                     return (
                       <div key={`${m.name}-${i}`} className="p-4 border rounded-xl">
                         <div className="flex items-center justify-between">
                           <div className="font-medium">{m.name}</div>
                           <RAGBadge rag={rag} />
                         </div>
+                        {/* Importance line based on RAG */} <p className="mt-2 text-sm italic text-muted-foreground">{importance}</p>
                         {Array.isArray(m.mitigation) ? (
                           <ul className="mt-2 list-disc list-inside text-sm space-y-1">
                             {m.mitigation.map((li, j) => <li key={j}>{li}</li>)}
