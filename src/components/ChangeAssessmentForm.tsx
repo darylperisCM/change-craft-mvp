@@ -43,36 +43,35 @@ const industries = [
   'Other',
 ]
 
-const stakeholderGroupsMap = {
-  Internal: [
-    'Board / Investors',
-    'Executive Leadership',
-    'Senior Management',
-    'Middle Management',
-    'Team Leads',
-    'Frontline Employees',
-  ],
-  Functions: [
-    'IT / Engineering',
-    'Product / R&D',
-    'Operations',
-    'HR / People',
-    'Finance',
-    'Sales',
-    'Marketing',
-    'Customer Support / Success',
-    'Legal / Compliance',
-    'Facilities / EHS',
-    'Supply Chain / Procurement',
-  ],
-  External: [
-    'Customers',
-    'Partners',
-    'Vendors / Suppliers',
-    'Regulators',
-    'Unions / Works Council',
-  ],
-} as const
+const stakeholderOptions = [
+  // Internal
+  'Board / Investors',
+  'Executive Leadership',
+  'Senior Management',
+  'Middle Management',
+  'Team Leads',
+  'Frontline Employees',
+
+  // Functions (pick what’s relevant)
+  'IT / Engineering',
+  'Product / R&D',
+  'Operations',
+  'HR / People',
+  'Finance',
+  'Sales',
+  'Marketing',
+  'Customer Support / Success',
+  'Legal / Compliance',
+  'Facilities / EHS',
+  'Supply Chain / Procurement',
+
+  // External
+  'Customers',
+  'Partners',
+  'Vendors / Suppliers',
+  'Regulators',
+  'Unions / Works Council',
+]
 
 
 const changeTypeOptions = [
@@ -88,14 +87,6 @@ const sanitizeLevel = (n: number | undefined) => {
   const x = Number(n ?? 3)
   if (Number.isNaN(x)) return 3
   return Math.min(5, Math.max(1, Math.round(x)))
-}
-
-function ScaleLegend() {
-  return (
-    <p className="text-xs text-muted-foreground mt-1">
-      1 = Low • 5 = High
-    </p>
-  );
 }
 
 export const ChangeAssessmentForm: React.FC = () => {
