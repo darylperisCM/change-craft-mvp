@@ -89,6 +89,14 @@ const sanitizeLevel = (n: number | undefined) => {
   return Math.min(5, Math.max(1, Math.round(x)))
 }
 
+function ScaleLegend() {
+  return (
+    <p className="text-xs text-muted-foreground mt-1">
+      1 = Low • 5 = High
+    </p>
+  );
+}
+
 export const ChangeAssessmentForm: React.FC = () => {
   const navigate = useNavigate()
   const { toast } = useToast()
