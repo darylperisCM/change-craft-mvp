@@ -43,35 +43,36 @@ const industries = [
   'Other',
 ]
 
-const stakeholderOptions = [
-  // Internal
-  'Board / Investors',
-  'Executive Leadership',
-  'Senior Management',
-  'Middle Management',
-  'Team Leads',
-  'Frontline Employees',
-
-  // Functions (pick what’s relevant)
-  'IT / Engineering',
-  'Product / R&D',
-  'Operations',
-  'HR / People',
-  'Finance',
-  'Sales',
-  'Marketing',
-  'Customer Support / Success',
-  'Legal / Compliance',
-  'Facilities / EHS',
-  'Supply Chain / Procurement',
-
-  // External
-  'Customers',
-  'Partners',
-  'Vendors / Suppliers',
-  'Regulators',
-  'Unions / Works Council',
-]
+const stakeholderGroupsMap = {
+  Internal: [
+    'Board / Investors',
+    'Executive Leadership',
+    'Senior Management',
+    'Middle Management',
+    'Team Leads',
+    'Frontline Employees',
+  ],
+  Functions: [
+    'IT / Engineering',
+    'Product / R&D',
+    'Operations',
+    'HR / People',
+    'Finance',
+    'Sales',
+    'Marketing',
+    'Customer Support / Success',
+    'Legal / Compliance',
+    'Facilities / EHS',
+    'Supply Chain / Procurement',
+  ],
+  External: [
+    'Customers',
+    'Partners',
+    'Vendors / Suppliers',
+    'Regulators',
+    'Unions / Works Council',
+  ],
+} as const
 
 
 const changeTypeOptions = [
