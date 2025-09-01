@@ -43,34 +43,44 @@ const industries = [
   'Other',
 ]
 
-const stakeholderOptions = [
-  // Internal
-  'Board / Investors',
-  'Executive Leadership',
-  'Senior Management',
-  'Middle Management',
-  'Team Leads',
-  'Frontline Employees',
-
-  // Functions (pick what’s relevant)
-  'IT / Engineering',
-  'Product / R&D',
-  'Operations',
-  'HR / People',
-  'Finance',
-  'Sales',
-  'Marketing',
-  'Customer Support / Success',
-  'Legal / Compliance',
-  'Facilities / EHS',
-  'Supply Chain / Procurement',
-
-  // External
-  'Customers',
-  'Partners',
-  'Vendors / Suppliers',
-  'Regulators',
-  'Unions / Works Council',
+const stakeholderSections = [
+  {
+    title: 'Internal',
+    options: [
+      'Board / Investors',
+      'Executive Leadership',
+      'Senior Management',
+      'Middle Management',
+      'Team Leads',
+      'Frontline Employees',
+    ]
+  },
+  {
+    title: 'Functions',
+    options: [
+      'IT / Engineering',
+      'Product / R&D',
+      'Operations',
+      'HR / People',
+      'Finance',
+      'Sales',
+      'Marketing',
+      'Customer Support / Success',
+      'Legal / Compliance',
+      'Facilities / EHS',
+      'Supply Chain / Procurement',
+    ]
+  },
+  {
+    title: 'External',
+    options: [
+      'Customers',
+      'Partners',
+      'Vendors / Suppliers',
+      'Regulators',
+      'Unions / Works Council',
+    ]
+  }
 ]
 
 
@@ -253,25 +263,34 @@ export const ChangeAssessmentForm: React.FC = () => {
           {/* Stakeholder Groups */}
           <div className="space-y-6">
             <Label className="text-xl font-bold text-foreground">Affected Stakeholder Groups *</Label>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {stakeholderOptions.map((group) => {
-                const checked = formData.stakeholderGroups.includes(group)
-                return (
-                  <div
-                    key={group}
-                    className="flex items-center space-x-3 p-6 glass-card rounded-modern hover:bg-white/20 transition-all duration-300 card-hover"
-                  >
-                    <Checkbox
-                      id={group}
-                      checked={checked}
-                      onCheckedChange={(c) => handleStakeholderGroupChange(group, Boolean(c))}
-                    />
-                    <Label htmlFor={group} className="font-semibold cursor-pointer text-foreground">
-                      {group}
-                    </Label>
+            <div className="space-y-8">
+              {stakeholderSections.map((section) => (
+                <div key={section.title} className="space-y-4">
+                  <h4 className="text-lg font-semibold text-foreground border-b border-border pb-2">
+                    {section.title}
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {section.options.map((group) => {
+                      const checked = formData.stakeholderGroups.includes(group)
+                      return (
+                        <div
+                          key={group}
+                          className="flex items-center space-x-3 p-6 glass-card rounded-modern hover:bg-white/20 transition-all duration-300 card-hover"
+                        >
+                          <Checkbox
+                            id={`stakeholder-${group.replace(/\s+/g, '-').toLowerCase()}`}
+                            checked={checked}
+                            onCheckedChange={(c) => handleStakeholderGroupChange(group, Boolean(c))}
+                          />
+                          <Label htmlFor={`stakeholder-${group.replace(/\s+/g, '-').toLowerCase()}`} className="font-semibold cursor-pointer text-foreground">
+                            {group}
+                          </Label>
+                        </div>
+                      )
+                    })}
                   </div>
-                )
-              })}
+                </div>
+              ))}
             </div>
 
             {/* NEW: Severity & Likelihood sliders for selected groups */}
