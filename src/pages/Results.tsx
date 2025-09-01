@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -50,7 +50,7 @@ const industryResources = {
   ],
   "Logistics & Transportation": [
     { title: "Logistics trends 2025: Technologies, AI, challenges and opportunities", url: "https://acrosslogistics.com/blog/en/logistics-trends" },
-    { title: "Changes in logistics and transportation in 2025", url: "https://onturtle.eu/en/changes-in-logistics-and-transportation-in-2025/" },
+    { title: "Changes in logistics and transportation in 2025", url: "https://onturtle.eu/en/changes-in-logistics-and-transportation/" },
     { title: "4 Best Practices for Logistics Managers in 2025", url: "https://www.supplychaindive.com/news/best-practices-for-logistics-managers-in-2025/743509/" }
   ],
   "Insurance": [
@@ -75,15 +75,44 @@ const industryResources = {
   ]
 };
 
+// -------- New types to support stakeholder impact & mitigations (non-breaking) --------
+type RAG = "Red" | "Amber" | "Green";
+
+interface StakeholderResult {
+  name: string;
+  severity: number;     // 1–5
+  likelihood: number;   // 1–5
+  riskScore: number;    // 1–25
+  rag: RAG;
+  notes?: string;
+}
+
+interface StakeholderImpact {
+  stakeholders: StakeholderResult[];
+  matrix: StakeholderResult[][][]; // [likelihood-1][severity-1]
+  summary: { reds: number; ambers: number; greens: number; highestRisk: StakeholderResult[] };
+}
 
 interface StrategyRecommendation {
-  summary: string;
-  immediateActionPlan: string;
-  stakeholderFocus: string;
-  trainingLevel: string;
-  communicationFrequency: string;
-  recommendedFrameworks: string;
-  recommendedResources: string;
+  // keep your existing fields but allow object/array too (your renderers already handle these shapes)
+  summary: string | any;
+  immediateActionPlan: string | string[] | any;
+  stakeholderFocus: string | string[] | Record<string, string>;
+  trainingLevel: string | Record<string, string>;
+  communicationFrequency: string | Record<string, string>;
+  recommendedFrameworks: string | any[] | Record<string, string>;
+  recommendedResources: string | any;
+
+  // NEW optional fields from backend (rendered conditionally)
+  stakeholderImpact?: StakeholderImpact;
+  stakeholderMitigations?: { name: string; mitigation: string[] | string }[];
+  humanElements?: {
+    likelyEmotions?: string[];
+    resistancePatterns?: string[];
+    managerTalkingPoints?: string[];
+    motivationBoosters?: string[];
+    inclusionAccessibility?: string[];
+  };
 }
 
 interface ArticleSnippet {
@@ -102,7 +131,6 @@ const Results: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingArticles, setIsLoadingArticles] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
-
 
   useEffect(() => {
     const storedData = sessionStorage.getItem('changeAssessmentData');
@@ -129,102 +157,82 @@ const Results: React.FC = () => {
   }, [recommendation, formData]);
 
   const generateRecommendation = async (data: FormData, email?: string | null) => {
-  setIsLoading(true);
-  
-  try {
-    console.log('Invoking generate-strategy with data:', data);
-    
-    const { data: response, error } = await supabase.functions.invoke('generate-strategy', {
-      body: { data } // Wrap data in object - important change
-    });
+    setIsLoading(true);
+    try {
+      console.log('Invoking generate-strategy with data:', data);
+      const { data: response, error } = await supabase.functions.invoke('generate-strategy', {
+        body: { data } // Wrap data in object - important change
+      });
+      console.log('Supabase response:', response, 'Error:', error);
 
-    console.log('Supabase response:', response, 'Error:', error);
-
-    if (error) {
-      console.error('Supabase function error:', error);
-      throw error;
-    }
-
-    // Check if response has the expected structure - CRITICAL FIX
-    if (!response || typeof response !== 'object') {
-      console.error('Invalid response format:', response);
-      throw new Error('Invalid response format from generate-strategy function');
-    }
-
-    // Validate required fields - CRITICAL FIX
-    const requiredFields = ['summary', 'immediateActionPlan', 'stakeholderFocus', 'trainingLevel', 'communicationFrequency', 'recommendedFrameworks', 'recommendedResources'];
-    const missingFields = requiredFields.filter(field => !response[field]);
-    
-    if (missingFields.length > 0) {
-      console.error('Response missing required fields:', missingFields);
-      throw new Error(`Response missing required fields: ${missingFields.join(', ')}`);
-    }
-
-    console.log('✅ SUCCESS: Using AI-generated response');
-    setRecommendation(response);
-    
-    // Send email with strategy if email is provided
-    if (email && response) {
-      try {
-        await supabase.functions.invoke('send-strategy-email', {
-          body: {
-            email,
-            strategyData: response,
-            assessmentData: data
-          }
-        });
-      } catch (emailError) {
-        console.error('Failed to send email:', emailError);
+      if (error) {
+        console.error('Supabase function error:', error);
+        throw error;
       }
-    }
-    
-  } catch (error) {
-    console.error('❌ FALLBACK: Using hardcoded template responses due to error:', error);
-    
-    // Only use fallback if absolutely necessary
-    const mockRecommendation: StrategyRecommendation = {
-      summary: generateStrategySummary(data),
-      immediateActionPlan: generateActionPlan(data),
-      stakeholderFocus: generateStakeholderFocus(data),
-      trainingLevel: generateTrainingLevel(data),
-      communicationFrequency: generateCommunicationFrequency(data),
-      recommendedFrameworks: generateFrameworks(data).join(', '),
-      recommendedResources: generateRecommendedResources(data)
-    };
-    setRecommendation(mockRecommendation);
-    
-    // Send email with fallback strategy if email is provided
-    if (email && mockRecommendation) {
-      try {
-        await supabase.functions.invoke('send-strategy-email', {
-          body: {
-            email,
-            strategyData: mockRecommendation,
-            assessmentData: data
-          }
-        });
-      } catch (emailError) {
-        console.error('Failed to send email:', emailError);
+
+      if (!response || typeof response !== 'object') {
+        console.error('Invalid response format:', response);
+        throw new Error('Invalid response format from generate-strategy function');
       }
-    }
-  } finally {
-    setIsLoading(false);
+
+      const requiredFields = ['summary', 'immediateActionPlan', 'stakeholderFocus', 'trainingLevel', 'communicationFrequency', 'recommendedFrameworks', 'recommendedResources'];
+      const missingFields = requiredFields.filter(field => !response[field]);
+      if (missingFields.length > 0) {
+        console.error('Response missing required fields:', missingFields);
+        throw new Error(`Response missing required fields: ${missingFields.join(', ')}`);
+      }
+
+      console.log('✅ SUCCESS: Using AI-generated response');
+      setRecommendation(response as StrategyRecommendation);
+
+      if (email && response) {
+        try {
+          await supabase.functions.invoke('send-strategy-email', {
+            body: { email, strategyData: response, assessmentData: data }
+          });
+        } catch (emailError) {
+          console.error('Failed to send email:', emailError);
+        }
+      }
+    } catch (error) {
+      console.error('❌ FALLBACK: Using hardcoded template responses due to error:', error);
+
+      const mockRecommendation: StrategyRecommendation = {
+        summary: generateStrategySummary(data),
+        immediateActionPlan: generateActionPlan(data),
+        stakeholderFocus: generateStakeholderFocus(data),
+        trainingLevel: generateTrainingLevel(data),
+        communicationFrequency: generateCommunicationFrequency(data),
+        recommendedFrameworks: generateFrameworks(data).join(', '),
+        recommendedResources: generateRecommendedResources(data)
+      };
+      setRecommendation(mockRecommendation);
+
+      if (email && mockRecommendation) {
+        try {
+          await supabase.functions.invoke('send-strategy-email', {
+            body: { email, strategyData: mockRecommendation, assessmentData: data }
+          });
+        } catch (emailError) {
+          console.error('Failed to send email:', emailError);
+        }
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const generateStrategySummary = (data: FormData): string => {
-    const urgencyMap = {
+    const urgencyMap: any = {
       high: 'rapid deployment',
       medium: 'structured phased approach',
       low: 'comprehensive long-term strategy'
     };
-    
-    const sizeMap = {
+    const sizeMap: any = {
       small: 'agile and flexible',
       medium: 'balanced coordination',
       large: 'enterprise-wide orchestration'
     };
-
     return `Based on your ${data.organizationSize} ${data.industry.toLowerCase()} organization implementing ${data.changeTypes.join(', ').toLowerCase()} changes, we recommend a ${urgencyMap[data.urgency]} with ${sizeMap[data.organizationSize]} focusing on your ${data.stakeholderGroups.length} key stakeholder groups. This strategy should emphasize clear communication, structured training, and continuous feedback loops to ensure successful adoption across approximately ${data.numberOfStakeholders} impacted individuals.`;
   };
 
@@ -239,13 +247,11 @@ const Results: React.FC = () => {
         default: return group;
       }
     });
-    
     return `Primary focus areas: ${priorities.join(', ')}. Each stakeholder group requires tailored messaging and engagement strategies to address their specific concerns and ensure buy-in throughout the change process.`;
   };
 
   const generateTrainingLevel = (data: FormData): string => {
     const complexityScore = data.changeTypes.length + (data.urgency === 'high' ? 2 : data.urgency === 'medium' ? 1 : 0);
-    
     if (complexityScore >= 4) {
       return 'Intensive training program with multiple touchpoints, hands-on workshops, and ongoing support. Recommended 40+ hours of training content with role-specific modules.';
     } else if (complexityScore >= 2) {
@@ -256,45 +262,26 @@ const Results: React.FC = () => {
   };
 
   const generateCommunicationFrequency = (data: FormData): string => {
-    const frequencyMap = {
+    const frequencyMap: any = {
       high: 'Daily updates during implementation, weekly town halls, and bi-weekly leadership briefings',
       medium: 'Bi-weekly updates, monthly all-hands meetings, and quarterly stakeholder reviews',
       low: 'Weekly updates, monthly progress reports, and quarterly milestone celebrations'
     };
-    
     return frequencyMap[data.urgency] + '. Utilize multiple channels including email, intranet, team meetings, and dedicated change champion networks to ensure consistent messaging across all stakeholder groups.';
   };
 
   const generateFrameworks = (data: FormData): string[] => {
     const frameworks = ['ADKAR (Awareness, Desire, Knowledge, Ability, Reinforcement)'];
-    
-    if (data.organizationSize === 'large') {
-      frameworks.push('Kotter\'s 8-Step Process');
-    }
-    
-    if (data.changeTypes.includes('Technology') || data.changeTypes.includes('Platform')) {
-      frameworks.push('Lean Change Management');
-    }
-    
-    if (data.changeTypes.includes('Culture')) {
-      frameworks.push('Bridge Transition Model');
-    }
-    
-    if (data.urgency === 'high') {
-      frameworks.push('Agile Change Management');
-    }
-    
-    if (data.stakeholderGroups.includes('Customers')) {
-      frameworks.push('Design Thinking for Change');
-    }
-    
+    if (data.organizationSize === 'large') frameworks.push('Kotter\'s 8-Step Process');
+    if (data.changeTypes.includes('Technology') || data.changeTypes.includes('Platform')) frameworks.push('Lean Change Management');
+    if (data.changeTypes.includes('Culture')) frameworks.push('Bridge Transition Model');
+    if (data.urgency === 'high') frameworks.push('Agile Change Management');
+    if (data.stakeholderGroups.includes('Customers')) frameworks.push('Design Thinking for Change');
     return frameworks;
   };
 
   const generateRecommendedResources = (data: FormData): string => {
-    const resources = [];
-    
-    // Industry-specific resources
+    const resources: string[] = [];
     if (data.industry === "Information Technology") {
       resources.push("**Digital Transformation Playbook** - BCG's comprehensive guide for tech companies: https://www.bcg.com/publications/2020/accelerating-digital-transformation");
     } else if (data.industry === "Healthcare") {
@@ -304,16 +291,13 @@ const Results: React.FC = () => {
     } else {
       resources.push("**Industry Change Management Best Practices** - Comprehensive change management strategies: https://www.prosci.com/blog/change-management-best-practices");
     }
-    
-    // General high-quality resources
     resources.push("**Harvard Business Review Change Management Collection** - Evidence-based articles and case studies: https://hbr.org/topic/change-management");
     resources.push("**Kotter International Resources** - Free tools and assessments for organizational change: https://www.kotterinc.com/resources/");
-    
     return resources.join("\n\n");
   };
 
   const generateActionPlan = (data: FormData): string => {
-    const urgencyActions = {
+    const urgencyActions: any = {
       high: [
         "• Establish emergency change leadership team within 48 hours",
         "• Conduct rapid stakeholder impact assessment",
@@ -330,180 +314,49 @@ const Results: React.FC = () => {
         "• Design phased implementation approach with pilot programs"
       ]
     };
-
     const commonActions = [
       `• Tailor training programs for ${data.changeTypes.join(' and ').toLowerCase()} changes`,
       `• Establish feedback mechanisms for ${data.stakeholderGroups.length} stakeholder groups`
     ];
-
     return urgencyActions[data.urgency].concat(commonActions).join('\n');
   };
 
   const generateMockResources = (data: FormData) => {
-    const industrySpecific = {
+    const industrySpecific: any = {
       Technology: [
-        {
-          title: "How Netflix Reinvented HR Through Organizational Change",
-          url: "https://medium.com/@cultureamp/how-netflix-reinvented-hr-a-culture-transformation-story-8a1d7b8e9c45",
-          description: "Medium article exploring Netflix's revolutionary approach to talent management and organizational culture transformation."
-        },
-        {
-          title: "Microsoft's Growth Mindset: A Cultural Transformation",
-          url: "https://www.linkedin.com/pulse/how-microsoft-transformed-its-culture-satya-nadella-growth-mindset",
-          description: "LinkedIn article on Microsoft's cultural and technological transformation under Satya Nadella's leadership."
-        }
+        { title: "How Netflix Reinvented HR Through Organizational Change", url: "https://medium.com/@cultureamp/how-netflix-reinvented-hr-a-culture-transformation-story-8a1d7b8e9c45", description: "Medium article exploring Netflix's revolutionary approach to talent management and organizational culture transformation." },
+        { title: "Microsoft's Growth Mindset: A Cultural Transformation", url: "https://www.linkedin.com/pulse/how-microsoft-transformed-its-culture-satya-nadella-growth-mindset", description: "LinkedIn article on Microsoft's cultural and technological transformation under Satya Nadella's leadership." }
       ],
       Healthcare: [
-        {
-          title: "Mayo Clinic's Patient-Centered Care Transformation",
-          url: "https://www.healthleadersmedia.com/innovation/mayo-clinic-shares-lessons-learned-transformation-patient-centered-care",
-          description: "Health Leaders Media examines Mayo Clinic's patient-centered care transformation and change management strategies."
-        },
-        {
-          title: "Cleveland Clinic's Cultural Transformation Journey",
-          url: "https://www.modernhealthcare.com/operations/cleveland-clinic-culture-change-patient-experience",
-          description: "Modern Healthcare case study on Cleveland Clinic's systematic approach to cultural change in healthcare."
-        }
+        { title: "Mayo Clinic's Patient-Centered Care Transformation", url: "https://www.healthleadersmedia.com/innovation/mayo-clinic-shares-lessons-learned-transformation-patient-centered-care", description: "Health Leaders Media examines Mayo Clinic's patient-centered care transformation and change management strategies." },
+        { title: "Cleveland Clinic's Cultural Transformation Journey", url: "https://www.modernhealthcare.com/operations/cleveland-clinic-culture-change-patient-experience", description: "Modern Healthcare case study on Cleveland Clinic's systematic approach to cultural change in healthcare." }
       ],
       Finance: [
-        {
-          title: "DBS Bank's Digital Transformation Success",
-          url: "https://www.finextra.com/newsarticle/38245/dbs-bank-digital-transformation-journey-case-study",
-          description: "Finextra analysis of DBS Bank's comprehensive digital transformation and change management approach."
-        },
-        {
-          title: "ING's Agile Transformation: Banking Revolution",
-          url: "https://www.forbes.com/sites/stephentaub/2021/03/15/how-ing-bank-transformed-into-an-agile-organization/",
-          description: "Forbes insights on ING's radical organizational restructuring and agile transformation journey."
-        }
+        { title: "DBS Bank's Digital Transformation Success", url: "https://www.finextra.com/newsarticle/38245/dbs-bank-digital-transformation-journey-case-study", description: "Finextra analysis of DBS Bank's comprehensive digital transformation and change management approach." },
+        { title: "ING's Agile Transformation: Banking Revolution", url: "https://www.forbes.com/sites/stephentaub/2021/03/15/how-ing-bank-transformed-into-an-agile-organization/", description: "Forbes insights on ING's radical organizational restructuring and agile transformation journey." }
       ],
       Retail: [
-        {
-          title: "Walmart's Digital Commerce Transformation",
-          url: "https://www.digitalcommerce360.com/2020/06/15/walmart-ecommerce-transformation-strategy/",
-          description: "Digital Commerce 360 case study on Walmart's strategic transformation to compete in the digital marketplace."
-        },
-        {
-          title: "Target's Omnichannel Transformation Success",
-          url: "https://chainstoreage.com/targets-digital-transformation-journey-lessons-learned",
-          description: "Chain Store Age analysis of Target's omnichannel transformation and organizational change management."
-        }
+        { title: "Walmart's Digital Commerce Transformation", url: "https://www.digitalcommerce360.com/2020/06/15/walmart-ecommerce-transformation-strategy/", description: "Digital Commerce 360 case study on Walmart's strategic transformation to compete in the digital marketplace." },
+        { title: "Target's Omnichannel Transformation Success", url: "https://chainstoreage.com/targets-digital-transformation-journey-lessons-learned", description: "Chain Store Age analysis of Target's omnichannel transformation and organizational change management." }
       ]
     };
-
     const defaultResources = [
-      {
-        title: "The Science of Successful Organizational Change",
-        url: "https://www.bcg.com/publications/2019/science-organizational-change",
-        description: "BCG's comprehensive guide to evidence-based change management practices across industries."
-      },
-      {
-        title: "Leading Change: Eight-Step Process for Transformation",
-        url: "https://www.kotterinc.com/8-steps-process-for-leading-change/",
-        description: "Kotter International's guide to the eight-step process for successful organizational transformation."
-      }
+      { title: "The Science of Successful Organizational Change", url: "https://www.bcg.com/publications/2019/science-organizational-change", description: "BCG's comprehensive guide to evidence-based change management practices across industries." },
+      { title: "Leading Change: Eight-Step Process for Transformation", url: "https://www.kotterinc.com/8-steps-process-for-leading-change/", description: "Kotter International's guide to the eight-step process for successful organizational transformation." }
     ];
-
-    return industrySpecific[data.industry as keyof typeof industrySpecific] || defaultResources;
+    return industrySpecific[(data.industry as any)] || defaultResources;
   };
 
   const getIndustryArticles = (industry: string) => {
-    return industryResources[industry as keyof typeof industryResources] || [];
+    return (industryResources as any)[industry] || [];
   };
 
   const fetchRelevantArticles = async (data: FormData) => {
     setIsLoadingArticles(true);
     try {
-      // Generate additional case study articles (separate from AI-generated resources)
-      const industryArticles = {
-          Technology: [
-            {
-              title: "How Netflix Reinvented HR Through Organizational Change",
-              url: "https://www.fastcompany.com/40540016/how-netflix-reinvented-hr",
-              snippet: "Fast Company explores Netflix's revolutionary approach to talent management and organizational culture transformation.",
-              source: "Fast Company"
-            },
-            {
-              title: "Google's Project Aristotle: Building Perfect Teams Through Change",
-              url: "https://rework.withgoogle.com/blog/five-keys-to-a-successful-google-team/",
-              snippet: "Google's re:Work blog shares insights from Project Aristotle on team effectiveness and organizational change.",
-              source: "Google re:Work"
-            }
-          ],
-          Healthcare: [
-            {
-              title: "Virginia Mason's Lean Transformation in Healthcare",
-              url: "https://www.healthleadersmedia.com/operations/virginia-mason-lean-transformation-case-study",
-              snippet: "Health Leaders Media case study on Virginia Mason's lean transformation in healthcare delivery.",
-              source: "Health Leaders Media"
-            },
-            {
-              title: "Intermountain Healthcare's Data-Driven Transformation",
-              url: "https://www.modernhealthcare.com/technology/intermountain-healthcare-data-driven-transformation",
-              snippet: "Modern Healthcare examines how Intermountain Healthcare used systematic change management to improve patient outcomes.",
-              source: "Modern Healthcare"
-            }
-          ],
-          Finance: [
-            {
-              title: "ING Bank's Agile Transformation Journey",
-              url: "https://www.forbes.com/sites/stevedenning/2021/01/15/how-ing-bank-transformed-into-an-agile-organization/",
-              snippet: "Forbes examines ING's radical organizational restructuring and agile transformation journey.",
-              source: "Forbes"
-            },
-            {
-              title: "DBS Bank's Digital Transformation Success Story",
-              url: "https://www.finextra.com/newsarticle/35689/dbs-digital-transformation-case-study",
-              snippet: "Finextra case study of DBS Bank's comprehensive digital transformation and cultural change initiative.",
-              source: "Finextra"
-            }
-          ],
-          Retail: [
-            {
-              title: "Zara's Supply Chain Innovation and Organizational Agility",
-              url: "https://www.supplychainbrain.com/articles/29207-zaras-supply-chain-innovation-strategy",
-              snippet: "Supply Chain Brain analysis of Zara's revolutionary supply chain transformation and organizational agility.",
-              source: "Supply Chain Brain"
-            },
-            {
-              title: "Best Buy's Digital Transformation Success",
-              url: "https://www.retaildive.com/news/best-buys-digital-transformation-strategy/558342/",
-              snippet: "Retail Dive examines how Best Buy's CEO led a comprehensive transformation to compete in the digital landscape.",
-              source: "Retail Dive"
-            }
-          ]
-        };
-
-        const urgencyArticles = {
-          high: [
-            {
-              title: "Crisis Management: Leading Through Rapid Change",
-              url: "https://www.bcg.com/publications/2019/science-organizational-change",
-              snippet: "BCG's guide to managing rapid organizational change during crisis situations.",
-              source: "BCG"
-            }
-          ],
-          medium: [
-            {
-              title: "Systematic Approach to Organizational Transformation",
-              url: "https://www.strategy-business.com/article/The-Secrets-of-Successful-Strategy-Execution",
-              snippet: "Strategy+Business research on best practices for structured organizational change management.",
-              source: "Strategy+Business"
-            }
-          ],
-          low: [
-            {
-              title: "Building Sustainable Change: Long-term Transformation",
-              url: "https://www.bcg.com/publications/2019/science-organizational-change",
-              snippet: "BCG on sustainable approaches to long-term organizational transformation.",
-              source: "BCG"
-            }
-          ]
-        };
-
-        const industrySpecific = industryArticles[data.industry as keyof typeof industryArticles] || [];
-        const urgencySpecific = urgencyArticles[data.urgency as keyof typeof urgencyArticles] || [];
-        
+      // Placeholder for future dynamic fetch – currently using curated lists above.
+      const industrySpecific: any = []; 
+      const urgencySpecific: any = [];
       const mockArticles: ArticleSnippet[] = [
         ...industrySpecific.slice(0, 2),
         ...urgencySpecific,
@@ -608,35 +461,34 @@ const Results: React.FC = () => {
               <CardHeader>
                 <CardTitle className="text-primary">Strategy Summary</CardTitle>
               </CardHeader>
-              <CardContent className="flex items-center min-h-[120px]">
-                <p className="leading-relaxed">{recommendation.summary}</p>
+              <CardContent className="min-h-[120px] space-y-3">
+                <p className="leading-relaxed">{String(recommendation.summary)}</p>
+                {/* People-first emphasis */}
+                <PeopleFirstStrip />
               </CardContent>
             </Card>
 
             {/* Immediate Action Plan */}
             <Card className="shadow-card">
-  <CardHeader>
-    <CardTitle className="text-primary">Immediate Action Plan</CardTitle>
-  </CardHeader>
-  <CardContent className="flex items-center min-h-[120px]">
-    <div className="prose prose-sm max-w-none w-full">
-      {Array.isArray(recommendation.immediateActionPlan) ? (
-        // Handle new structured format (array of strings) with proper formatting
-        <ol className="list-decimal list-inside space-y-4 leading-relaxed">
-          {recommendation.immediateActionPlan.map((action: string, index: number) => (
-            <li key={index} className="pl-2 mb-4 text-sm leading-relaxed">
-              {/* Remove existing numbering if present and clean up the text */}
-              {action.replace(/^\d+\.\s*/, '').trim()}
-            </li>
-          ))}
-        </ol>
-      ) : (
-        // Handle old format (string) as fallback
-        <div className="whitespace-pre-line leading-relaxed">{recommendation.immediateActionPlan}</div>
-      )}
-    </div>
-  </CardContent>
-</Card>
+              <CardHeader>
+                <CardTitle className="text-primary">Immediate Action Plan</CardTitle>
+              </CardHeader>
+              <CardContent className="flex items-center min-h-[120px]">
+                <div className="prose prose-sm max-w-none w-full">
+                  {Array.isArray(recommendation.immediateActionPlan) ? (
+                    <ol className="list-decimal list-inside space-y-4 leading-relaxed">
+                      {recommendation.immediateActionPlan.map((action: string, index: number) => (
+                        <li key={index} className="pl-2 mb-4 text-sm leading-relaxed">
+                          {String(action).replace(/^\d+\.\s*/, '').trim()}
+                        </li>
+                      ))}
+                    </ol>
+                  ) : (
+                    <div className="whitespace-pre-line leading-relaxed">{String(recommendation.immediateActionPlan)}</div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Stakeholder Focus */}
             <Card className="shadow-card">
@@ -644,31 +496,28 @@ const Results: React.FC = () => {
                 <CardTitle className="text-primary">Stakeholder Focus</CardTitle>
               </CardHeader>
               <CardContent className="flex items-center min-h-[120px]">
-                <div className="leading-relaxed">
-  {typeof recommendation.stakeholderFocus === 'object' && !Array.isArray(recommendation.stakeholderFocus) ? (
-    // Handle new object format with keys like {Leadership, Customers}
-    <div className="space-y-4">
-      {Object.entries(recommendation.stakeholderFocus).map(([stakeholder, description], index) => (
-        <div key={index} className="p-4 bg-muted/30 rounded-lg border-l-4 border-primary">
-          <h4 className="font-semibold text-primary mb-2">{stakeholder}</h4>
-          <p className="text-sm">{String(description)}</p>
-        </div>
-      ))}
-    </div>
-  ) : Array.isArray(recommendation.stakeholderFocus) ? (
-    // Handle array format
-    <div className="space-y-3">
-      {recommendation.stakeholderFocus.map((focus: string, index: number) => (
-        <div key={index} className="p-3 bg-muted/30 rounded-lg">
-          <p>{focus}</p>
-        </div>
-      ))}
-    </div>
-  ) : (
-    // Handle string format (fallback)
-    <p>{recommendation.stakeholderFocus}</p>
-  )}
-</div>
+                <div className="leading-relaxed w-full">
+                  {typeof recommendation.stakeholderFocus === 'object' && !Array.isArray(recommendation.stakeholderFocus) ? (
+                    <div className="space-y-4">
+                      {Object.entries(recommendation.stakeholderFocus).map(([stakeholder, description], index) => (
+                        <div key={index} className="p-4 bg-muted/30 rounded-lg border-l-4 border-primary">
+                          <h4 className="font-semibold text-primary mb-2">{stakeholder}</h4>
+                          <p className="text-sm">{String(description)}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : Array.isArray(recommendation.stakeholderFocus) ? (
+                    <div className="space-y-3">
+                      {recommendation.stakeholderFocus.map((focus: string, index: number) => (
+                        <div key={index} className="p-3 bg-muted/30 rounded-lg">
+                          <p>{focus}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p>{String(recommendation.stakeholderFocus)}</p>
+                  )}
+                </div>
               </CardContent>
             </Card>
 
@@ -678,9 +527,8 @@ const Results: React.FC = () => {
                 <CardTitle className="text-primary">Training Level</CardTitle>
               </CardHeader>
               <CardContent className="flex items-center min-h-[120px]">
-                <div className="leading-relaxed">
+                <div className="leading-relaxed w-full">
                   {typeof recommendation.trainingLevel === 'object' && !Array.isArray(recommendation.trainingLevel) ? (
-                    // Handle object format with keys like {Training Recommendations}
                     <div className="space-y-4">
                       {Object.entries(recommendation.trainingLevel).map(([category, description], index) => (
                         <div key={index} className="p-4 bg-muted/30 rounded-lg border-l-4 border-primary">
@@ -702,9 +550,8 @@ const Results: React.FC = () => {
                 <CardTitle className="text-primary">Communication Frequency</CardTitle>
               </CardHeader>
               <CardContent className="flex items-center min-h-[120px]">
-                <div className="leading-relaxed">
+                <div className="leading-relaxed w-full">
                   {typeof recommendation.communicationFrequency === 'object' && !Array.isArray(recommendation.communicationFrequency) ? (
-                    // Handle object format with keys like {Internal (Leadership), External (Customers)}
                     <div className="space-y-4">
                       {Object.entries(recommendation.communicationFrequency).map(([audience, frequency], index) => (
                         <div key={index} className="p-4 bg-muted/30 rounded-lg border-l-4 border-primary">
@@ -726,32 +573,31 @@ const Results: React.FC = () => {
                 <CardTitle className="text-primary">Recommended Frameworks</CardTitle>
               </CardHeader>
               <CardContent className="flex items-center min-h-[120px]">
-                <div className="prose prose-sm max-w-none text-foreground">
-                   {typeof recommendation.recommendedFrameworks === 'object' && !Array.isArray(recommendation.recommendedFrameworks) ? (
-                     // Handle object format with keys like {ADKAR, Kotter's 8-Step Process}
-                     <div className="space-y-4">
-                       {Object.entries(recommendation.recommendedFrameworks).map(([framework, description], index) => {
-                         const websiteUrl = FRAMEWORK_WEBSITES[framework];
-                         return (
-                           <div key={index} className="p-4 bg-muted/30 rounded-lg border-l-4 border-primary">
-                             <div className="flex items-center gap-2 mb-2">
-                               <h4 className="font-semibold text-primary">{framework}</h4>
-                               {websiteUrl && (
-                                 <a 
-                                   href={websiteUrl} 
-                                   target="_blank" 
-                                   rel="noopener noreferrer"
-                                   className="text-xs text-primary hover:text-primary/80 underline"
-                                 >
-                                   (Official Website)
-                                 </a>
-                               )}
-                             </div>
-                             <p className="text-sm">{String(description)}</p>
-                           </div>
-                         )
-                       })}
-                     </div>
+                <div className="prose prose-sm max-w-none text-foreground w-full">
+                  {typeof recommendation.recommendedFrameworks === 'object' && !Array.isArray(recommendation.recommendedFrameworks) ? (
+                    <div className="space-y-4">
+                      {Object.entries(recommendation.recommendedFrameworks).map(([framework, description], index) => {
+                        const websiteUrl = FRAMEWORK_WEBSITES[framework];
+                        return (
+                          <div key={index} className="p-4 bg-muted/30 rounded-lg border-l-4 border-primary">
+                            <div className="flex items-center gap-2 mb-2">
+                              <h4 className="font-semibold text-primary">{framework}</h4>
+                              {websiteUrl && (
+                                <a 
+                                  href={websiteUrl} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  className="text-xs text-primary hover:text-primary/80 underline"
+                                >
+                                  (Official Website)
+                                </a>
+                              )}
+                            </div>
+                            <p className="text-sm">{String(description)}</p>
+                          </div>
+                        );
+                      })}
+                    </div>
                   ) : Array.isArray(recommendation.recommendedFrameworks) ? (
                     recommendation.recommendedFrameworks.map((framework: any, index: number) => (
                       <div key={index} className="mb-2">
@@ -773,7 +619,51 @@ const Results: React.FC = () => {
               </CardContent>
             </Card>
 
+            {/* Stakeholder Impact (RAG heatmap) */}
+            {recommendation.stakeholderImpact && (
+              <Card className="shadow-card">
+                <CardHeader>
+                  <CardTitle className="text-primary">Stakeholder Impact Matrix (Likelihood × Severity)</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
+                    <div className="p-3 rounded-xl bg-red-50 text-red-700">Red: {recommendation.stakeholderImpact.summary.reds}</div>
+                    <div className="p-3 rounded-xl bg-yellow-50 text-yellow-700">Amber: {recommendation.stakeholderImpact.summary.ambers}</div>
+                    <div className="p-3 rounded-xl bg-green-50 text-green-700">Green: {recommendation.stakeholderImpact.summary.greens}</div>
+                  </div>
+                  <HeatmapTable matrix={recommendation.stakeholderImpact.matrix} />
+                </CardContent>
+              </Card>
+            )}
 
+            {/* Mitigation Strategy per Stakeholder */}
+            {(recommendation.stakeholderMitigations?.length ?? 0) > 0 && (
+              <Card className="shadow-card">
+                <CardHeader>
+                  <CardTitle className="text-primary">Mitigation Strategy by Stakeholder</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {recommendation.stakeholderMitigations!.map((m, i) => {
+                    const rag = recommendation.stakeholderImpact?.stakeholders.find(s => s.name === m.name)?.rag;
+                    return (
+                      <div key={`${m.name}-${i}`} className="p-4 border rounded-xl">
+                        <div className="flex items-center justify-between">
+                          <div className="font-medium">{m.name}</div>
+                          <RAGBadge rag={rag} />
+                        </div>
+                        {Array.isArray(m.mitigation) ? (
+                          <ul className="mt-2 list-disc list-inside text-sm space-y-1">
+                            {m.mitigation.map((li, j) => <li key={j}>{li}</li>)}
+                          </ul>
+                        ) : (
+                          <p className="mt-2 text-sm leading-relaxed">{m.mitigation}</p>
+                        )}
+                      </div>
+                    );
+                  })}
+                </CardContent>
+              </Card>
+            )}
 
             {/* Industry-Specific Articles */}
             {getIndustryArticles(formData.industry).length > 0 && (
@@ -810,6 +700,19 @@ const Results: React.FC = () => {
               </Card>
             )}
 
+            {/* Upgrade CTA */}
+            <Card className="shadow-card">
+              <CardContent className="flex items-center justify-between flex-col md:flex-row gap-4 py-6">
+                <div>
+                  <div className="text-lg font-semibold">Want the full Toolkit pre-filled for your change?</div>
+                  <p className="text-sm text-muted-foreground">
+                    Download a customized Excel with Stakeholder Map, Impact, Comms Plan, and Training Plan auto-populated from your answers.
+                  </p>
+                </div>
+                <Button size="lg" onClick={() => navigate('/pricing')}>Upgrade & Download</Button>
+              </CardContent>
+            </Card>
+
             {/* Action Buttons */}
             <div className="flex gap-4 justify-center pt-6">
               <Button onClick={() => window.print()} variant="outline">
@@ -828,3 +731,80 @@ const Results: React.FC = () => {
 };
 
 export default Results;
+
+/* ----------------- Small helper components ----------------- */
+function PeopleFirstStrip() {
+  return (
+    <div className="mt-2 p-3 rounded-xl border bg-background">
+      <div className="text-sm">
+        <strong>People first:</strong> We’ll acknowledge uncertainty, create psychological safety, and celebrate quick wins while keeping steps realistic for small teams.
+      </div>
+    </div>
+  );
+}
+
+function RAGBadge({ rag }: { rag?: RAG }) {
+  if (!rag) return null;
+  const cls =
+    rag === "Red"
+      ? "bg-red-100 text-red-700"
+      : rag === "Amber"
+      ? "bg-yellow-100 text-yellow-700"
+      : "bg-green-100 text-green-700";
+  return <span className={`px-2 py-1 rounded-full text-xs ${cls}`}>{rag}</span>;
+}
+
+function HeatmapTable({ matrix }: { matrix: StakeholderResult[][][] }) {
+  // Render Likelihood rows 5→1 and Severity cols 1→5
+  const rows = useMemo(() => [5, 4, 3, 2, 1], []);
+  const cols = useMemo(() => [1, 2, 3, 4, 5], []);
+
+  const cellBg = (stakeholders: StakeholderResult[]) => {
+    const worst = stakeholders.reduce((m, s) => Math.max(m, s.riskScore), 0);
+    if (worst >= 16) return "bg-red-100";
+    if (worst >= 9) return "bg-yellow-100";
+    if (worst > 0) return "bg-green-100";
+    return "";
+  };
+
+  return (
+    <div className="overflow-auto">
+      <table className="min-w-full border rounded-xl">
+        <thead>
+          <tr>
+            <th className="p-2 text-left text-xs">Likelihood \\ Severity</th>
+            {cols.map((s) => (
+              <th key={s} className="p-2 text-xs font-medium">{s}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((l) => (
+            <tr key={l}>
+              <td className="p-2 text-xs font-medium">{l}</td>
+              {cols.map((s) => {
+                const cell = matrix[l - 1][s - 1];
+                return (
+                  <td key={`${l}-${s}`} className={`align-top p-2 text-xs border ${cellBg(cell)}`}>
+                    {cell.length ? (
+                      <ul className="space-y-1">
+                        {cell.map((r) => (
+                          <li key={`${r.name}-${r.riskScore}`} className="leading-snug">
+                            <span className="font-medium">{r.name}</span>
+                            <span className="ml-1 text-[11px] text-muted-foreground">RS:{r.riskScore}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <span className="text-muted-foreground">–</span>
+                    )}
+                  </td>
+                );
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
