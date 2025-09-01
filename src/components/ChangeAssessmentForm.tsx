@@ -15,7 +15,7 @@ export interface StakeholderInput {
   likelihood: number // 1–5
   notes?: string
 }
-
+ 
 export interface FormData {
   organizationSize: string
   industry: string
