@@ -294,68 +294,62 @@ export const ChangeAssessmentForm: React.FC = () => {
             </div>
 
             {/* NEW: Severity & Likelihood sliders for selected groups */}
-{formData.stakeholderGroups.length > 0 && (
-  <div className="mt-4 space-y-4">
-    <Label className="text-lg font-semibold text-foreground">Impact Details</Label>
-    <p className="text-sm text-muted-foreground">
-      For each stakeholder group you selected, please rate how strongly the change will affect them 
-      (<span className="font-medium">Severity</span>) and how likely they are to feel that impact 
-      (<span className="font-medium">Likelihood</span>). This helps us understand both the practical 
-      and emotional side of the change so we can recommend meaningful mitigation strategies.
-    </p>
-    <div className="grid grid-cols-1 gap-4">
-      {formData.stakeholderGroups.map((g) => {
-        const s = stakeholderMap[g]
-        return (
-          <div key={g} className="p-4 border rounded-modern glass-card">
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
-              <div className="md:col-span-3">
-                <div className="text-sm font-medium">{g}</div>
-                <Input
-                  placeholder="Notes (optional): concerns, influence, location, etc."
-                  value={s?.notes || ''}
-                  onChange={(e) => handleStakeholderDetail(g, { notes: e.target.value })}
-                  className="mt-2"
-                />
+            {formData.stakeholderGroups.length > 0 && (
+              <div className="mt-4 space-y-4">
+                <Label className="text-lg font-semibold text-foreground">Impact Details</Label>
+                <div className="grid grid-cols-1 gap-4">
+                  {formData.stakeholderGroups.map((g) => {
+                    const s = stakeholderMap[g]
+                    return (
+                      <div key={g} className="p-4 border rounded-modern glass-card">
+                        <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
+                          <div className="md:col-span-3">
+                            <div className="text-sm font-medium">{g}</div>
+                            <Input
+                              placeholder="Notes (optional): concerns, influence, location, etc."
+                              value={s?.notes || ''}
+                              onChange={(e) => handleStakeholderDetail(g, { notes: e.target.value })}
+                              className="mt-2"
+                            />
+                          </div>
+                          <div className="md:col-span-4">
+                            <div className="text-xs text-muted-foreground">Severity (1–5)</div>
+                            <input
+                              type="range"
+                              min={1}
+                              max={5}
+                              step={1}
+                              value={s?.severity ?? 3}
+                              onChange={(e) => handleStakeholderDetail(g, { severity: Number(e.target.value) })}
+                              className="w-full"
+                            />
+                            <div className="text-xs mt-1">{s?.severity ?? 3}</div>
+                          </div>
+                          <div className="md:col-span-4">
+                            <div className="text-xs text-muted-foreground">Likelihood (1–5)</div>
+                            <input
+                              type="range"
+                              min={1}
+                              max={5}
+                              step={1}
+                              value={s?.likelihood ?? 3}
+                              onChange={(e) => handleStakeholderDetail(g, { likelihood: Number(e.target.value) })}
+                              className="w-full"
+                            />
+                            <div className="text-xs mt-1">{s?.likelihood ?? 3}</div>
+                          </div>
+                          <div className="md:col-span-1 text-center">
+                            <div className="text-xs text-muted-foreground">Risk</div>
+                            <div className="text-sm font-semibold">{(s?.severity ?? 3) * (s?.likelihood ?? 3)}</div>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
               </div>
-              <div className="md:col-span-4">
-                <div className="text-xs text-muted-foreground">Severity (1–5, 1 = Low • 5 = High)</div>
-                <input
-                  type="range"
-                  min={1}
-                  max={5}
-                  step={1}
-                  value={s?.severity ?? 3}
-                  onChange={(e) => handleStakeholderDetail(g, { severity: Number(e.target.value) })}
-                  className="w-full"
-                />
-                <div className="text-xs mt-1">{s?.severity ?? 3}</div>
-              </div>
-              <div className="md:col-span-4">
-                <div className="text-xs text-muted-foreground">Likelihood (1–5, 1 = Low • 5 = High)</div>
-                <input
-                  type="range"
-                  min={1}
-                  max={5}
-                  step={1}
-                  value={s?.likelihood ?? 3}
-                  onChange={(e) => handleStakeholderDetail(g, { likelihood: Number(e.target.value) })}
-                  className="w-full"
-                />
-                <div className="text-xs mt-1">{s?.likelihood ?? 3}</div>
-              </div>
-              <div className="md:col-span-1 text-center">
-                <div className="text-xs text-muted-foreground">Risk</div>
-                <div className="text-sm font-semibold">{(s?.severity ?? 3) * (s?.likelihood ?? 3)}</div>
-              </div>
-            </div>
+            )}
           </div>
-        )
-      })}
-    </div>
-  </div>
-)}
-
 
           {/* Number of Stakeholders */}
           <div className="space-y-6">
