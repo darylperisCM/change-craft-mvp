@@ -297,6 +297,10 @@ export const ChangeAssessmentForm: React.FC = () => {
             {formData.stakeholderGroups.length > 0 && (
               <div className="mt-4 space-y-4">
                 <Label className="text-lg font-semibold text-foreground">Impact Details</Label>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  For each stakeholder group you selected, please rate how strongly the change will affect them (Severity) and how likely they are to feel that impact (Likelihood). 
+                  This helps us understand both the practical and emotional side of the change so we can recommend meaningful mitigation strategies.
+                </p>
                 <div className="grid grid-cols-1 gap-4">
                   {formData.stakeholderGroups.map((g) => {
                     const s = stakeholderMap[g]
