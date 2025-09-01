@@ -754,13 +754,11 @@ function RAGBadge({ rag }: { rag?: RAG }) {
   return <span className={`px-2 py-1 rounded-full text-xs ${cls}`}>{rag}</span>;
 }
 
-/* Replace old HeatmapTable with this prettier, tile-style grid */
+/* === Pretty, tile-style heatmap === */
 function PrettyHeatmap({ matrix }: { matrix: StakeholderResult[][][] }) {
-  // Labels (5=top/leftmost per your data)
-  const likelihoodLabels = ["Never", "Rarely", "Sometimes", "Often", "Always"];       // index 0..4 => 1..5
-  const severityLabels   = ["Very Light", "Light", "Medium", "Heavy", "Very Heavy"];  // index 0..4 => 1..5
+  const likelihoodLabels = ["Never", "Rarely", "Sometimes", "Often", "Always"];
+  const severityLabels   = ["Very Light", "Light", "Medium", "Heavy", "Very Heavy"];
 
-  // compute display risk label for a severity×likelihood value
   const riskLabel = (value: number) => {
     if (value >= 20) return "Very Significant";
     if (value >= 12) return "Significant";
@@ -769,31 +767,27 @@ function PrettyHeatmap({ matrix }: { matrix: StakeholderResult[][][] }) {
     return "Insignificant";
   };
 
-  // background color “buckets” inspired by your example
   const tileColor = (value: number) => {
-    if (value >= 20) return "bg-red-500";       // 20–25
-    if (value >= 16) return "bg-red-400";       // 16–19
-    if (value >= 12) return "bg-amber-400";     // 12–15
-    if (value >= 8)  return "bg-yellow-300";    // 8–11
-    if (value >= 5)  return "bg-lime-300";      // 5–7
-    if (value >= 3)  return "bg-green-400";     // 3–4
-    if (value >= 2)  return "bg-green-600";     // 2
-    return "bg-green-700";                      // 1
+    if (value >= 20) return "bg-red-500";
+    if (value >= 16) return "bg-red-400";
+    if (value >= 12) return "bg-amber-400";
+    if (value >= 8)  return "bg-yellow-300";
+    if (value >= 5)  return "bg-lime-300";
+    if (value >= 3)  return "bg-green-400";
+    if (value >= 2)  return "bg-green-600";
+    return "bg-green-700";
   };
 
-  // text color to keep contrast readable
   const textColor = (value: number) => (value >= 16 ? "text-white" : "text-black/80");
 
-  // we render Likelihood 5→1 (top to bottom), Severity 1→5 (left to right)
-  const rows = [5, 4, 3, 2, 1];
-  const cols = [1, 2, 3, 4, 5];
+  const rows = [5, 4, 3, 2, 1]; // Likelihood top→bottom
+  const cols = [1, 2, 3, 4, 5]; // Severity left→right
 
   return (
     <div className="w-full overflow-x-auto">
       <div className="min-w-[720px]">
-        {/* Header spacing */}
         <div className="grid grid-cols-[120px_repeat(5,minmax(0,1fr))] gap-3 items-center mb-2">
-          <div /> 
+          <div />
           {cols.map((s) => (
             <div key={s} className="text-center text-sm font-medium text-muted-foreground">
               {severityLabels[s-1]}
@@ -801,24 +795,17 @@ function PrettyHeatmap({ matrix }: { matrix: StakeholderResult[][][] }) {
           ))}
         </div>
 
-        {/* Rows */}
         <div className="grid gap-3">
           {rows.map((l) => (
             <div key={l} className="grid grid-cols-[120px_repeat(5,minmax(0,1fr))] gap-3">
-              {/* Likelihood label */}
               <div className="flex items-center justify-end pr-2 text-sm font-medium text-muted-foreground">
                 {likelihoodLabels[l-1]}
               </div>
-
-              {/* 5 tiles for each severity */}
               {cols.map((s) => {
                 const cell = matrix[l-1][s-1];
-                // representative value = s*l (max risk in that cell also works if you prefer)
-                const value = s * l;
+                const value = s * l; // display number like in your example
                 const label = riskLabel(value);
-                // Tooltip: show stakeholder names on hover
-                const title = cell.length ? `${cell.map((r) => r.name).join(", ")}` : "No stakeholders";
-
+                const title = cell.length ? cell.map(r => r.name).join(", ") : "No stakeholders";
                 return (
                   <div
                     key={`${l}-${s}`}
@@ -829,10 +816,8 @@ function PrettyHeatmap({ matrix }: { matrix: StakeholderResult[][][] }) {
                       <div className="text-sm font-semibold">{label}</div>
                       <div className="text-[11px] opacity-90">Value: {value}</div>
                     </div>
-
-                    {/* Bottom-right small badge with count */}
                     <div className="absolute bottom-1 right-1">
-                      <span className={`px-2 py-0.5 rounded-full text-[10px] bg-white/80 ${textColor(1)} shadow`}>
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] bg-white/80 text-black/80 shadow`}>
                         {cell.length} {cell.length === 1 ? "grp" : "grps"}
                       </span>
                     </div>
@@ -843,7 +828,6 @@ function PrettyHeatmap({ matrix }: { matrix: StakeholderResult[][][] }) {
           ))}
         </div>
 
-        {/* Axes labels */}
         <div className="mt-3 grid grid-cols-[120px_repeat(5,minmax(0,1fr))]">
           <div />
           <div className="col-span-5 text-center text-sm text-muted-foreground">Consequence</div>
@@ -855,3 +839,6 @@ function PrettyHeatmap({ matrix }: { matrix: StakeholderResult[][][] }) {
     </div>
   );
 }
+
+/* Alias to avoid crashes if any JSX still uses <HeatmapTable /> */
+const HeatmapTable = PrettyHeatmap;
