@@ -555,8 +555,7 @@ const Results: React.FC = () => {
                     
                     <Card className="shadow-card">
                       <CardHeader>
-                        <CardTitle className="text-primary flex items-center gap-2">
-                          <span className="text-2xl">📋</span>
+                        <CardTitle className="text-primary">
                           Strategy Summary
                         </CardTitle>
                       </CardHeader>
@@ -598,8 +597,7 @@ const Results: React.FC = () => {
 
                     <Card className="shadow-card">
                       <CardHeader>
-                        <CardTitle className="text-primary flex items-center gap-2">
-                          <span className="text-2xl">👥</span>
+                        <CardTitle className="text-primary">
                           Stakeholder Focus
                         </CardTitle>
                       </CardHeader>
@@ -640,8 +638,7 @@ const Results: React.FC = () => {
                     
                     <Card className="shadow-card">
                       <CardHeader>
-                        <CardTitle className="text-primary flex items-center gap-2">
-                          <span className="text-2xl">🚀</span>
+                        <CardTitle className="text-primary">
                           Immediate Action Plan
                         </CardTitle>
                       </CardHeader>
@@ -686,8 +683,7 @@ const Results: React.FC = () => {
 
                     <Card className="shadow-card">
                       <CardHeader>
-                        <CardTitle className="text-primary flex items-center gap-2">
-                          <span className="text-2xl">🔧</span>
+                        <CardTitle className="text-primary">
                           Recommended Frameworks
                         </CardTitle>
                       </CardHeader>
@@ -794,8 +790,7 @@ const Results: React.FC = () => {
                     
                     <Card className="shadow-card">
                       <CardHeader>
-                        <CardTitle className="text-primary flex items-center gap-2">
-                          <span className="text-2xl">📚</span>
+                        <CardTitle className="text-primary">
                           Training Level
                         </CardTitle>
                       </CardHeader>
@@ -817,8 +812,7 @@ const Results: React.FC = () => {
 
                     <Card className="shadow-card">
                       <CardHeader>
-                        <CardTitle className="text-primary flex items-center gap-2">
-                          <span className="text-2xl">📢</span>
+                        <CardTitle className="text-primary">
                           Communication Frequency
                         </CardTitle>
                       </CardHeader>
@@ -853,8 +847,7 @@ const Results: React.FC = () => {
                     {recommendation.stakeholderImpact ? (
                       <Card className="shadow-card">
                         <CardHeader>
-                          <CardTitle className="text-primary flex items-center gap-2">
-                            <span className="text-2xl">📊</span>
+                          <CardTitle className="text-primary">
                             Stakeholder Impact Matrix
                           </CardTitle>
                           <CardDescription>
@@ -932,8 +925,7 @@ const Results: React.FC = () => {
                     {recommendation.stakeholderMitigations && recommendation.stakeholderMitigations.length > 0 ? (
                       <Card className="shadow-card">
                         <CardHeader>
-                          <CardTitle className="text-primary flex items-center gap-2">
-                            <span className="text-2xl">🛡️</span>
+                          <CardTitle className="text-primary">
                             Mitigation Strategy by Stakeholder
                           </CardTitle>
                           <CardDescription>
@@ -1194,24 +1186,24 @@ function PrettyHeatmap({ matrix }: { matrix: StakeholderResult[][][] }) {
   const cols = [1, 2, 3, 4, 5]; // Severity low→high
 
   return (
-    <div className="w-full overflow-x-auto">
-      <div className="min-w-[720px]">
+    <div className="w-full">
+      <div className="max-w-full">
         {/* Severity (X-axis) */}
-        <div className="grid grid-cols-[120px_repeat(5,minmax(0,1fr))] gap-3 items-center mb-2">
+        <div className="grid grid-cols-[80px_repeat(5,minmax(0,1fr))] gap-1 items-center mb-2">
           <div />
           {cols.map((s) => (
-            <div key={s} className="text-center text-sm font-medium text-muted-foreground">
+            <div key={s} className="text-center text-[10px] font-medium text-muted-foreground">
               {severityLabels[s-1]}
             </div>
           ))}
         </div>
 
         {/* Matrix grid */}
-        <div className="grid gap-3">
+        <div className="grid gap-1">
           {rows.map((l) => (
-            <div key={l} className="grid grid-cols-[120px_repeat(5,minmax(0,1fr))] gap-3">
+            <div key={l} className="grid grid-cols-[80px_repeat(5,minmax(0,1fr))] gap-1">
               {/* Likelihood label */}
-              <div className="flex items-center justify-end pr-2 text-sm font-medium text-muted-foreground">
+              <div className="flex items-center justify-end pr-1 text-[10px] font-medium text-muted-foreground">
                 {likelihoodLabels[l-1]}
               </div>
 
@@ -1221,12 +1213,13 @@ function PrettyHeatmap({ matrix }: { matrix: StakeholderResult[][][] }) {
                 return (
                   <div
                     key={`${l}-${s}`}
-                    className={`relative h-24 rounded-2xl ${tileColor(value)} shadow-sm transition-transform hover:scale-[1.01]`}
+                    className={`relative h-12 rounded ${tileColor(value)} shadow-sm`}
                   >
                     {cell.length > 0 && (
-                      <div className="absolute inset-0 flex flex-col items-center justify-center p-2 text-center">
-                        <div className="text-white text-sm font-semibold leading-tight whitespace-pre-line">
-                          {cell.map(r => r.name).join("\n")}
+                      <div className="absolute inset-0 flex flex-col items-center justify-center p-1 text-center">
+                        <div className="text-white text-[8px] font-semibold leading-tight">
+                          {cell.map(r => r.name).slice(0, 2).join(", ")}
+                          {cell.length > 2 && <div className="text-[7px]">+{cell.length - 2} more</div>}
                         </div>
                       </div>
                     )}
@@ -1238,12 +1231,14 @@ function PrettyHeatmap({ matrix }: { matrix: StakeholderResult[][][] }) {
         </div>
 
         {/* Axis labels */}
-        <div className="mt-3 grid grid-cols-[120px_repeat(5,minmax(0,1fr))]">
+        <div className="mt-2 grid grid-cols-[80px_repeat(5,minmax(0,1fr))]">
           <div />
-          <div className="col-span-5 text-center text-sm text-muted-foreground">Severity</div>
+          <div className="col-span-5 text-center text-[10px] text-muted-foreground">Severity</div>
         </div>
-        <div className="-mt-[140px] -rotate-90 origin-left translate-x-[-120px] text-sm text-muted-foreground hidden md:block">
-          Likelihood
+        <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-6">
+          <div className="-rotate-90 text-[10px] text-muted-foreground whitespace-nowrap">
+            Likelihood
+          </div>
         </div>
       </div>
     </div>
