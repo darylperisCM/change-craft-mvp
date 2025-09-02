@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Download, RefreshCw, ExternalLink } from 'lucide-react';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { ArrowLeft, Download, RefreshCw, ExternalLink, ChevronRight, ChevronLeft } from 'lucide-react';
 import { FormData } from '@/components/ChangeAssessmentForm';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -136,6 +137,15 @@ const Results: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingArticles, setIsLoadingArticles] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [currentStep, setCurrentStep] = useState(0);
+
+  const steps = [
+    { id: 'summary', title: 'Strategy Summary & Stakeholder Focus', shortTitle: 'Summary' },
+    { id: 'action', title: 'Immediate Action Plan & Recommended Frameworks', shortTitle: 'Action Plan' },
+    { id: 'training', title: 'Training Level & Communication Frequency', shortTitle: 'Training' },
+    { id: 'matrix', title: 'Stakeholder Impact Matrix', shortTitle: 'Impact Matrix' },
+    { id: 'mitigation', title: 'Mitigation Strategy & Upgrade CTA', shortTitle: 'Mitigation' }
+  ];
 
   useEffect(() => {
     const storedData = sessionStorage.getItem('changeAssessmentData');
@@ -380,358 +390,761 @@ const Results: React.FC = () => {
     }
   };
 
+  const handleDownload = () => {
+    window.print();
+  };
+
+  const handleNewAssessment = () => {
+    sessionStorage.removeItem('changeAssessmentData');
+    sessionStorage.removeItem('userEmail');
+    navigate('/');
+  };
+
+  const nextStep = () => {
+    if (currentStep < steps.length - 1) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const prevStep = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const goToStep = (step: number) => {
+    setCurrentStep(step);
+  };
+
   if (!formData) {
-    return null;
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
   }
 
   return (
-    <div className="min-h-screen bg-section-gradient">
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <Button 
-            variant="outline" 
-            onClick={() => navigate('/')}
-            className="mb-4"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Assessment
-          </Button>
-          
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-foreground mb-4">
-              Your Change Management Strategy
-            </h1>
-            <p className="text-lg text-muted-foreground">
-              Personalized recommendations based on your organization's profile
-            </p>
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50">
+      <div className="max-w-7xl mx-auto p-4 md:p-8">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-4">
+            <Button 
+              variant="ghost" 
+              onClick={() => navigate('/assessment')}
+              className="flex items-center gap-2 text-primary hover:text-primary/80"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back to Assessment
+            </Button>
           </div>
         </div>
 
         {/* Assessment Summary */}
-        <Card className="mb-8 shadow-card">
+        <Card className="mb-8">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              Assessment Summary
-              <Badge variant="secondary">{formData.industry}</Badge>
-            </CardTitle>
+            <CardTitle className="text-3xl font-bold text-primary">Your Change Management Strategy</CardTitle>
+            <CardDescription className="text-lg">
+              Personalized recommendations based on your assessment
+            </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div>
-                <p className="font-semibold text-sm text-muted-foreground">Organization Size</p>
-                <p className="capitalize">{formData.organizationSize}</p>
+                <p className="font-semibold text-muted-foreground">Organization Size</p>
+                <p className="text-lg capitalize">{formData.organizationSize}</p>
               </div>
               <div>
-                <p className="font-semibold text-sm text-muted-foreground">Stakeholders Impacted</p>
-                <p>{formData.numberOfStakeholders}</p>
+                <p className="font-semibold text-muted-foreground">Industry</p>
+                <p className="text-lg">{formData.industry}</p>
               </div>
               <div>
-                <p className="font-semibold text-sm text-muted-foreground">Urgency Level</p>
-                <p className="capitalize">{formData.urgency}</p>
+                <p className="font-semibold text-muted-foreground">Change Types</p>
+                <p className="text-lg">{formData.changeTypes.join(', ')}</p>
               </div>
               <div>
-                <p className="font-semibold text-sm text-muted-foreground">Stakeholder Groups</p>
-                <div className="flex flex-wrap gap-1 mt-1">
-                  {formData.stakeholderGroups.map(group => (
-                    <Badge key={group} variant="outline" className="text-xs">{group}</Badge>
-                  ))}
-                </div>
+                <p className="font-semibold text-muted-foreground">Urgency</p>
+                <Badge variant={formData.urgency === 'high' ? 'destructive' : formData.urgency === 'medium' ? 'default' : 'secondary'} className="text-sm">
+                  {formData.urgency}
+                </Badge>
               </div>
-              <div>
-                <p className="font-semibold text-sm text-muted-foreground">Change Types</p>
-                <div className="flex flex-wrap gap-1 mt-1">
-                  {formData.changeTypes.map(type => (
-                    <Badge key={type} variant="outline" className="text-xs">{type}</Badge>
-                  ))}
-                </div>
+            </div>
+            <div className="pt-2">
+              <p className="font-semibold text-muted-foreground">Stakeholder Groups ({formData.stakeholderGroups.length})</p>
+              <div className="flex flex-wrap gap-2 mt-1">
+                {formData.stakeholderGroups.map((group, index) => (
+                  <Badge key={index} variant="outline" className="text-sm">{group}</Badge>
+                ))}
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {isLoading ? (
-          <Card className="shadow-card">
-            <CardContent className="flex items-center justify-center py-12">
-              <div className="text-center">
-                <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-4 text-primary" />
-                <p className="text-lg font-medium">Generating your personalized strategy...</p>
-                <p className="text-sm text-muted-foreground mt-2">This may take a few moments</p>
-              </div>
+        {/* Strategy Loading State */}
+        {isLoading && (
+          <Card className="mb-8">
+            <CardContent className="p-8 text-center">
+              <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
+              <p className="text-lg font-medium">Generating your personalized strategy...</p>
+              <p className="text-muted-foreground">This may take a few moments</p>
             </CardContent>
           </Card>
-        ) : recommendation ? (
-          <div className="space-y-6">
-            {/* Strategy Summary */}
-            <Card className="shadow-card">
-              <CardHeader>
-                <CardTitle className="text-primary">Strategy Summary</CardTitle>
-              </CardHeader>
-              <CardContent className="min-h-[120px] space-y-3">
-                <p className="leading-relaxed">{String(recommendation.summary)}</p>
-                {/* People-first emphasis */}
-                <PeopleFirstStrip />
-              </CardContent>
-            </Card>
+        )}
 
-            {/* Immediate Action Plan */}
-            <Card className="shadow-card">
-              <CardHeader>
-                <CardTitle className="text-primary">Immediate Action Plan</CardTitle>
-              </CardHeader>
-              <CardContent className="flex items-center min-h-[120px]">
-                <div className="prose prose-sm max-w-none w-full">
-                  {Array.isArray(recommendation.immediateActionPlan) ? (
-                    <ol className="list-decimal list-inside space-y-4 leading-relaxed">
-                      {recommendation.immediateActionPlan.map((action: string, index: number) => (
-                        <li key={index} className="pl-2 mb-4 text-sm leading-relaxed">
-                          {String(action).replace(/^\d+\.\s*/, '').trim()}
-                        </li>
-                      ))}
-                    </ol>
-                  ) : (
-                    <div className="whitespace-pre-line leading-relaxed">{String(recommendation.immediateActionPlan)}</div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Stakeholder Focus */}
-            <Card className="shadow-card">
-              <CardHeader>
-                <CardTitle className="text-primary">Stakeholder Focus</CardTitle>
-              </CardHeader>
-              <CardContent className="flex items-center min-h-[120px]">
-                <div className="leading-relaxed w-full">
-                  {typeof recommendation.stakeholderFocus === 'object' && !Array.isArray(recommendation.stakeholderFocus) ? (
-                    <div className="space-y-4">
-                      {Object.entries(recommendation.stakeholderFocus).map(([stakeholder, description], index) => (
-                        <div key={index} className="p-4 bg-muted/30 rounded-lg border-l-4 border-primary">
-                          <h4 className="font-semibold text-primary mb-2">{stakeholder}</h4>
-                          <p className="text-sm">{String(description)}</p>
-                        </div>
-                      ))}
-                    </div>
-                  ) : Array.isArray(recommendation.stakeholderFocus) ? (
-                    <div className="space-y-3">
-                      {recommendation.stakeholderFocus.map((focus: string, index: number) => (
-                        <div key={index} className="p-3 bg-muted/30 rounded-lg">
-                          <p>{focus}</p>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p>{String(recommendation.stakeholderFocus)}</p>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Training Level */}
-            <Card className="shadow-card">
-              <CardHeader>
-                <CardTitle className="text-primary">Training Level</CardTitle>
-              </CardHeader>
-              <CardContent className="flex items-center min-h-[120px]">
-                <div className="leading-relaxed w-full">
-                  {typeof recommendation.trainingLevel === 'object' && !Array.isArray(recommendation.trainingLevel) ? (
-                    <div className="space-y-4">
-                      {Object.entries(recommendation.trainingLevel).map(([category, description], index) => (
-                        <div key={index} className="p-4 bg-muted/30 rounded-lg border-l-4 border-primary">
-                          <h4 className="font-semibold text-primary mb-2">{category}</h4>
-                          <p className="text-sm">{String(description)}</p>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p>{String(recommendation.trainingLevel)}</p>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Communication Frequency */}
-            <Card className="shadow-card">
-              <CardHeader>
-                <CardTitle className="text-primary">Communication Frequency</CardTitle>
-              </CardHeader>
-              <CardContent className="flex items-center min-h-[120px]">
-                <div className="leading-relaxed w-full">
-                  {typeof recommendation.communicationFrequency === 'object' && !Array.isArray(recommendation.communicationFrequency) ? (
-                    <div className="space-y-4">
-                      {Object.entries(recommendation.communicationFrequency).map(([audience, frequency], index) => (
-                        <div key={index} className="p-4 bg-muted/30 rounded-lg border-l-4 border-primary">
-                          <h4 className="font-semibold text-primary mb-2">{audience}</h4>
-                          <p className="text-sm">{String(frequency)}</p>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p>{String(recommendation.communicationFrequency)}</p>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Recommended Frameworks */}
-            <Card className="shadow-card">
-              <CardHeader>
-                <CardTitle className="text-primary">Recommended Frameworks</CardTitle>
-              </CardHeader>
-              <CardContent className="flex items-center min-h-[120px]">
-                <div className="prose prose-sm max-w-none text-foreground w-full">
-                  {typeof recommendation.recommendedFrameworks === 'object' && !Array.isArray(recommendation.recommendedFrameworks) ? (
-                    <div className="space-y-4">
-                      {Object.entries(recommendation.recommendedFrameworks).map(([framework, description], index) => {
-                        const websiteUrl = FRAMEWORK_WEBSITES[framework];
-                        return (
-                          <div key={index} className="p-4 bg-muted/30 rounded-lg border-l-4 border-primary">
-                            <div className="flex items-center gap-2 mb-2">
-                              <h4 className="font-semibold text-primary">{framework}</h4>
-                              {websiteUrl && (
-                                <a 
-                                  href={websiteUrl} 
-                                  target="_blank" 
-                                  rel="noopener noreferrer"
-                                  className="text-xs text-primary hover:text-primary/80 underline"
-                                >
-                                  (Official Website)
-                                </a>
-                              )}
-                            </div>
-                            <p className="text-sm">{String(description)}</p>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  ) : Array.isArray(recommendation.recommendedFrameworks) ? (
-                    recommendation.recommendedFrameworks.map((framework: any, index: number) => (
-                      <div key={index} className="mb-2">
-                        {typeof framework === 'string' && framework.includes('**') ? (
-                          <div dangerouslySetInnerHTML={{ 
-                            __html: framework
-                              .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                              .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary/80 underline">$1</a>')
-                          }} />
-                        ) : (
-                          <p>{typeof framework === 'string' ? framework : framework.name || 'Framework'}</p>
-                        )}
-                      </div>
-                    ))
-                  ) : (
-                    <p>{String(recommendation.recommendedFrameworks)}</p>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Stakeholder Impact (RAG heatmap) */}
-            {recommendation.stakeholderImpact && (
-              <Card className="shadow-card">
+        {/* Strategy Results with Stepper */}
+        {recommendation && !isLoading && (
+          <div className="grid lg:grid-cols-4 gap-8">
+            {/* Desktop: Left Navigation */}
+            <div className="hidden lg:block lg:col-span-1">
+              <Card className="sticky top-8">
                 <CardHeader>
-                  <CardTitle className="text-primary">Stakeholder Impact Matrix (Likelihood × Severity)</CardTitle>
+                  <CardTitle className="text-lg">Strategy Steps</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
-                    <div className="p-3 rounded-xl bg-red-50 text-red-700">Red: {recommendation.stakeholderImpact.summary.reds}</div>
-                    <div className="p-3 rounded-xl bg-yellow-50 text-yellow-700">Amber: {recommendation.stakeholderImpact.summary.ambers}</div>
-                    <div className="p-3 rounded-xl bg-green-50 text-green-700">Green: {recommendation.stakeholderImpact.summary.greens}</div>
-                  </div>
-                  <HeatmapTable matrix={recommendation.stakeholderImpact.matrix} />
+                <CardContent className="p-4">
+                  <nav className="space-y-2">
+                    {steps.map((step, index) => (
+                      <button
+                        key={step.id}
+                        onClick={() => goToStep(index)}
+                        className={`w-full text-left p-3 rounded-lg transition-colors ${
+                          currentStep === index
+                            ? 'bg-primary text-primary-foreground shadow-md'
+                            : 'hover:bg-muted text-muted-foreground hover:text-foreground'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                            currentStep === index
+                              ? 'bg-primary-foreground text-primary'
+                              : 'bg-muted-foreground/20'
+                          }`}>
+                            {index + 1}
+                          </span>
+                          <span className="text-sm font-medium">{step.shortTitle}</span>
+                        </div>
+                      </button>
+                    ))}
+                  </nav>
                 </CardContent>
               </Card>
-            )}
+            </div>
 
-            {/* Mitigation Strategy per Stakeholder */}
-            {(recommendation.stakeholderMitigations?.length ?? 0) > 0 && (
-              <Card className="shadow-card">
-                <CardHeader>
-                  <CardTitle className="text-primary">Mitigation Strategy by Stakeholder</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {recommendation.stakeholderMitigations!.map((m, i) => {    
-                const rag = recommendation.stakeholderImpact?.stakeholders.find(s => s.name === m.name)?.rag;
-                const importance = rag ? importanceByRAG[rag] : "Maintain engagement and keep communication open.";
-                    return (
-                      <div key={`${m.name}-${i}`} className="p-4 border rounded-xl">
-                        <div className="flex items-center justify-between">
-                          <div className="font-medium">{m.name}</div>
-                          <RAGBadge rag={rag} />
-                        </div>
-                        {/* Importance line based on RAG */} <p className="mt-2 text-sm italic text-muted-foreground">{importance}</p>
-                        {Array.isArray(m.mitigation) ? (
-                          <ul className="mt-2 list-disc list-inside text-sm space-y-1">
-                            {m.mitigation.map((li, j) => <li key={j}>{li}</li>)}
+            {/* Mobile: Top Tabs */}
+            <div className="lg:hidden mb-6">
+              <Tabs value={currentStep.toString()} onValueChange={(value) => setCurrentStep(parseInt(value))}>
+                <TabsList className="w-full grid grid-cols-5">
+                  {steps.map((step, index) => (
+                    <TabsTrigger key={step.id} value={index.toString()} className="text-xs">
+                      {index + 1}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+              </Tabs>
+            </div>
+
+            {/* Main Content Area */}
+            <div className="lg:col-span-3 space-y-6">
+              {/* Step Content */}
+              <div className="space-y-6">
+                {/* Step 1: Strategy Summary & Stakeholder Focus */}
+                {currentStep === 0 && (
+                  <div className="space-y-6">
+                    <div className="flex items-center justify-between">
+                      <h2 className="text-2xl font-bold text-primary">{steps[0].title}</h2>
+                      <span className="text-sm text-muted-foreground">Step 1 of 5</span>
+                    </div>
+                    
+                    <PeopleFirstStrip />
+                    
+                    <Card className="shadow-card">
+                      <CardHeader>
+                        <CardTitle className="text-primary flex items-center gap-2">
+                          <span className="text-2xl">📋</span>
+                          Strategy Summary
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        {typeof recommendation.summary === 'string' ? (
+                          <p className="text-lg leading-relaxed">{recommendation.summary}</p>
+                        ) : (
+                          <div className="space-y-4">
+                            {recommendation.summary?.overview && (
+                              <div>
+                                <h4 className="font-semibold text-primary mb-2">Overview</h4>
+                                <p className="leading-relaxed">{recommendation.summary.overview}</p>
+                              </div>
+                            )}
+                            {recommendation.summary?.keyPriorities && (
+                              <div>
+                                <h4 className="font-semibold text-primary mb-2">Key Priorities</h4>
+                                <ul className="list-disc pl-6 space-y-1">
+                                  {recommendation.summary.keyPriorities.map((priority: string, idx: number) => (
+                                    <li key={idx}>{priority}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                            {recommendation.summary?.successFactors && (
+                              <div>
+                                <h4 className="font-semibold text-primary mb-2">Success Factors</h4>
+                                <ul className="list-disc pl-6 space-y-1">
+                                  {recommendation.summary.successFactors.map((factor: string, idx: number) => (
+                                    <li key={idx}>{factor}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+
+                    <Card className="shadow-card">
+                      <CardHeader>
+                        <CardTitle className="text-primary flex items-center gap-2">
+                          <span className="text-2xl">👥</span>
+                          Stakeholder Focus
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        {typeof recommendation.stakeholderFocus === 'string' ? (
+                          <p className="text-lg leading-relaxed">{recommendation.stakeholderFocus}</p>
+                        ) : Array.isArray(recommendation.stakeholderFocus) ? (
+                          <ul className="space-y-2">
+                            {recommendation.stakeholderFocus.map((focus: string, index: number) => (
+                              <li key={index} className="flex items-start gap-2">
+                                <span className="text-primary">•</span>
+                                <span>{focus}</span>
+                              </li>
+                            ))}
                           </ul>
                         ) : (
-                          <p className="mt-2 text-sm leading-relaxed">{m.mitigation}</p>
+                          <div className="space-y-4">
+                            {Object.entries(recommendation.stakeholderFocus || {}).map(([group, focus]: [string, any]) => (
+                              <div key={group} className="border-l-4 border-primary pl-4">
+                                <h4 className="font-semibold text-primary mb-1">{group}</h4>
+                                <p className="text-muted-foreground">{focus}</p>
+                              </div>
+                            ))}
+                          </div>
                         )}
-                      </div>
-                    );
-                  })}
-                </CardContent>
-              </Card>
-            )}
+                      </CardContent>
+                    </Card>
+                  </div>
+                )}
 
-            {/* Industry-Specific Articles */}
-            {getIndustryArticles(formData.industry).length > 0 && (
-              <Card className="shadow-card">
-                <CardHeader>
-                  <CardTitle className="text-primary">Recommended Articles and Resources</CardTitle>
-                  <CardDescription>
-                    Curated articles and resources specifically for the {formData.industry} industry
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {getIndustryArticles(formData.industry).map((resource, index) => (
-                      <div key={index} className="border border-border rounded-lg p-4 hover:shadow-md transition-shadow">
-                        <div className="flex items-start justify-between mb-2">
-                          <h4 className="font-semibold text-sm leading-tight flex-1">{resource.title}</h4>
-                          <ExternalLink className="w-4 h-4 text-muted-foreground ml-2 flex-shrink-0" />
+                {/* Step 2: Immediate Action Plan & Recommended Frameworks */}
+                {currentStep === 1 && (
+                  <div className="space-y-6">
+                    <div className="flex items-center justify-between">
+                      <h2 className="text-2xl font-bold text-primary">{steps[1].title}</h2>
+                      <span className="text-sm text-muted-foreground">Step 2 of 5</span>
+                    </div>
+                    
+                    <Card className="shadow-card">
+                      <CardHeader>
+                        <CardTitle className="text-primary flex items-center gap-2">
+                          <span className="text-2xl">🚀</span>
+                          Immediate Action Plan
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        {Array.isArray(recommendation.immediateActionPlan) ? (
+                          <ul className="space-y-3">
+                            {recommendation.immediateActionPlan.map((action: string, index: number) => (
+                              <li key={index} className="flex items-start gap-3">
+                                <span className="flex-shrink-0 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-semibold mt-0.5">
+                                  {index + 1}
+                                </span>
+                                <span className="leading-relaxed">{action}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : typeof recommendation.immediateActionPlan === 'string' ? (
+                          <div className="prose max-w-none">
+                            {recommendation.immediateActionPlan.split('\n').map((line: string, index: number) => (
+                              <p key={index} className="leading-relaxed">{line}</p>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="space-y-4">
+                            {Object.entries(recommendation.immediateActionPlan || {}).map(([phase, actions]: [string, any]) => (
+                              <div key={phase}>
+                                <h4 className="font-semibold text-primary mb-2 capitalize">{phase.replace(/([A-Z])/g, ' $1').trim()}</h4>
+                                {Array.isArray(actions) ? (
+                                  <ul className="list-disc pl-6 space-y-1">
+                                    {actions.map((action: string, idx: number) => (
+                                      <li key={idx}>{action}</li>
+                                    ))}
+                                  </ul>
+                                ) : (
+                                  <p>{actions}</p>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+
+                    <Card className="shadow-card">
+                      <CardHeader>
+                        <CardTitle className="text-primary flex items-center gap-2">
+                          <span className="text-2xl">🔧</span>
+                          Recommended Frameworks
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        {typeof recommendation.recommendedFrameworks === 'string' ? (
+                          <div className="space-y-3">
+                            {recommendation.recommendedFrameworks.split(',').map((framework: string, index: number) => {
+                              const trimmedFramework = framework.trim();
+                              const websiteUrl = FRAMEWORK_WEBSITES[trimmedFramework];
+                              return (
+                                <div key={index} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
+                                  <span className="font-medium">{trimmedFramework}</span>
+                                  {websiteUrl && (
+                                    <Button 
+                                      variant="ghost" 
+                                      size="sm" 
+                                      asChild
+                                      className="text-primary hover:text-primary/80"
+                                    >
+                                      <a href={websiteUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1">
+                                        Learn More <ExternalLink className="w-3 h-3" />
+                                      </a>
+                                    </Button>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        ) : Array.isArray(recommendation.recommendedFrameworks) ? (
+                          <div className="space-y-3">
+                            {recommendation.recommendedFrameworks.map((framework: any, index: number) => (
+                              <div key={index} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
+                                <div>
+                                  <span className="font-medium">{typeof framework === 'string' ? framework : framework.name}</span>
+                                  {typeof framework === 'object' && framework.description && (
+                                    <p className="text-sm text-muted-foreground mt-1">{framework.description}</p>
+                                  )}
+                                </div>
+                                {((typeof framework === 'string' && FRAMEWORK_WEBSITES[framework]) || 
+                                  (typeof framework === 'object' && framework.url)) && (
+                                  <Button 
+                                    variant="ghost" 
+                                    size="sm" 
+                                    asChild
+                                    className="text-primary hover:text-primary/80"
+                                  >
+                                    <a 
+                                      href={typeof framework === 'string' ? FRAMEWORK_WEBSITES[framework] : framework.url} 
+                                      target="_blank" 
+                                      rel="noopener noreferrer" 
+                                      className="flex items-center gap-1"
+                                    >
+                                      Learn More <ExternalLink className="w-3 h-3" />
+                                    </a>
+                                  </Button>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="space-y-3">
+                            {Object.entries(recommendation.recommendedFrameworks || {}).map(([category, frameworks]: [string, any]) => (
+                              <div key={category}>
+                                <h4 className="font-semibold text-primary mb-2 capitalize">{category.replace(/([A-Z])/g, ' $1').trim()}</h4>
+                                <div className="space-y-2 pl-4">
+                                  {Array.isArray(frameworks) ? (
+                                    frameworks.map((framework: string, idx: number) => (
+                                      <div key={idx} className="flex items-center justify-between p-2 bg-muted/20 rounded">
+                                        <span>{framework}</span>
+                                        {FRAMEWORK_WEBSITES[framework] && (
+                                          <Button 
+                                            variant="ghost" 
+                                            size="sm" 
+                                            asChild
+                                            className="text-primary hover:text-primary/80"
+                                          >
+                                            <a href={FRAMEWORK_WEBSITES[framework]} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1">
+                                              Learn More <ExternalLink className="w-3 h-3" />
+                                            </a>
+                                          </Button>
+                                        )}
+                                      </div>
+                                    ))
+                                  ) : (
+                                    <p>{frameworks}</p>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </div>
+                )}
+
+                {/* Step 3: Training Level & Communication Frequency */}
+                {currentStep === 2 && (
+                  <div className="space-y-6">
+                    <div className="flex items-center justify-between">
+                      <h2 className="text-2xl font-bold text-primary">{steps[2].title}</h2>
+                      <span className="text-sm text-muted-foreground">Step 3 of 5</span>
+                    </div>
+                    
+                    <Card className="shadow-card">
+                      <CardHeader>
+                        <CardTitle className="text-primary flex items-center gap-2">
+                          <span className="text-2xl">📚</span>
+                          Training Level
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        {typeof recommendation.trainingLevel === 'string' ? (
+                          <p className="text-lg leading-relaxed">{recommendation.trainingLevel}</p>
+                        ) : (
+                          <div className="space-y-4">
+                            {Object.entries(recommendation.trainingLevel || {}).map(([level, description]: [string, any]) => (
+                              <div key={level} className="border rounded-lg p-4 bg-muted/30">
+                                <h4 className="font-semibold text-primary mb-2 capitalize">{level.replace(/([A-Z])/g, ' $1').trim()}</h4>
+                                <p className="text-muted-foreground">{description}</p>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+
+                    <Card className="shadow-card">
+                      <CardHeader>
+                        <CardTitle className="text-primary flex items-center gap-2">
+                          <span className="text-2xl">📢</span>
+                          Communication Frequency
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        {typeof recommendation.communicationFrequency === 'string' ? (
+                          <p className="text-lg leading-relaxed">{recommendation.communicationFrequency}</p>
+                        ) : (
+                          <div className="space-y-4">
+                            {Object.entries(recommendation.communicationFrequency || {}).map(([frequency, details]: [string, any]) => (
+                              <div key={frequency} className="flex items-start gap-4 p-4 bg-muted/30 rounded-lg">
+                                <div className="flex-shrink-0">
+                                  <Badge variant="outline" className="font-medium">{frequency}</Badge>
+                                </div>
+                                <p className="text-muted-foreground">{details}</p>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </div>
+                )}
+
+                {/* Step 4: Stakeholder Impact Matrix */}
+                {currentStep === 3 && (
+                  <div className="space-y-6">
+                    <div className="flex items-center justify-between">
+                      <h2 className="text-2xl font-bold text-primary">{steps[3].title}</h2>
+                      <span className="text-sm text-muted-foreground">Step 4 of 5</span>
+                    </div>
+                    
+                    {recommendation.stakeholderImpact ? (
+                      <Card className="shadow-card">
+                        <CardHeader>
+                          <CardTitle className="text-primary flex items-center gap-2">
+                            <span className="text-2xl">📊</span>
+                            Stakeholder Impact Matrix
+                          </CardTitle>
+                          <CardDescription>
+                            Likelihood × Severity heatmap showing stakeholder risk levels
+                          </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-6">
+                          {/* RAG Summary */}
+                          <div className="flex flex-wrap gap-4">
+                            <div className="flex items-center gap-2">
+                              <RAGBadge rag="Red" />
+                              <span className="text-sm font-medium">{recommendation.stakeholderImpact.summary.reds} Critical</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <RAGBadge rag="Amber" />
+                              <span className="text-sm font-medium">{recommendation.stakeholderImpact.summary.ambers} Important</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <RAGBadge rag="Green" />
+                              <span className="text-sm font-medium">{recommendation.stakeholderImpact.summary.greens} Supportive</span>
+                            </div>
+                          </div>
+
+                          {/* Heatmap */}
+                          <div className="overflow-x-auto">
+                            <HeatmapTable matrix={recommendation.stakeholderImpact.matrix} />
+                          </div>
+
+                          {/* Highest Risk Stakeholders */}
+                          {recommendation.stakeholderImpact.summary.highestRisk.length > 0 && (
+                            <div>
+                              <h4 className="font-semibold text-primary mb-3">Highest Risk Stakeholders</h4>
+                              <div className="space-y-2">
+                                {recommendation.stakeholderImpact.summary.highestRisk.map((stakeholder, index) => (
+                                  <div key={index} className="flex items-center justify-between p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
+                                    <div className="flex items-center gap-3">
+                                      <RAGBadge rag={stakeholder.rag} />
+                                      <span className="font-medium">{stakeholder.name}</span>
+                                    </div>
+                                    <div className="text-sm text-muted-foreground">
+                                      Risk Score: {stakeholder.riskScore}/25
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    ) : (
+                      <Card className="shadow-card">
+                        <CardContent className="p-8 text-center">
+                          <div className="text-6xl mb-4">📊</div>
+                          <h3 className="text-xl font-semibold mb-2">Stakeholder Impact Analysis</h3>
+                          <p className="text-muted-foreground mb-4">
+                            Detailed stakeholder impact matrix is available in the premium version of this report.
+                          </p>
+                          <Button variant="outline">
+                            Upgrade to See Full Analysis
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    )}
+                  </div>
+                )}
+
+                {/* Step 5: Mitigation Strategy & Upgrade CTA */}
+                {currentStep === 4 && (
+                  <div className="space-y-6">
+                    <div className="flex items-center justify-between">
+                      <h2 className="text-2xl font-bold text-primary">{steps[4].title}</h2>
+                      <span className="text-sm text-muted-foreground">Step 5 of 5</span>
+                    </div>
+                    
+                    {recommendation.stakeholderMitigations && recommendation.stakeholderMitigations.length > 0 ? (
+                      <Card className="shadow-card">
+                        <CardHeader>
+                          <CardTitle className="text-primary flex items-center gap-2">
+                            <span className="text-2xl">🛡️</span>
+                            Mitigation Strategy by Stakeholder
+                          </CardTitle>
+                          <CardDescription>
+                            Targeted strategies to address stakeholder-specific risks and concerns
+                          </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-6">
+                          {recommendation.stakeholderMitigations.map((stakeholder, index) => {
+                            // Find RAG rating for importance line
+                            const stakeholderData = recommendation.stakeholderImpact?.stakeholders.find(s => s.name === stakeholder.name);
+                            const rag = stakeholderData?.rag;
+                            
+                            return (
+                              <div key={index} className="border rounded-lg p-4">
+                                <div className="flex items-center gap-3 mb-3">
+                                  {rag && <RAGBadge rag={rag} />}
+                                  <h4 className="font-semibold text-lg">{stakeholder.name}</h4>
+                                  {rag && (
+                                    <div className="text-sm text-muted-foreground">
+                                      {importanceByRAG[rag]}
+                                    </div>
+                                  )}
+                                </div>
+                                
+                                <div className="pl-6">
+                                  {Array.isArray(stakeholder.mitigation) ? (
+                                    <ul className="space-y-2">
+                                      {stakeholder.mitigation.map((action: string, actionIndex: number) => (
+                                        <li key={actionIndex} className="flex items-start gap-2">
+                                          <span className="text-primary text-sm mt-1">•</span>
+                                          <span className="text-sm">{action}</span>
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  ) : (
+                                    <p className="text-sm">{stakeholder.mitigation}</p>
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </CardContent>
+                      </Card>
+                    ) : (
+                      <Card className="shadow-card">
+                        <CardContent className="p-8 text-center">
+                          <div className="text-6xl mb-4">🛡️</div>
+                          <h3 className="text-xl font-semibold mb-2">Stakeholder Mitigation Strategies</h3>
+                          <p className="text-muted-foreground mb-4">
+                            Detailed mitigation strategies for each stakeholder group are available in the premium version.
+                          </p>
+                          <Button variant="outline">
+                            Upgrade to See Full Strategies
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    )}
+
+                    <Card className="shadow-card border-primary/20 bg-gradient-to-br from-primary/5 via-primary/3 to-transparent">
+                      <CardHeader>
+                        <CardTitle className="text-primary flex items-center gap-2">
+                          <span className="text-2xl">⭐</span>
+                          Upgrade to Full Toolkit
+                        </CardTitle>
+                        <CardDescription>
+                          Get access to detailed templates, worksheets, and implementation guides
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <h4 className="font-semibold">What's Included:</h4>
+                            <ul className="text-sm space-y-1 text-muted-foreground">
+                              <li>• Detailed implementation templates</li>
+                              <li>• Stakeholder communication scripts</li>
+                              <li>• Training curriculum outlines</li>
+                              <li>• Progress tracking worksheets</li>
+                              <li>• Change readiness assessments</li>
+                            </ul>
+                          </div>
+                          <div className="space-y-2">
+                            <h4 className="font-semibold">Premium Features:</h4>
+                            <ul className="text-sm space-y-1 text-muted-foreground">
+                              <li>• Customizable PowerPoint presentations</li>
+                              <li>• Executive briefing templates</li>
+                              <li>• Risk mitigation playbooks</li>
+                              <li>• Success metrics dashboards</li>
+                              <li>• 1-on-1 consultation call</li>
+                            </ul>
+                          </div>
                         </div>
-                        <div className="flex items-center justify-between mt-3">
-                          <Badge variant="outline" className="text-xs">{formData.industry}</Badge>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="text-xs p-2 h-auto"
-                            onClick={() => window.open(resource.url, '_blank', 'noopener,noreferrer')}
-                          >
-                            Read Article
+                        <div className="flex flex-col sm:flex-row gap-3 pt-4">
+                          <Button size="lg" className="flex-1">
+                            Upgrade Now - $97
+                          </Button>
+                          <Button variant="outline" size="lg" onClick={handleDownload} className="flex-1">
+                            <Download className="w-4 h-4 mr-2" />
+                            Download Current Report
                           </Button>
                         </div>
-                      </div>
-                    ))}
+                      </CardContent>
+                    </Card>
+
+                    {/* Final Action Buttons */}
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8">
+                      <Button 
+                        onClick={handleDownload}
+                        size="lg" 
+                        variant="outline"
+                        className="flex items-center gap-2"
+                      >
+                        <Download className="w-4 h-4" />
+                        Download as PDF
+                      </Button>
+                      <Button 
+                        onClick={handleNewAssessment}
+                        size="lg"
+                        className="flex items-center gap-2"
+                      >
+                        <RefreshCw className="w-4 h-4" />
+                        Start New Assessment
+                      </Button>
+                    </div>
                   </div>
-                </CardContent>
-              </Card>
-            )}
+                )}
+              </div>
 
-            {/* Upgrade CTA */}
-            <Card className="shadow-card">
-              <CardContent className="flex items-center justify-between flex-col md:flex-row gap-4 py-6">
-                <div>
-                  <div className="text-lg font-semibold">Want the full Toolkit pre-filled for your change?</div>
-                  <p className="text-sm text-muted-foreground">
-                    Download a customized Excel with Stakeholder Map, Impact, Comms Plan, and Training Plan auto-populated from your answers.
-                  </p>
+              {/* Step Navigation */}
+              <div className="flex items-center justify-between pt-6 border-t">
+                <Button
+                  variant="outline"
+                  onClick={prevStep}
+                  disabled={currentStep === 0}
+                  className="flex items-center gap-2"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                  Previous
+                </Button>
+                
+                <div className="flex items-center gap-2">
+                  {steps.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => goToStep(index)}
+                      className={`w-3 h-3 rounded-full transition-colors ${
+                        currentStep === index
+                          ? 'bg-primary'
+                          : 'bg-muted-foreground/30 hover:bg-muted-foreground/50'
+                      }`}
+                    />
+                  ))}
                 </div>
-                <Button size="lg" onClick={() => navigate('/pricing')}>Upgrade & Download</Button>
-              </CardContent>
-            </Card>
 
-            {/* Action Buttons */}
-            <div className="flex gap-4 justify-center pt-6">
-              <Button onClick={() => window.print()} variant="outline">
-                <Download className="w-4 h-4 mr-2" />
-                Download Report
-              </Button>
-              <Button onClick={() => navigate('/')} className="bg-primary hover:bg-primary/90 text-primary-foreground">
-                New Assessment
-              </Button>
+                <Button
+                  variant="outline"
+                  onClick={nextStep}
+                  disabled={currentStep === steps.length - 1}
+                  className="flex items-center gap-2"
+                >
+                  Next
+                  <ChevronRight className="w-4 h-4" />
+                </Button>
+              </div>
             </div>
           </div>
-        ) : null}
+        )}
+
+        {/* Recommended Articles and Resources */}
+        {articles.length > 0 && (
+          <Card className="mt-8 shadow-card">
+            <CardHeader>
+              <CardTitle className="text-primary flex items-center gap-2">
+                <span className="text-2xl">📖</span>
+                Recommended Articles and Resources
+              </CardTitle>
+              <CardDescription>
+                Industry-specific articles and resources to support your change management journey
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {isLoadingArticles ? (
+                <div className="flex items-center justify-center py-8">
+                  <div className="animate-spin w-6 h-6 border-2 border-primary border-t-transparent rounded-full mr-3"></div>
+                  <span>Loading relevant articles...</span>
+                </div>
+              ) : (
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {articles.map((article, index) => (
+                    <div key={index} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                      <h4 className="font-semibold mb-2 line-clamp-2">{article.title}</h4>
+                      <p className="text-sm text-muted-foreground mb-3 line-clamp-3">{article.snippet}</p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-muted-foreground">{article.source}</span>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          asChild
+                          className="text-primary hover:text-primary/80"
+                        >
+                          <a href={article.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1">
+                            Read More <ExternalLink className="w-3 h-3" />
+                          </a>
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );
@@ -744,7 +1157,7 @@ function PeopleFirstStrip() {
   return (
     <div className="mt-2 p-3 rounded-xl border bg-background">
       <div className="text-sm">
-        <strong>People first:</strong> We’ll acknowledge uncertainty, create psychological safety, and celebrate quick wins while keeping steps realistic for small teams.
+        <strong>People first:</strong> We'll acknowledge uncertainty, create psychological safety, and celebrate quick wins while keeping steps realistic for small teams.
       </div>
     </div>
   );
