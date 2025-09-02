@@ -1216,13 +1216,18 @@ function PrettyHeatmap({ matrix }: { matrix: StakeholderResult[][][] }) {
                     className={`relative h-12 rounded ${tileColor(value)} shadow-sm`}
                   >
                     {cell.length > 0 && (
-                      <div className="absolute inset-0 flex flex-col items-center justify-center p-1 text-center">
-                        <div className="text-white text-[8px] font-semibold leading-tight">
-                          {cell.map(r => r.name).slice(0, 2).join(", ")}
-                          {cell.length > 2 && <div className="text-[7px]">+{cell.length - 2} more</div>}
-                        </div>
-                      </div>
-                    )}
+  <div className="absolute inset-0 flex flex-col items-center justify-center p-2 text-center">
+    <div
+      className={`
+        text-base md:text-lg font-bold leading-snug whitespace-pre-line drop-shadow-sm
+        ${value >= 8 && value <= 12 ? "text-black" : "text-white"}
+      `}
+    >
+      {cell.map(r => r.name).join("\n")}
+    </div>
+  </div>
+)}
+
                   </div>
                 );
               })}
